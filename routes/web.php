@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\getDataController;
+use App\Http\Controllers\postDataController;
 use App\Http\Controllers\userController;
 use Illuminate\Support\Facades\Route;
 
@@ -21,6 +22,8 @@ Route::get('/', function () {
 
 Route::post('/Authorizate', [userController::class, 'Authorizate']);
 
+Route::post('/Create_order', [postDataController::class, 'Create_order']);
+Route::post('/Create_contact', [postDataController::class, 'Create_contact']);
 
 Route::get('/Get_locomotives', [getDataController::class, 'Get_locomotives']);
 Route::get('/Get_contacts', [getDataController::class, 'Get_contacts']);

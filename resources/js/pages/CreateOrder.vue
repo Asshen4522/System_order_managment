@@ -75,7 +75,6 @@ function getLocomotives() {
             });
         });
 }
-
 function getContacts() {
     fetch("/Get_contacts", {
         method: "GET",
@@ -91,7 +90,6 @@ function getContacts() {
             });
         });
 }
-
 function getExecutors(params) {
     fetch("/Get_executors", {
         method: "GET",
@@ -110,10 +108,70 @@ function getExecutors(params) {
 
 function pickOptionContact(param) {
     local_data.optionContact = param;
+    local_data.order.contact.id = null;
+    local_data.order.contact.fio = null;
+    local_data.order.contact.phone = null;
 }
 
-function Validate() {}
-function SendData() {}
+function Validate() {
+    return true;
+}
+function contact() {
+    if (local_data.order.contact.id == null) {
+        return fetch("/Create_contact", {
+            method: "POST",
+            body: JSON.stringify({
+                fio: local_data.order.contact.fio,
+                phone: local_data.order.contact.phone,
+            }),
+            headers: {
+                "X-CSRF-TOKEN": document.querySelector('[name="_token"]').value,
+                "Content-Type": "application/json",
+            },
+        })
+            .then((response) => response.json())
+            .then((response) => {
+                console.log({ response });
+                return response;
+            });
+    } else {
+        return Promise.resolve(local_data.order.contact.id);
+    }
+}
+function SendData() {
+    if (Validate()) {
+        contact().then((response) => {
+            const datuum = {
+                city: local_data.order.city,
+                locomotive: local_data.order.locomotive,
+                wheel_pairs: local_data.order.wheel_pairs,
+
+                budget: local_data.order.budget,
+                housing: local_data.order.housing,
+
+                tangen: local_data.order.tangen,
+                cup: local_data.order.cup,
+
+                contact: response,
+
+                created_at: local_data.order.created_at,
+
+                executor: local_data.order.executor,
+            };
+            fetch("/Create_order", {
+                method: "POST",
+                body: JSON.stringify(datuum),
+                headers: {
+                    "X-CSRF-TOKEN":
+                        document.querySelector('[name="_token"]').value,
+                    "Content-Type": "application/json",
+                },
+            })
+                .then((response) => response.json())
+                .then((response) => console.log(response));
+        });
+    }
+}
 
 getLocomotives();
 getContacts();
@@ -261,6 +319,7 @@ getExecutors();
                 </option>
             </select>
         </div>
+        <button @click="SendData">Создать заказ</button>
     </div>
 </template>
 <style scoped>
@@ -274,6 +333,7 @@ getExecutors();
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+    margin-top: 20px;
 }
 
 .contact_buttons {
