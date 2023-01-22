@@ -9,7 +9,7 @@ class contactPerson extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'name', 'surname', 'patronymic', 'phone'
+        'fio', 'phone'
     ];
 
     public $timestamps = FALSE;

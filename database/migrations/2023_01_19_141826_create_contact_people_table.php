@@ -16,14 +16,12 @@ return new class extends Migration
     {
         Schema::create('contact_people', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('surname')->nullable(true);
-            $table->string('patronymic')->nullable(true);
+            $table->string('fio');
             $table->string('phone');
         });
 
         contactPerson::create([
-            'name' => 'Сергей',
+            'fio' => 'Сергей',
             'phone' => '89633854682'
         ]);
     }
