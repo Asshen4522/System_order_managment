@@ -46,6 +46,8 @@ const local_data = reactive({
     optionContact: "Существующий",
 });
 
+const emit = defineEmits(["openPage"]);
+
 const wheel_pairs_text = computed(() => {
     if (local_data.order.locomotive == null) {
         return "Количество колесных пар";
@@ -59,6 +61,10 @@ const wheel_pairs_text = computed(() => {
         );
     }
 });
+
+function returnToCabinet(index) {
+    emit("openPage", index);
+}
 
 function getLocomotives() {
     fetch("/Get_locomotives", {
@@ -179,7 +185,7 @@ getExecutors();
 </script>
 <template>
     <div class="page">
-        <div></div>
+        <div>Создание заказа</div>
         <div>
             <customInput
                 v-model="local_data.order.city"
@@ -320,6 +326,7 @@ getExecutors();
             </select>
         </div>
         <button @click="SendData">Создать заказ</button>
+        <button @click="returnToCabinet(3)">Вернуться</button>
     </div>
 </template>
 <style scoped>

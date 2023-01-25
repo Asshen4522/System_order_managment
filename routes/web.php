@@ -28,3 +28,4 @@ Route::post('/Create_contact', [postDataController::class, 'Create_contact']);
 Route::get('/Get_locomotives', [getDataController::class, 'Get_locomotives']);
 Route::get('/Get_contacts', [getDataController::class, 'Get_contacts']);
 Route::get('/Get_executors', [getDataController::class, 'Get_executors']);
+Route::get('/Get_orders', [getDataController::class, 'Get_orders']);

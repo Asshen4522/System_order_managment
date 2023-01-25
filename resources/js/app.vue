@@ -22,7 +22,7 @@ function changePage(index) {
             <Authorization />
         </div>
         <div v-if="local_data.currentPage === 2">
-            <CreateOrder />
+            <CreateOrder @openPage="changePage" />
         </div>
         <div v-if="local_data.currentPage === 3">
             <ManagerCabinet @openPage="changePage" />
