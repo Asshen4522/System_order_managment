@@ -2,11 +2,12 @@
 import Authorization from "./pages/Authorization.vue";
 import CreateOrder from "./pages/CreateOrder.vue";
 import ManagerCabinet from "./pages/ManagerCabinet.vue";
+import DisplayOrder from "./pages/DisplayOrder.vue";
 
 import { reactive, ref } from "vue";
 
 const local_data = reactive({
-    currentPage: 3,
+    currentPage: 4,
 });
 
 function changePage(index) {
@@ -26,6 +27,9 @@ function changePage(index) {
         </div>
         <div v-if="local_data.currentPage === 3">
             <ManagerCabinet @openPage="changePage" />
+        </div>
+        <div v-if="local_data.currentPage === 4">
+            <DisplayOrder :orderId="1" />
         </div>
     </div>
 </template>

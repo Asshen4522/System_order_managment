@@ -18,7 +18,9 @@ return new class extends Migration
             $table->string('city');
             $table->foreignId('locomotive_id')->constrained('locomotives');
             $table->integer('budget');
+            $table->integer('daily_cost');
             $table->string('housing');
+            $table->integer('rent');
             $table->integer('tangen');
             $table->integer('cup');
             $table->integer('wheel_pairs');

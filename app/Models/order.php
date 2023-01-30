@@ -10,7 +10,7 @@ class order extends Model
     use HasFactory;
 
     protected $fillable = [
-        'city', 'locomotive_id', 'budget', 'housing', 'tangen', 'cup', 'wheel_pairs', 'contact_id', 'created_at', 'date_end', 'executor_id', 'status_id'
+        'city', 'locomotive_id', 'budget', 'daily_cost', 'housing', 'rent', 'tangen', 'cup', 'wheel_pairs', 'contact_id', 'created_at', 'date_end', 'executor_id', 'status_id'
     ];
 
     public $timestamps = FALSE;

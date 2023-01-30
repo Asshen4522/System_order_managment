@@ -9,7 +9,9 @@ const local_data = reactive({
         wheel_pairs: null,
 
         budget: null,
+        daily_cost: null,
         housing: "",
+        rent: null,
 
         tangen: null,
         cup: null,
@@ -35,6 +37,8 @@ const local_data = reactive({
         errorFio: false,
         errorPhone: false,
         errorDate: false,
+        errorRent: false,
+        errorDailyCost: false,
     },
 
     locomotives: [],
@@ -153,7 +157,9 @@ function SendData() {
                 wheel_pairs: local_data.order.wheel_pairs,
 
                 budget: local_data.order.budget,
+                daily_cost: local_data.order.daily_cost,
                 housing: local_data.order.housing,
+                rent: local_data.order.rent,
 
                 tangen: local_data.order.tangen,
                 cup: local_data.order.cup,
@@ -226,10 +232,24 @@ getExecutors();
                 :ifError="local_data.error_list.errorBudget"
             />
             <customInput
+                v-model="local_data.order.daily_cost"
+                inputname="Суточные"
+                typeIn="text"
+                :ifError="local_data.error_list.errorDailyCost"
+            />
+        </div>
+        <div class="line">
+            <customInput
                 v-model="local_data.order.housing"
-                inputname="Рента"
+                inputname="Адрес жилья"
                 typeIn="text"
                 :ifError="local_data.error_list.errorHousing"
+            />
+            <customInput
+                v-model="local_data.order.rent"
+                inputname="Рента"
+                typeIn="text"
+                :ifError="local_data.error_list.errorRent"
             />
         </div>
 
