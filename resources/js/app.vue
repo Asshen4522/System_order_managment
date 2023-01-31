@@ -7,11 +7,17 @@ import DisplayOrder from "./pages/DisplayOrder.vue";
 import { reactive, ref } from "vue";
 
 const local_data = reactive({
-    currentPage: 4,
+    currentPage: 3,
+    pickOrder: null,
 });
 
 function changePage(index) {
     local_data.currentPage = index;
+}
+
+function showOrder(index) {
+    local_data.currentPage = 4;
+    local_data.pickOrder = index;
 }
 // This starter template is using Vue 3 <script setup> SFCs
 // Check out https://vuejs.org/api/sfc-script-setup.html#script-setup
@@ -26,10 +32,10 @@ function changePage(index) {
             <CreateOrder @openPage="changePage" />
         </div>
         <div v-if="local_data.currentPage === 3">
-            <ManagerCabinet @openPage="changePage" />
+            <ManagerCabinet @openPage="changePage" @displayOrder="showOrder" />
         </div>
         <div v-if="local_data.currentPage === 4">
-            <DisplayOrder :orderId="1" />
+            <DisplayOrder :orderId="local_data.pickOrder" />
         </div>
     </div>
 </template>

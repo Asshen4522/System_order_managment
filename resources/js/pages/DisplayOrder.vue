@@ -23,6 +23,7 @@ function getDisplayOrder() {
             local_data.order.id = props.orderId;
             local_data.order.city = response[0].city;
             local_data.order.model = response[0].model;
+            local_data.order.housing = response[0].housing;
             local_data.order.fio = response[0].fio;
             local_data.order.phone = response[0].phone;
             local_data.order.budget = response[0].budget;
@@ -46,7 +47,7 @@ function getDisplayOrder() {
             if (response[1] == null) {
                 local_data.order.tangenLeft = response[0].tangen;
                 local_data.order.cupLeft = response[0].cup;
-                local_data.order.wheel_pairLeft = response[0].wheel_pairs;
+                local_data.order.wheel_pairs_ready = 0;
             } else {
                 var spentTangen = 0;
                 var spentCup = 0;
@@ -58,8 +59,7 @@ function getDisplayOrder() {
                 });
                 local_data.order.tangenLeft = response[0].tangen - spentTangen;
                 local_data.order.cupLeft = response[0].cup - spentCup;
-                local_data.order.wheel_pairLeft =
-                    response[0].wheel_pairs - spentWheelPairs;
+                local_data.order.wheel_pairs_ready = spentWheelPairs;
             }
         });
 }
@@ -67,6 +67,128 @@ function getDisplayOrder() {
 getDisplayOrder();
 </script>
 <template>
-    <div></div>
+    <div>
+        <div class="header">Заказ № {{ local_data.order.id }}</div>
+        <div class="line_fields">
+            <div>Город</div>
+            <div class="line_out">{{ local_data.order.city }}</div>
+        </div>
+        <div class="line_fields">
+            <div>Модель</div>
+            <div class="line_out">{{ local_data.order.model }}</div>
+        </div>
+        <div class="line_fields">
+            <div>Жилье</div>
+            <div class="line_out">{{ local_data.order.housing }}</div>
+        </div>
+        <div class="block">
+            <div class="block_header">Контактное лицо</div>
+            <div class="line_fields">
+                <div class="line_in">ФИО</div>
+                <div class="line_out">{{ local_data.order.fio }}</div>
+            </div>
+            <div class="line_fields">
+                <div class="line_in">Телефон</div>
+                <div class="line_out">{{ local_data.order.phone }}</div>
+            </div>
+        </div>
+        <div class="block">
+            <div class="block_header">Бюджет</div>
+            <table class="tables">
+                <thead>
+                    <tr>
+                        <th>Выделено</th>
+                        <th>Осталось</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th>{{ local_data.order.budget }}</th>
+                        <th>{{ local_data.order.moneyLeft }}</th>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="block">
+            <div class="block_header">Резцы</div>
+            <table class="tables">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>Выделено</th>
+                        <th>Осталось</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th>Тангец</th>
+                        <th>{{ local_data.order.tangen }}</th>
+                        <th>{{ local_data.order.tangenLeft }}</th>
+                    </tr>
+                    <tr>
+                        <th>Чашка</th>
+                        <th>{{ local_data.order.cup }}</th>
+                        <th>{{ local_data.order.cupLeft }}</th>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="block">
+            <div class="block_header">Колесные пары</div>
+            <table class="tables">
+                <thead>
+                    <tr>
+                        <th>Всего</th>
+                        <th>Обточено</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th>{{ local_data.order.wheel_pair }}</th>
+                        <th>{{ local_data.order.wheel_pairs_ready }}</th>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
 </template>
-<style scoped></style>
+<style scoped>
+.header {
+    display: flex;
+    text-align: center;
+    align-self: center;
+    margin-bottom: 30px;
+}
+
+.line_fields {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.line_out {
+    width: 70%;
+    text-align: center;
+    border-bottom-style: solid;
+}
+.line_in {
+    margin-left: 10px;
+}
+
+.block {
+    border-style: solid;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+.block_header {
+    margin-bottom: 15px;
+    margin-top: 5px;
+    margin-left: 10px;
+}
+
+.tables {
+    width: 100%;
+}
+</style>

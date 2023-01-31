@@ -5,7 +5,7 @@ const local_data = reactive({
     orders: [],
 });
 
-const emit = defineEmits(["openPage"]);
+const emit = defineEmits(["openPage", "displayOrder"]);
 
 function getOrders() {
     fetch("/Get_orders", {
@@ -31,6 +31,10 @@ function nextPage(index) {
     emit("openPage", index);
 }
 
+function showOrder(index) {
+    emit("displayOrder", index);
+}
+
 getOrders();
 </script>
 <template>
@@ -42,22 +46,22 @@ getOrders();
         <div class="field">
             <div v-for="option in local_data.orders">
                 <div v-show="option.status === 1">
-                    <button class="button-order">
+                    <button @click="showOrder(option.id)" class="button-order">
                         Новый заказ #{{ option.id }}
                     </button>
                 </div>
                 <div v-show="option.status === 2">
-                    <button class="button-order">
+                    <button @click="showOrder(option.id)" class="button-order">
                         Работающий заказ #{{ option.id }}
                     </button>
                 </div>
                 <div v-show="option.status === 3">
-                    <button class="button-order">
+                    <button @click="showOrder(option.id)" class="button-order">
                         Выполненный заказ #{{ option.id }}
                     </button>
                 </div>
                 <div v-show="option.status === 4">
-                    <button class="button-order">
+                    <button @click="showOrder(option.id)" class="button-order">
                         Отмененный заказ #{{ option.id }}
                     </button>
                 </div>
