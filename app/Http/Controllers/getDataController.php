@@ -3,11 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\activity;
 use App\Models\contactPerson;
+use App\Models\cost;
 use App\Models\locomotive;
 use App\Models\order;
-use App\Models\report;
-use App\Models\reportCost;
 use App\Models\user;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -42,6 +42,13 @@ class getDataController extends Controller
         return $answer;
     }
 
+    public function Get_my_orders()
+    {
+        $answer = order::where(["executor_id" => auth()->user()->id])->get();
+
+        return $answer;
+    }
+
     public function Get_display_order(Request $request)
     {
         $order = DB::table('orders')
@@ -59,6 +66,40 @@ class getDataController extends Controller
             ->select('reports.id', 'report_costs.price')
             ->get();
         $answer = [$order, $order_reports, $order_costs];
+
+        return $answer;
+    }
+
+    public function Get_order_report_dates(Request $request)
+    {
+        $answer = DB::table('reports')
+            ->where(['order_id' => $request->id])
+            ->select(('date'))
+            ->get();
+
+        return $answer;
+    }
+
+    public function Get_costs()
+    {
+        $answer = cost::all();
+
+        return $answer;
+    }
+
+    public function Get_activities()
+    {
+        $answer = activity::all();
+
+        return $answer;
+    }
+
+    public function Get_costs_order(Request $request)
+    {
+        $answer = DB::table('orders')
+            ->where(["orders.id" => $request->id])
+            ->select('daily_cost', 'rent')
+            ->get();
 
         return $answer;
     }

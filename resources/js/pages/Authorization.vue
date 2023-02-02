@@ -2,57 +2,46 @@
 import customInput from "../components/Input.vue";
 import { reactive, ref } from "vue";
 
+const emit = defineEmits(["auth"]);
+
 const local_data = reactive({
     phone: null,
-    password: null,
+    password: "",
 
     fieldType: "password",
 
     errorPhone: false,
     errorPassword: false,
+
+    errorLogin: false,
 });
 
-//и регулярка//
 function Validate() {
-    if (local_data.phone != null) {
-        if (
-            (local_data.phone.length === 12 ||
-                local_data.phone.length === 11) &&
-            (local_data.phone[0] === "8" ||
-                (local_data.phone[0] === "+" && local_data.phone[1] === "7"))
-        ) {
-            local_data.errorPhone = false;
-        } else {
-            local_data.errorPhone = true;
-        }
-    } else {
-        local_data.errorPhone = true;
-    }
-
-    if (local_data.password != null) {
-        local_data.errorPassword = false;
-    } else {
-        local_data.errorPassword = true;
-    }
-    return !(local_data.errorPhone || local_data.errorPassword);
+    local_data.errorPhone = !/^(8|\+7)(\d){10}$/.test(local_data.phone);
+    local_data.errorPassword = local_data.password == "";
+    return !local_data.errorPhone && !local_data.errorPassword;
 }
 function Authorize() {
     if (Validate()) {
-        const datuum = {
-            phone: local_data.phone,
-            password: local_data.password,
-        };
-
         fetch("/Authorizate", {
             method: "POST",
-            body: JSON.stringify(datuum),
+            body: JSON.stringify({
+                phone: local_data.phone,
+                password: local_data.password,
+            }),
             headers: {
                 "X-CSRF-TOKEN": document.querySelector('[name="_token"]').value,
                 "Content-Type": "application/json",
             },
         })
             .then((response) => response.json())
-            .then((response) => console.log(response));
+            .then((response) => {
+                if (response == false) {
+                    local_data.errorLogin = true;
+                } else {
+                    emit("auth", response);
+                }
+            });
     }
 }
 
@@ -66,6 +55,14 @@ function RevealPassword() {
 </script>
 <template>
     <div class="page">
+        <div>
+            <div class="header__head">Вход в систему</div>
+            <div class="header__text">
+                Введите ваш номер телефона, без пробелов и иных знаков, в
+                формате 8xxxxxxxxxx или +7xxxxxxxxxx, и выданный вам
+                администратором пароль.
+            </div>
+        </div>
         <customInput
             v-model="local_data.phone"
             inputname="Телефон"
@@ -83,6 +80,10 @@ function RevealPassword() {
         </div>
 
         <button @click="Authorize">Войти</button>
+
+        <div class="error" v-show="local_data.errorLogin">
+            Неверная пара телефон-пароль
+        </div>
     </div>
 </template>
 <style scoped>
@@ -100,5 +101,22 @@ function RevealPassword() {
     display: flex;
     flex-direction: row;
     width: 100%;
+}
+
+.header__head {
+    font-size: 30px;
+    text-align: center;
+    margin-bottom: 20px;
+}
+.header__text {
+    font-size: 20px;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.error {
+    text-align: center;
+    font-size: 20px;
+    color: red;
 }
 </style>

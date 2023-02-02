@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Models\contactPerson;
 use App\Models\order;
+use App\Models\report;
+use App\Models\reportActivity;
+use App\Models\reportCost;
 use Illuminate\Http\Request;
 
 class postDataController extends Controller
@@ -41,6 +44,44 @@ class postDataController extends Controller
             return true;
         } catch (\Throwable $th) {
             return false;
+        }
+    }
+    public function Create_report(Request $request)
+    {
+        try {
+            $report = report::create([
+                'date' => $request->date,
+                'order_id' => $request->id,
+                'tangen' => $request->tangen,
+                'cup' => $request->cup,
+                'wheel_pair' => $request->wheel_pairs,
+                'comment' => $request->comment,
+            ]);
+            $report->refresh();
+            if (count($request->costs)) {
+                foreach ($request->costs as $cost) {
+                    reportCost::create([
+                        'report_id' => $report->id,
+                        'cost_id' => $cost['id'],
+                        'price' => $cost['price'],
+                    ]);
+                }
+            }
+            if (count($request->activities)) {
+                foreach ($request->activities as $activity) {
+                    reportActivity::create([
+                        'report_id' => $report->id,
+                        'activity_id' => $activity['id'],
+                    ]);
+                }
+            }
+
+
+            $answer = 'true';
+            return $answer;
+        } catch (\Throwable $th) {
+            $answer = 'false';
+            return $th;
         }
     }
 }

@@ -20,7 +20,7 @@ return new class extends Migration
             $table->integer('tangen');
             $table->integer('cup');
             $table->float('wheel_pair');
-            $table->text('comment');
+            $table->text('comment')->nullable();
         });
     }
 

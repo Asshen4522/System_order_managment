@@ -20,11 +20,11 @@ return new class extends Migration
         });
 
         cost::create([
-            'name' => 'суточные'
+            'name' => 'трата 1'
         ]);
 
         cost::create([
-            'name' => 'рента'
+            'name' => 'трата 2'
         ]);
     }
 

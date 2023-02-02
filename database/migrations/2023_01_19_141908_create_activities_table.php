@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\activity;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -17,6 +18,13 @@ return new class extends Migration
             $table->id();
             $table->string('name');
         });
+
+        activity::create([
+            'name' => 'занятие 1'
+        ]);
+        activity::create([
+            'name' => 'занятие 2'
+        ]);
     }
 
     /**

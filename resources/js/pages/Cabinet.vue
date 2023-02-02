@@ -1,6 +1,9 @@
 <script setup>
 import { reactive } from "vue";
 
+const props = defineProps({
+    roleId: null,
+});
 const local_data = reactive({
     orders: [],
 });
@@ -8,23 +11,43 @@ const local_data = reactive({
 const emit = defineEmits(["openPage", "displayOrder"]);
 
 function getOrders() {
-    fetch("/Get_orders", {
-        method: "GET",
-        headers: {
-            "X-CSRF-TOKEN": document.querySelector('[name="_token"]').value,
-            "Content-Type": "application/json",
-        },
-    })
-        .then((response) => response.json())
-        .then((response) => {
-            response.forEach((element) => {
-                const elem = {
-                    status: element.status_id,
-                    id: element.id,
-                };
-                local_data.orders.push(elem);
+    if (props.roleId == 1) {
+        fetch("/Get_orders", {
+            method: "GET",
+            headers: {
+                "X-CSRF-TOKEN": document.querySelector('[name="_token"]').value,
+                "Content-Type": "application/json",
+            },
+        })
+            .then((response) => response.json())
+            .then((response) => {
+                response.forEach((element) => {
+                    const elem = {
+                        status: element.status_id,
+                        id: element.id,
+                    };
+                    local_data.orders.push(elem);
+                });
             });
-        });
+    } else {
+        fetch("/Get_my_orders", {
+            method: "GET",
+            headers: {
+                "X-CSRF-TOKEN": document.querySelector('[name="_token"]').value,
+                "Content-Type": "application/json",
+            },
+        })
+            .then((response) => response.json())
+            .then((response) => {
+                response.forEach((element) => {
+                    const elem = {
+                        status: element.status_id,
+                        id: element.id,
+                    };
+                    local_data.orders.push(elem);
+                });
+            });
+    }
 }
 
 function nextPage(index) {
@@ -39,7 +62,11 @@ getOrders();
 </script>
 <template>
     <div>
-        <div class="buttons">
+        <div class="header">
+            <div v-show="props.roleId == 1">Личный кабинет администратора</div>
+            <div v-show="props.roleId == 2">Личный кабинет исполнителя</div>
+        </div>
+        <div class="buttons" v-show="props.roleId == 1">
             <button @click="nextPage(2)">Добавить заказ</button>
             <button>Добавить пользователя</button>
         </div>
@@ -78,6 +105,12 @@ getOrders();
 
 .field {
     margin-top: 30px;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 30px;
 }
 
 .button-order {

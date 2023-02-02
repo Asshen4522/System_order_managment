@@ -11,9 +11,11 @@ class userController extends Controller
     public function Authorizate(Request $request)
     {
         if (Auth::attempt($request->only('phone', 'password'))) {
-            return true;
+            $answer = auth()->user()->role_id;
+            return $answer;
         } else {
-            return false;
+            $answer = 'false';
+            return $answer;
         }
     }
 }

@@ -9,7 +9,7 @@ class reportActivity extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'report_id', 'activities_id'
+        'report_id', 'activity_id'
     ];
 
     public $timestamps = FALSE;

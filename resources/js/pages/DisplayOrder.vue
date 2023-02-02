@@ -3,10 +3,45 @@ import { reactive } from "vue";
 
 const props = defineProps({
     orderId: null,
+    roleId: null,
 });
 const local_data = reactive({
     order: {},
+    reportDates: [],
+    dateError: false,
 });
+const emit = defineEmits(["openPage", "createReport"]);
+
+function returnToCabinet() {
+    emit("openPage", 3);
+}
+function writeReport(index) {
+    let date = new Date();
+    let nowDate = String(date.getFullYear()) + "-";
+    if (String(date.getMonth() + 1).length == 1) {
+        nowDate += "0" + String(date.getMonth() + 1) + "-";
+    } else {
+        nowDate += String(date.getMonth() + 1) + "-";
+    }
+    if (String(date.getDate()).length == 1) {
+        nowDate += "0" + String(date.getDate());
+    } else {
+        nowDate += String(date.getDate());
+    }
+
+    let dataCheck = true;
+    local_data.reportDates.forEach((element) => {
+        if (element.date == nowDate) {
+            dataCheck = false;
+        }
+    });
+
+    if (dataCheck) {
+        emit("createReport", index);
+    } else {
+        local_data.dateError = true;
+    }
+}
 
 function getDisplayOrder() {
     fetch("/Get_display_order", {
@@ -19,7 +54,6 @@ function getDisplayOrder() {
     })
         .then((response) => response.json())
         .then((response) => {
-            console.log(response);
             local_data.order.id = props.orderId;
             local_data.order.city = response[0].city;
             local_data.order.model = response[0].model;
@@ -55,7 +89,7 @@ function getDisplayOrder() {
                 response[1].forEach((elem) => {
                     spentTangen += elem.tangen;
                     spentCup += elem.cup;
-                    spentWheelPairs += elem.wheel_pairs;
+                    spentWheelPairs += elem.wheel_pair;
                 });
                 local_data.order.tangenLeft = response[0].tangen - spentTangen;
                 local_data.order.cupLeft = response[0].cup - spentCup;
@@ -63,7 +97,24 @@ function getDisplayOrder() {
             }
         });
 }
+function getReportDates() {
+    fetch("/Get_order_report_dates", {
+        method: "POST",
+        body: JSON.stringify({ id: props.orderId }),
+        headers: {
+            "X-CSRF-TOKEN": document.querySelector('[name="_token"]').value,
+            "Content-Type": "application/json",
+        },
+    })
+        .then((response) => response.json())
+        .then((response) => {
+            response.forEach((element) => {
+                local_data.reportDates.push(element);
+            });
+        });
+}
 
+getReportDates();
 getDisplayOrder();
 </script>
 <template>
@@ -150,6 +201,19 @@ getDisplayOrder();
                 </tbody>
             </table>
         </div>
+        <div class="buttons">
+            <button @click="returnToCabinet">Вернуться в кабинет</button>
+            <button v-show="props.roleId == 1">Редактировать заказ</button>
+            <button
+                @click="writeReport(local_data.order.id)"
+                v-show="props.roleId == 2"
+            >
+                Написать отчет
+            </button>
+        </div>
+        <div class="error" v-show="local_data.dateError">
+            Сегодняшний отчет уже заполнен
+        </div>
     </div>
 </template>
 <style scoped>
@@ -158,6 +222,12 @@ getDisplayOrder();
     text-align: center;
     align-self: center;
     margin-bottom: 30px;
+}
+
+.buttons {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
 }
 
 .line_fields {
@@ -190,5 +260,12 @@ getDisplayOrder();
 
 .tables {
     width: 100%;
+}
+
+.error {
+    margin-top: 20px;
+    text-align: center;
+    font-size: 20px;
+    color: red;
 }
 </style>
