@@ -21,6 +21,7 @@ Route::get('/', function () {
 });
 
 Route::post('/Authorizate', [userController::class, 'Authorizate']);
+Route::post('/Register', [userController::class, 'Register']);
 
 Route::post('/Create_order', [postDataController::class, 'Create_order']);
 Route::post('/Create_contact', [postDataController::class, 'Create_contact']);

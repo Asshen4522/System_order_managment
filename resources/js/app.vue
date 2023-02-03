@@ -4,6 +4,7 @@ import CreateOrder from "./pages/CreateOrder.vue";
 import Cabinet from "./pages/Cabinet.vue";
 import DisplayOrder from "./pages/DisplayOrder.vue";
 import CreateReport from "./pages/CreateReport.vue";
+import CreateUser from "./pages/CreateUser.vue";
 
 import { reactive } from "vue";
 
@@ -61,6 +62,9 @@ function authorizate(roleId) {
                 :orderId="local_data.pickOrder"
                 @openPage="changePage"
             />
+        </div>
+        <div v-if="local_data.currentPage === 6">
+            <CreateUser @openPage="changePage" />
         </div>
     </div>
 </template>

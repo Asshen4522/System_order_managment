@@ -68,7 +68,7 @@ getOrders();
         </div>
         <div class="buttons" v-show="props.roleId == 1">
             <button @click="nextPage(2)">Добавить заказ</button>
-            <button>Добавить пользователя</button>
+            <button @click="nextPage(6)">Добавить пользователя</button>
         </div>
         <div class="field">
             <div v-for="option in local_data.orders">

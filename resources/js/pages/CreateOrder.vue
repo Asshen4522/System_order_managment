@@ -30,16 +30,22 @@ const local_data = reactive({
     error_list: {
         errorCity: false,
         errorWheelPairs: false,
-        errorHousing: false,
+
         errorBudget: false,
-        errorTangen: false,
-        errorCup: false,
-        errorFio: false,
-        errorPhone: false,
-        errorDate: false,
         errorRent: false,
         errorDailyCost: false,
+
+        errorHousing: false,
+
+        errorTangen: false,
+        errorCup: false,
+
+        errorFio: false,
+        errorPhone: false,
+
+        errorDate: false,
     },
+    createError: false,
 
     locomotives: [],
 
@@ -124,7 +130,47 @@ function pickOptionContact(param) {
 }
 
 function Validate() {
-    return true;
+    local_data.error_list.errorCity = local_data.order.city == "";
+    local_data.error_list.errorWheelPairs =
+        local_data.order.locomotive == null ||
+        !/^\d+$/.test(local_data.order.wheel_pairs);
+
+    local_data.error_list.errorBudget = !/^\d+$/.test(local_data.order.budget);
+    local_data.error_list.errorRent = !/^\d+$/.test(local_data.order.rent);
+    local_data.error_list.errorDailyCost = !/^\d+$/.test(
+        local_data.order.daily_cost
+    );
+
+    local_data.error_list.errorHousing = local_data.order.housing == "";
+
+    local_data.error_list.errorTangen = !/^\d+$/.test(local_data.order.tangen);
+    local_data.error_list.errorCup = !/^\d+$/.test(local_data.order.cup);
+
+    local_data.error_list.errorFio =
+        local_data.order.contact.id == null &&
+        local_data.order.contact.fio == "";
+    local_data.error_list.errorPhone =
+        local_data.order.contact.id == null &&
+        !/^(8|\+7)(\d){10}$/.test(local_data.order.contact.phone);
+
+    if (
+        !local_data.error_list.errorCity &&
+        !local_data.error_list.errorWheelPairs &&
+        !local_data.error_list.errorBudget &&
+        !local_data.error_list.errorRent &&
+        !local_data.error_list.errorDailyCost &&
+        !local_data.error_list.errorHousing &&
+        !local_data.error_list.errorTangen &&
+        !local_data.error_list.errorCup &&
+        !local_data.error_list.errorFio &&
+        !local_data.error_list.errorPhone &&
+        !local_data.error_list.errorDate &&
+        local_data.order.executor != null
+    ) {
+        return true;
+    } else {
+        return false;
+    }
 }
 function contact() {
     if (local_data.order.contact.id == null) {
@@ -182,6 +228,8 @@ function SendData() {
                 .then((response) => response.json())
                 .then((response) => console.log(response));
         });
+    } else {
+        local_data.createError = true;
     }
 }
 
@@ -347,6 +395,9 @@ getExecutors();
         </div>
         <button @click="SendData">Создать заказ</button>
         <button @click="returnToCabinet(3)">Вернуться</button>
+        <div class="error" v-show="local_data.createError">
+            Не все поля заполнены верно
+        </div>
     </div>
 </template>
 <style scoped>
@@ -387,5 +438,12 @@ getExecutors();
 .active {
     color: white;
     background-color: var(--color-object);
+}
+
+.error {
+    margin-top: 20px;
+    text-align: center;
+    font-size: 20px;
+    color: red;
 }
 </style>
