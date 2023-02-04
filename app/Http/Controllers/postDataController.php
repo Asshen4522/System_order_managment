@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\activity;
 use App\Models\contactPerson;
+use App\Models\cost;
 use App\Models\order;
 use App\Models\report;
 use App\Models\reportActivity;
@@ -82,6 +84,34 @@ class postDataController extends Controller
         } catch (\Throwable $th) {
             $answer = 'false';
             return $th;
+        }
+    }
+
+    public function Create_cost(Request $request)
+    {
+        try {
+            cost::create([
+                'name' => $request->name
+            ]);
+            $answer = "true";
+            return $answer;
+        } catch (\Throwable $th) {
+            $answer = "false";
+            return $answer;
+        }
+    }
+
+    public function Create_activity(Request $request)
+    {
+        try {
+            activity::create([
+                'name' => $request->name
+            ]);
+            $answer = "true";
+            return $answer;
+        } catch (\Throwable $th) {
+            $answer = "false";
+            return $answer;
         }
     }
 }

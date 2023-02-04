@@ -32,13 +32,69 @@ const local_data = reactive({
     activities: [],
     costs: [],
     inner_costs: [],
+
+    createNewCost:"",
+    errorNewCost : false,
+
+    createNewActivity:"",
+    errorNewActivity : false,
 });
 
 function returnToCabinet() {
     emit("openPage", 3);
 }
 
+function createCost() {
+    local_data.errorNewCost = local_data.createNewCost == "";
+    if (!local_data.errorNewCost) {
+        fetch("/Create_cost", {
+            method: "POST",
+            body: JSON.stringify({
+                name: local_data.createNewCost,
+            }),
+            headers: {
+                "X-CSRF-TOKEN": document.querySelector('[name="_token"]').value,
+                "Content-Type": "application/json",
+            },
+        })
+            .then((response) => response.json())
+            .then((response) => {
+                if (response == false) {
+                    local_data.errorNewCost = true;
+                } else {
+                    local_data.createNewCost = "";
+                    getCosts();
+                }
+            });
+    }
+}
+function createActivity() {
+    local_data.errorNewActivity = local_data.createNewActivity == "";
+    if (!local_data.errorNewActivity) {
+        fetch("/Create_activity", {
+            method: "POST",
+            body: JSON.stringify({
+                name: local_data.createNewActivity,
+            }),
+            headers: {
+                "X-CSRF-TOKEN": document.querySelector('[name="_token"]').value,
+                "Content-Type": "application/json",
+            },
+        })
+            .then((response) => response.json())
+            .then((response) => {
+                if (response == false) {
+                    local_data.errorNewActivity = true;
+                } else {
+                    local_data.createNewActivity = "";
+                    getActivities();
+                }
+            });
+    }
+}
+
 function getActivities() {
+    local_data.activities = [];
     fetch("/Get_activities", {
         method: "GET",
         headers: {
@@ -54,6 +110,7 @@ function getActivities() {
         });
 }
 function getCosts() {
+    local_data.costs = [];
     fetch("/Get_costs", {
         method: "GET",
         headers: {
@@ -213,6 +270,18 @@ getDate();
             </div>
         </div>
         <div class="block">
+            <div class="block_header">Введите название новой затраты, только если их нет в списке выше!</div>
+            <div class="display_line">
+                <customInput
+                    v-model="local_data.createNewCost"
+                    inputname="Название затраты"
+                    typeIn="text"
+                    :ifError="local_data.errorNewCost"
+                />
+                <button @click="createCost" class="addCostButton">Добавить</button>
+            </div>
+        </div>        
+        <div class="block">
             <div class="block_header">Занятость</div>
             <div class="display_line">
                 <div class="display_line_first">Обточка КП</div>
@@ -261,6 +330,18 @@ getDate();
                     </option>
                 </select>
                 <button @click="addActivity" class="addCostButton">Добавить</button>
+            </div>
+        </div>
+        <div class="block">
+            <div class="block_header">Введите название нового занятия, только если его нет в списке выше!</div>
+            <div class="display_line">
+                <customInput
+                    v-model="local_data.createNewActivity"
+                    inputname="Название активности"
+                    typeIn="text"
+                    :ifError="local_data.errorNewActivity"
+                />
+                <button @click="createActivity" class="addCostButton">Добавить</button>
             </div>
         </div>
         <div class="block">

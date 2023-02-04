@@ -26,6 +26,9 @@ Route::post('/Register', [userController::class, 'Register']);
 Route::post('/Create_order', [postDataController::class, 'Create_order']);
 Route::post('/Create_contact', [postDataController::class, 'Create_contact']);
 Route::post('/Create_report', [postDataController::class, 'Create_report']);
+Route::post('/Create_cost', [postDataController::class, 'Create_cost']);
+Route::post('/Create_activity', [postDataController::class, 'Create_activity']);
+
 
 Route::get('/Get_locomotives', [getDataController::class, 'Get_locomotives']);
 Route::get('/Get_contacts', [getDataController::class, 'Get_contacts']);
