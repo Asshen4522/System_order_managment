@@ -87,6 +87,32 @@ class postDataController extends Controller
         }
     }
 
+    public function Edit_order(Request $request)
+    {
+        try {
+            $order = order::find($request->id);
+            $order->city = $request->city;
+            $order->locomotive_id = $request->locomotive;
+            $order->budget = $request->budget;
+            $order->daily_cost = $request->daily_cost;
+            $order->housing = $request->housing;
+            $order->rent = $request->rent;
+            $order->tangen = $request->tangen;
+            $order->cup = $request->cup;
+            $order->wheel_pairs = $request->wheel_pairs;
+            $order->contact_id = $request->contact;
+            $order->created_at = $request->created_at;
+            $order->executor_id = $request->executor;
+            $order->status_id = 1;
+            $order->save();
+
+            $answer = "true";
+            return $answer;
+        } catch (\Throwable $th) {
+            return $th;
+        }
+    }
+
     public function Create_cost(Request $request)
     {
         try {

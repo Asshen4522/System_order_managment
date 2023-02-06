@@ -5,7 +5,7 @@ import Cabinet from "./pages/Cabinet.vue";
 import DisplayOrder from "./pages/DisplayOrder.vue";
 import CreateReport from "./pages/CreateReport.vue";
 import CreateUser from "./pages/CreateUser.vue";
-
+import EditOrder from "./pages/EditOrder.vue";
 import { reactive } from "vue";
 
 const local_data = reactive({
@@ -17,7 +17,10 @@ const local_data = reactive({
 function changePage(index) {
     local_data.currentPage = index;
 }
-
+function editOrder(orderId) {
+    local_data.currentPage = 7;
+    local_data.pickOrder = orderId;
+}
 function writeReport(index) {
     local_data.pickOrder = index;
     local_data.currentPage = 5;
@@ -53,6 +56,7 @@ function authorizate(roleId) {
             <DisplayOrder
                 @createReport="writeReport"
                 @openPage="changePage"
+                @editOrder="editOrder"
                 :orderId="local_data.pickOrder"
                 :roleId="local_data.roleId"
             />
@@ -65,6 +69,9 @@ function authorizate(roleId) {
         </div>
         <div v-if="local_data.currentPage === 6">
             <CreateUser @openPage="changePage" />
+        </div>
+        <div v-if="local_data.currentPage === 7">
+            <EditOrder @openPage="changePage" :orderId="local_data.pickOrder" />
         </div>
     </div>
 </template>

@@ -10,10 +10,13 @@ const local_data = reactive({
     reportDates: [],
     dateError: false,
 });
-const emit = defineEmits(["openPage", "createReport"]);
+const emit = defineEmits(["openPage", "editOrder", "createReport"]);
 
 function returnToCabinet() {
     emit("openPage", 3);
+}
+function editOrder() {
+    emit("editOrder", props.orderId);
 }
 function writeReport(index) {
     let date = new Date();
@@ -203,7 +206,9 @@ getDisplayOrder();
         </div>
         <div class="buttons">
             <button @click="returnToCabinet">Вернуться в кабинет</button>
-            <button v-show="props.roleId == 1">Редактировать заказ</button>
+            <button @click="editOrder" v-show="props.roleId == 1">
+                Редактировать заказ
+            </button>
             <button
                 @click="writeReport(local_data.order.id)"
                 v-show="props.roleId == 2"

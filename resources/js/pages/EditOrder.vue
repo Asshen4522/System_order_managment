@@ -2,8 +2,14 @@
 import customInput from "../components/Input.vue";
 import { reactive, ref, computed } from "vue";
 
+const props = defineProps({
+    orderId: null,
+});
+
 const local_data = reactive({
     order: {
+        id: props.orderId,
+
         city: "",
         locomotive: null,
         wheel_pairs: null,
@@ -71,6 +77,8 @@ const wheel_pairs_text = computed(() => {
         );
     }
 });
+
+function get(params) {}
 
 function returnToCabinet(index) {
     emit("openPage", index);
@@ -198,6 +206,8 @@ function SendData() {
     if (Validate()) {
         contact().then((response) => {
             const datuum = {
+                id: props.orderId,
+
                 city: local_data.order.city,
                 locomotive: local_data.order.locomotive,
                 wheel_pairs: local_data.order.wheel_pairs,
@@ -216,7 +226,7 @@ function SendData() {
 
                 executor: local_data.order.executor,
             };
-            fetch("/Create_order", {
+            fetch("/Edit_order", {
                 method: "POST",
                 body: JSON.stringify(datuum),
                 headers: {
@@ -229,6 +239,8 @@ function SendData() {
                 .then((response) => {
                     if (response == true) {
                         returnToCabinet(3);
+                    } else {
+                        console.log(response);
                     }
                 });
         });
@@ -237,13 +249,44 @@ function SendData() {
     }
 }
 
+function getDisplayOrder() {
+    fetch("/Get_display_order", {
+        method: "POST",
+        body: JSON.stringify({ id: props.orderId }),
+        headers: {
+            "X-CSRF-TOKEN": document.querySelector('[name="_token"]').value,
+            "Content-Type": "application/json",
+        },
+    })
+        .then((response) => response.json())
+        .then((response) => {
+            local_data.order.city = response[0].city;
+            local_data.order.locomotive = response[0].locomotive_id;
+            local_data.order.wheel_pairs = response[0].wheel_pairs;
+
+            local_data.order.budget = response[0].budget;
+            local_data.order.daily_cost = response[0].daily_cost;
+            local_data.order.housing = response[0].housing;
+            local_data.order.rent = response[0].rent;
+
+            local_data.order.tangen = response[0].tangen;
+            local_data.order.cup = response[0].cup;
+
+            local_data.order.contact.id = response[0].contact_id;
+
+            local_data.order.created_at = response[0].created_at;
+
+            local_data.order.executor = response[0].executor_id;
+        });
+}
+getDisplayOrder();
 getLocomotives();
 getContacts();
 getExecutors();
 </script>
 <template>
     <div class="page">
-        <div>Создание заказа</div>
+        <div>Редактирование заказа №{{ props.orderId }}</div>
         <div>
             <customInput
                 v-model="local_data.order.city"
@@ -397,7 +440,7 @@ getExecutors();
                 </option>
             </select>
         </div>
-        <button @click="SendData">Создать заказ</button>
+        <button @click="SendData">Закончить редактирование</button>
         <button @click="returnToCabinet(3)">Вернуться</button>
         <div class="error" v-show="local_data.createError">
             Не все поля заполнены верно
