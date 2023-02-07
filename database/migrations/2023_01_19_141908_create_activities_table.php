@@ -18,13 +18,6 @@ return new class extends Migration
             $table->id();
             $table->string('name');
         });
-
-        activity::create([
-            'name' => 'занятие 1'
-        ]);
-        activity::create([
-            'name' => 'занятие 2'
-        ]);
     }
 
     /**

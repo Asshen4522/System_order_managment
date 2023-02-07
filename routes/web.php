@@ -30,8 +30,6 @@ Route::post('/Create_report', [postDataController::class, 'Create_report']);
 Route::post('/Create_cost', [postDataController::class, 'Create_cost']);
 Route::post('/Create_activity', [postDataController::class, 'Create_activity']);
 
-
-
 Route::get('/Get_locomotives', [getDataController::class, 'Get_locomotives']);
 Route::get('/Get_contacts', [getDataController::class, 'Get_contacts']);
 Route::get('/Get_executors', [getDataController::class, 'Get_executors']);
@@ -42,3 +40,4 @@ Route::get('/Get_costs', [getDataController::class, 'Get_costs']);
 Route::get('/Get_activities', [getDataController::class, 'Get_activities']);
 Route::post('/Get_costs_order', [getDataController::class, 'Get_costs_order']);
 Route::post('/Get_order_report_dates', [getDataController::class, 'Get_order_report_dates']);
+Route::post('/Get_wheel_pair_left', [getDataController::class, 'Get_wheel_pair_left']);

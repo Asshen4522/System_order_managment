@@ -205,7 +205,6 @@ getDisplayOrder();
             </table>
         </div>
         <div class="buttons">
-            <button @click="returnToCabinet">Вернуться в кабинет</button>
             <button @click="editOrder" v-show="props.roleId == 1">
                 Редактировать заказ
             </button>
@@ -213,8 +212,9 @@ getDisplayOrder();
                 @click="writeReport(local_data.order.id)"
                 v-show="props.roleId == 2"
             >
-                Написать отчет
+                Создать отчет
             </button>
+            <button @click="returnToCabinet">Назад</button>
         </div>
         <div class="error" v-show="local_data.dateError">
             Сегодняшний отчет уже заполнен
@@ -230,6 +230,7 @@ getDisplayOrder();
 }
 
 .buttons {
+    gap: 10px;
     display: flex;
     flex-direction: row;
     justify-content: space-between;

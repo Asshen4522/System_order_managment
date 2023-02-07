@@ -63,13 +63,10 @@ getOrders();
 <template>
     <div>
         <div class="header">
-            <div v-show="props.roleId == 1">Личный кабинет администратора</div>
+            <div v-show="props.roleId == 1">Личный кабинет менеджера</div>
             <div v-show="props.roleId == 2">Личный кабинет исполнителя</div>
         </div>
-        <div class="buttons" v-show="props.roleId == 1">
-            <button @click="nextPage(2)">Добавить заказ</button>
-            <button @click="nextPage(6)">Добавить пользователя</button>
-        </div>
+
         <div class="field">
             <div v-for="option in local_data.orders">
                 <div v-show="option.status === 1">
@@ -94,17 +91,26 @@ getOrders();
                 </div>
             </div>
         </div>
+        <div class="buttons" v-show="props.roleId == 1">
+            <button @click="nextPage(2)">Добавить заказ</button>
+            <button @click="nextPage(6)">Добавить пользователя</button>
+        </div>
     </div>
 </template>
 <style scoped>
 .buttons {
+    margin-top: 20px;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+    gap: 10px;
 }
 
 .field {
+    display: flex;
+    flex-direction: column;
     margin-top: 30px;
+    gap: 10px;
 }
 
 .header {

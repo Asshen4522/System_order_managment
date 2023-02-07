@@ -78,8 +78,6 @@ const wheel_pairs_text = computed(() => {
     }
 });
 
-function get(params) {}
-
 function returnToCabinet(index) {
     emit("openPage", index);
 }

@@ -103,4 +103,18 @@ class getDataController extends Controller
 
         return $answer;
     }
+
+    public function Get_wheel_pair_left(Request $request)
+    {
+        $order_wheels = DB::table('orders')
+            ->where(["orders.id" => $request->id])
+            ->select('wheel_pairs')
+            ->first();
+        $order_reports = DB::table('reports')
+            ->where(["reports.order_id" => $request->id])
+            ->select('wheel_pair')
+            ->get();
+        $answer = [$order_wheels, $order_reports];
+        return $answer;
+    }
 }

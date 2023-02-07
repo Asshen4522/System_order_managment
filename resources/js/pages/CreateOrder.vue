@@ -58,19 +58,10 @@ const local_data = reactive({
 
 const emit = defineEmits(["openPage"]);
 
-const wheel_pairs_text = computed(() => {
-    if (local_data.order.locomotive == null) {
-        return "Количество колесных пар";
-    } else {
-        return (
-            "Количество колесных пар: " +
-            String(
-                local_data.locomotives[local_data.order.locomotive - 1]
-                    .wheel_pairs
-            )
-        );
-    }
-});
+function selectLocomotive(selector) {
+    local_data.order.wheel_pairs =
+        local_data.locomotives[selector.target.value - 1].wheel_pairs;
+}
 
 function returnToCabinet(index) {
     emit("openPage", index);
@@ -233,7 +224,7 @@ function SendData() {
                 });
         });
     } else {
-        local_data.createError = true;
+        alert("Не все поля заполнены верно");
     }
 }
 
@@ -256,7 +247,10 @@ getExecutors();
         <div class="line">
             <div>
                 <div>Модель локомотива</div>
-                <select v-model="local_data.order.locomotive">
+                <select
+                    @change="selectLocomotive($event)"
+                    v-model="local_data.order.locomotive"
+                >
                     <option disabled value="">Локомотив</option>
                     <option
                         v-for="option in local_data.locomotives"
@@ -269,7 +263,7 @@ getExecutors();
             <div>
                 <customInput
                     v-model="local_data.order.wheel_pairs"
-                    :inputname="wheel_pairs_text"
+                    inputname="Кол-во колесных пар"
                     typeIn="text"
                     :ifError="local_data.error_list.errorWheelPairs"
                 />
@@ -399,9 +393,6 @@ getExecutors();
         </div>
         <button @click="SendData">Создать заказ</button>
         <button @click="returnToCabinet(3)">Вернуться</button>
-        <div class="error" v-show="local_data.createError">
-            Не все поля заполнены верно
-        </div>
     </div>
 </template>
 <style scoped>

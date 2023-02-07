@@ -18,14 +18,6 @@ return new class extends Migration
             $table->id();
             $table->string('name');
         });
-
-        cost::create([
-            'name' => 'трата 1'
-        ]);
-
-        cost::create([
-            'name' => 'трата 2'
-        ]);
     }
 
     /**

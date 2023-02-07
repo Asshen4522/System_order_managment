@@ -54,9 +54,9 @@ class postDataController extends Controller
             $report = report::create([
                 'date' => $request->date,
                 'order_id' => $request->id,
-                'tangen' => $request->tangen,
-                'cup' => $request->cup,
-                'wheel_pair' => $request->wheel_pairs,
+                'tangen' => (int)$request->tangen,
+                'cup' => (int)$request->cup,
+                'wheel_pair' => (float)$request->wheel_pairs,
                 'comment' => $request->comment,
             ]);
             $report->refresh();
@@ -65,7 +65,7 @@ class postDataController extends Controller
                     reportCost::create([
                         'report_id' => $report->id,
                         'cost_id' => $cost['id'],
-                        'price' => $cost['price'],
+                        'price' => (int)$cost['price'],
                     ]);
                 }
             }
@@ -77,7 +77,6 @@ class postDataController extends Controller
                     ]);
                 }
             }
-
 
             $answer = 'true';
             return $answer;
@@ -103,7 +102,6 @@ class postDataController extends Controller
             $order->contact_id = $request->contact;
             $order->created_at = $request->created_at;
             $order->executor_id = $request->executor;
-            $order->status_id = 1;
             $order->save();
 
             $answer = "true";

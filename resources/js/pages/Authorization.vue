@@ -55,15 +55,8 @@ function RevealPassword() {
 </script>
 <template>
     <div class="page">
-        <div>
-            <div class="header__head">Вход в систему</div>
-            <div class="header__text">
-                Введите ваш номер телефона, без пробелов и иных знаков, в
-                формате 8xxxxxxxxxx или +7xxxxxxxxxx, и выданный вам
-                администратором пароль.
-            </div>
-        </div>
         <customInput
+            class="inputs"
             v-model="local_data.phone"
             inputname="Телефон"
             typeIn="text"
@@ -71,15 +64,28 @@ function RevealPassword() {
         />
         <div class="part">
             <customInput
+                class="inputs"
                 v-model="local_data.password"
                 inputname="Пароль"
                 :typeIn="local_data.fieldType"
                 :ifError="local_data.errorPassword"
             />
-            <img @click="RevealPassword" class="pict" src="../../img/eye.png" />
+            <img
+                v-if="local_data.fieldType == 'password'"
+                @click="RevealPassword"
+                class="pict"
+                src="../../img/eye.png"
+            />
+            <img
+                v-if="local_data.fieldType == 'text'"
+                @click="RevealPassword"
+                class="pict"
+                src="../../img/hidden.png"
+            />
         </div>
-
-        <button @click="Authorize">Войти</button>
+        <div class="for_button">
+            <button @click="Authorize">Войти</button>
+        </div>
 
         <div class="error" v-show="local_data.errorLogin">
             Неверная пара телефон-пароль
@@ -87,6 +93,28 @@ function RevealPassword() {
     </div>
 </template>
 <style scoped>
+@media only screen and (min-width: 1441px) {
+    .page {
+        display: flex;
+        flex-direction: column;
+        gap: 30px;
+        margin-left: 200px;
+        margin-right: 200px;
+    }
+}
+@media only screen and (max-width: 425px) {
+    .page {
+        display: flex;
+        flex-direction: column;
+        gap: 30px;
+        margin-top: 100px;
+    }
+}
+
+.for_button {
+    display: flex;
+    justify-content: center;
+}
 .page {
     display: flex;
     flex-direction: column;
@@ -96,6 +124,7 @@ function RevealPassword() {
     width: 50px;
     height: 50px;
     position: relative;
+    margin-left: 20px;
 }
 .part {
     display: flex;
@@ -118,5 +147,13 @@ function RevealPassword() {
     text-align: center;
     font-size: 20px;
     color: red;
+}
+.inputs {
+    width: 75%;
+    margin-left: 10%;
+}
+
+img:hover {
+    cursor: pointer;
 }
 </style>

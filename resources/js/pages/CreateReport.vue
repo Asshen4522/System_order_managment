@@ -19,6 +19,8 @@ const local_data = reactive({
         id:props.orderId,
     },
 
+wheel_pair_left : null,
+
     newActivity: null,
     newCost: {
         id: null,
@@ -145,6 +147,27 @@ function getDate() {
     let date = new Date()
     local_data.report.date = String(date.getFullYear())+'-'+String(date.getMonth()+1)+'-'+String(date.getDate())
 }
+function getWheelPairLeft() {
+    fetch("/Get_wheel_pair_left", {
+        method: "POST",
+        body: JSON.stringify({ id: props.orderId }),
+        headers: {
+            "X-CSRF-TOKEN": document.querySelector('[name="_token"]').value,
+            "Content-Type": "application/json",
+        },
+    })
+        .then((response) => response.json())
+        .then((response) => {
+            console.log(response);
+            let $start = response[0].wheel_pairs;
+            if (response[1].length != 0) {
+                response[1].forEach(element => {
+                    $start -= element.wheel_pair
+                });
+            };
+            local_data.wheel_pair_left = $start;
+        });
+}
 
 function valCost() {
     local_data.errorCost = !/^\d+$/.test(local_data.newCost.price);
@@ -186,7 +209,9 @@ function lessPairs() {
     }
 }
 function morePairs() {
-    local_data.report.wheel_pairs+=0.5
+    if (local_data.report.wheel_pairs != local_data.wheel_pair_left) {
+        local_data.report.wheel_pairs += 0.5
+    }
 }
 
 function lessCup() {
@@ -218,7 +243,11 @@ function SendData() {
         },
     })
         .then((response) => response.json())
-        .then((response) => console.log(response));
+        .then((response) => {
+            if (response) {
+                returnToCabinet();
+            }
+        });
 }
 
 
@@ -226,6 +255,7 @@ getCosts();
 getActivities();
 getOrderCosts();
 getDate();
+getWheelPairLeft();
 </script>
 <template>
     <div>
@@ -234,17 +264,17 @@ getDate();
             <div class="block_header">Финансовые затраты</div>
             <div class="display_line">
                 <div class="display_line_first">Суточные</div>
-                <div>{{ local_data.inner_costs[0]?.daily_cost }} р.</div>
+                <div class="display_line_second">{{ local_data.inner_costs[0]?.daily_cost }} р.</div>
             </div>
             <div class="display_line">
                 <div class="display_line_first">Квартира</div>
-                <div>{{ local_data.inner_costs[0]?.rent }} р.</div>
+                <div class="display_line_second">{{ local_data.inner_costs[0]?.rent }} р.</div>
             </div>
 
             <div class="display_line" v-for="elem,index in local_data.report.costs">
                 <div class="display_line_first">{{ elem.name }}</div>
-                <div>{{ elem.price }} р.</div>
-                <div @click="deleteCost(index)">&#215</div>
+                <div class="display_line_second">{{ elem.price }} р.</div>
+                <div class="smallButtons" @click="deleteCost(index)">&#215</div>
             </div>
 
 
@@ -274,7 +304,7 @@ getDate();
             <div class="display_line">
                 <customInput
                     v-model="local_data.createNewCost"
-                    inputname="Название затраты"
+                    inputname="Затрата"
                     typeIn="text"
                     :ifError="local_data.errorNewCost"
                 />
@@ -286,34 +316,34 @@ getDate();
             <div class="display_line">
                 <div class="display_line_first">Обточка КП</div>
                 <div class="wheelPairs">
-                    <div @click="lessPairs()">-</div>
+                    <div class="smallButtons" @click="lessPairs()">-</div>
                     <div>{{ local_data.report.wheel_pairs }}</div>
-                    <div @click="morePairs()">+</div>
+                    <div class="smallButtons" @click="morePairs()">+</div>
                 </div>
                 
             </div>
             <div class="display_line">
                 <div class="display_line_first">Израсходовано чашечных резцов</div>
                 <div class="wheelPairs">
-                    <div @click="lessCup()">-</div>
+                    <div class="smallButtons" @click="lessCup()">-</div>
                     <div>{{ local_data.report.cup }}</div>
-                    <div @click="moreCup()">+</div>
+                    <div class="smallButtons" @click="moreCup()">+</div>
                 </div>
                 
             </div>
             <div class="display_line">
                 <div class="display_line_first">Израсходовано тангецных резцов</div>
                 <div class="wheelPairs">
-                    <div @click="lessTangen()">-</div>
+                    <div class="smallButtons" @click="lessTangen()">-</div>
                     <div>{{ local_data.report.tangen }}</div>
-                    <div @click="moreTangen()">+</div>
+                    <div class="smallButtons" @click="moreTangen()">+</div>
                 </div>
                 
             </div>
 
             <div class="display_line" v-for="elem,index in local_data.report.activities">
                 <div class="display_line_first">{{ elem.name }}</div>
-                <div @click="deleteActivity(index)">&#215</div>
+                <div class="smallButtons" @click="deleteActivity(index)">&#215</div>
             </div>
 
 
@@ -337,7 +367,7 @@ getDate();
             <div class="display_line">
                 <customInput
                     v-model="local_data.createNewActivity"
-                    inputname="Название активности"
+                    inputname="Активность"
                     typeIn="text"
                     :ifError="local_data.errorNewActivity"
                 />
@@ -349,13 +379,24 @@ getDate();
             <textarea class="comment" v-model="local_data.report.comment"> </textarea>
         </div>
         <div class="buttons">
+            <button @click="returnToCabinet">Назад</button>
             <button @click="SendData">Создать отчет</button>
-        <button @click="returnToCabinet">Вернуться в кабинет</button>
+        
         </div>
         
     </div>
 </template>
 <style scoped>
+
+.smallButtons{
+    font-size:30px;
+    align-self:right;
+}
+
+.smallButtons:hover{
+    cursor: pointer;
+}
+
 .block {
     border-style: solid;
     border-radius: 10px;
@@ -379,6 +420,7 @@ getDate();
 .display_line {
     display: flex;
     flex-direction: row;
+    align-items:center;
     margin-left: 10px;
     margin-bottom: 10px;
 }
@@ -388,6 +430,9 @@ getDate();
 }
 .display_line_first {
     width: 50%;
+}
+.display_line_second {
+    width: 30%;
 }
 
 .addCost {
@@ -410,6 +455,7 @@ getDate();
     flex-direction:row;
     justify-content:space-around;
     width:25%;
+    align-items: center;
 }
 
 .buttons {
