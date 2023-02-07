@@ -44,7 +44,9 @@ class getDataController extends Controller
 
     public function Get_my_orders()
     {
-        $answer = order::where(["executor_id" => auth()->user()->id])->get();
+        $answer = order::where(["executor_id" => auth()->user()->id,])
+            ->where("status_id", '<', 3)
+            ->get();
 
         return $answer;
     }
@@ -108,7 +110,7 @@ class getDataController extends Controller
     {
         $order_wheels = DB::table('orders')
             ->where(["orders.id" => $request->id])
-            ->select('wheel_pairs')
+            ->select('wheel_pairs', 'status_id')
             ->first();
         $order_reports = DB::table('reports')
             ->where(["reports.order_id" => $request->id])

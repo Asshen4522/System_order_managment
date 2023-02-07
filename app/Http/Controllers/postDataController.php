@@ -138,4 +138,17 @@ class postDataController extends Controller
             return $answer;
         }
     }
+
+    public function Update_status(Request $request)
+    {
+        try {
+            $order = order::find($request->id);
+            $order->status_id = $request->status;
+            $order->save();
+            $answer = "true";
+            return $answer;
+        } catch (\Throwable $th) {
+            dd($th);
+        }
+    }
 }

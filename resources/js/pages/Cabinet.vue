@@ -71,22 +71,28 @@ getOrders();
             <div v-for="option in local_data.orders">
                 <div v-show="option.status === 1">
                     <button @click="showOrder(option.id)" class="button-order">
-                        Новый заказ #{{ option.id }}
+                        <img class="pict" src="../../img/new.png" /> заказ №{{
+                            option.id
+                        }}
                     </button>
                 </div>
                 <div v-show="option.status === 2">
                     <button @click="showOrder(option.id)" class="button-order">
-                        Работающий заказ #{{ option.id }}
+                        <img class="pict" src="../../img/working.png" /> заказ
+                        №{{ option.id }}
                     </button>
                 </div>
                 <div v-show="option.status === 3">
                     <button @click="showOrder(option.id)" class="button-order">
-                        Выполненный заказ #{{ option.id }}
+                        <img class="pict" src="../../img/ready.png" /> заказ №{{
+                            option.id
+                        }}
                     </button>
                 </div>
                 <div v-show="option.status === 4">
                     <button @click="showOrder(option.id)" class="button-order">
-                        Отмененный заказ #{{ option.id }}
+                        <img class="pict" src="../../img/cancelled.png" /> заказ
+                        №{{ option.id }}
                     </button>
                 </div>
             </div>
@@ -98,6 +104,11 @@ getOrders();
     </div>
 </template>
 <style scoped>
+.pict {
+    height: 20px;
+    margin-right: 20px;
+}
+
 .buttons {
     margin-top: 20px;
     display: flex;
@@ -120,6 +131,9 @@ getOrders();
 }
 
 .button-order {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
     background-color: white;
     border-color: var(--color-accent);
     color: var(--color-accent);

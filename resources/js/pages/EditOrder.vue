@@ -64,19 +64,10 @@ const local_data = reactive({
 
 const emit = defineEmits(["openPage"]);
 
-const wheel_pairs_text = computed(() => {
-    if (local_data.order.locomotive == null) {
-        return "Количество колесных пар";
-    } else {
-        return (
-            "Количество колесных пар: " +
-            String(
-                local_data.locomotives[local_data.order.locomotive - 1]
-                    .wheel_pairs
-            )
-        );
-    }
-});
+function selectLocomotive(selector) {
+    local_data.order.wheel_pairs =
+        local_data.locomotives[selector.target.value - 1].wheel_pairs;
+}
 
 function returnToCabinet(index) {
     emit("openPage", index);
@@ -297,7 +288,10 @@ getExecutors();
         <div class="line">
             <div>
                 <div>Модель локомотива</div>
-                <select v-model="local_data.order.locomotive">
+                <select
+                    @change="selectLocomotive($event)"
+                    v-model="local_data.order.locomotive"
+                >
                     <option disabled value="">Локомотив</option>
                     <option
                         v-for="option in local_data.locomotives"
@@ -310,7 +304,7 @@ getExecutors();
             <div>
                 <customInput
                     v-model="local_data.order.wheel_pairs"
-                    :inputname="wheel_pairs_text"
+                    inputname="Кол-во колесных пар"
                     typeIn="text"
                     :ifError="local_data.error_list.errorWheelPairs"
                 />

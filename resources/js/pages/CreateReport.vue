@@ -18,8 +18,8 @@ const local_data = reactive({
         date: null,
         id:props.orderId,
     },
-
-wheel_pair_left : null,
+    orderStatus: null,
+    wheel_pair_left : null,
 
     newActivity: null,
     newCost: {
@@ -41,6 +41,29 @@ wheel_pair_left : null,
     createNewActivity:"",
     errorNewActivity : false,
 });
+
+function updateStatus() {
+    let statusId = 2
+    if (local_data.wheel_pair_left == local_data.report.wheel_pairs) {
+        statusId = 3
+    }
+    const statusAndId = {id : props.orderId, status : statusId}
+    fetch("/Update_status", {
+        method: "POST",
+        body: JSON.stringify(statusAndId),
+        headers: {
+            "X-CSRF-TOKEN":
+                document.querySelector('[name="_token"]').value,
+            "Content-Type": "application/json",
+        },
+    })
+        .then((response) => response.json())
+        .then((response) => {
+            if (response) {
+                returnToCabinet();
+            }
+        });
+}
 
 function returnToCabinet() {
     emit("openPage", 3);
@@ -166,6 +189,7 @@ function getWheelPairLeft() {
                 });
             };
             local_data.wheel_pair_left = $start;
+            local_data.orderStatus = response[0].status_id
         });
 }
 
@@ -245,7 +269,7 @@ function SendData() {
         .then((response) => response.json())
         .then((response) => {
             if (response) {
-                returnToCabinet();
+                updateStatus();
             }
         });
 }
@@ -427,6 +451,7 @@ getWheelPairLeft();
 .display_line_act{
     margin-top: 30px;
     margin-left: 10px;
+    margin-bottom: 15px;
 }
 .display_line_first {
     width: 50%;
