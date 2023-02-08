@@ -57,6 +57,27 @@ function nextPage(index) {
 function showOrder(index) {
     emit("displayOrder", index);
 }
+function deleteOrder(elem) {
+    let confirmation = confirm(
+        "Вы уверены? Данная команда окончательно удалит этот заказ."
+    );
+    if (confirmation) {
+        fetch("/Delete_order", {
+            method: "POST",
+            body: JSON.stringify({ id: elem }),
+            headers: {
+                "X-CSRF-TOKEN": document.querySelector('[name="_token"]').value,
+                "Content-Type": "application/json",
+            },
+        })
+            .then((response) => response.json())
+            .then((response) => {
+                if (response) {
+                    getOrders();
+                }
+            });
+    }
+}
 
 getOrders();
 </script>
@@ -64,31 +85,55 @@ getOrders();
     <div>
         <div class="field">
             <div v-for="option in local_data.orders">
-                <div v-show="option.status === 1">
+                <div class="order_buttons" v-show="option.status === 1">
                     <button @click="showOrder(option.id)" class="button-order">
                         <img class="pict" src="../../img/new.png" /> заказ №{{
                             option.id
                         }}
                     </button>
+                    <img
+                        @click="deleteOrder(option.id)"
+                        v-show="props.roleId == 1"
+                        class="close_pict"
+                        src="../../img/delete.png"
+                    />
                 </div>
-                <div v-show="option.status === 2">
+                <div class="order_buttons" v-show="option.status === 2">
                     <button @click="showOrder(option.id)" class="button-order">
                         <img class="pict" src="../../img/working.png" /> заказ
                         №{{ option.id }}
                     </button>
+                    <img
+                        @click="deleteOrder(option.id)"
+                        v-show="props.roleId == 1"
+                        class="close_pict"
+                        src="../../img/delete.png"
+                    />
                 </div>
-                <div v-show="option.status === 3">
+                <div class="order_buttons" v-show="option.status === 3">
                     <button @click="showOrder(option.id)" class="button-order">
                         <img class="pict" src="../../img/ready.png" /> заказ №{{
                             option.id
                         }}
                     </button>
+                    <img
+                        @click="deleteOrder(option.id)"
+                        v-show="props.roleId == 1"
+                        class="close_pict"
+                        src="../../img/delete.png"
+                    />
                 </div>
-                <div v-show="option.status === 4">
+                <div class="order_buttons" v-show="option.status === 4">
                     <button @click="showOrder(option.id)" class="button-order">
                         <img class="pict" src="../../img/cancelled.png" /> заказ
                         №{{ option.id }}
                     </button>
+                    <img
+                        @click="deleteOrder(option.id)"
+                        v-show="props.roleId == 1"
+                        class="close_pict"
+                        src="../../img/delete.png"
+                    />
                 </div>
             </div>
         </div>
@@ -99,6 +144,21 @@ getOrders();
     </div>
 </template>
 <style scoped>
+.order_buttons {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 20px;
+}
+
+.close_pict {
+    height: 20px;
+}
+
+.close_pict:hover {
+    cursor: pointer;
+}
+
 .pict {
     height: 20px;
     margin-right: 20px;

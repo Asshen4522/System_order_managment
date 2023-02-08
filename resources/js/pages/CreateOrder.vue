@@ -234,7 +234,7 @@ getExecutors();
 </script>
 <template>
     <div class="page">
-        <div>Создание заказа</div>
+        <div>Создание</div>
         <div>
             <customInput
                 v-model="local_data.order.city"
@@ -384,7 +384,7 @@ getExecutors();
             </div>
         </div>
         <div class="buttons">
-            <button @click="SendData">Создать заказ</button>
+            <button @click="SendData">Создать</button>
             <button @click="returnToCabinet(3)">Назад</button>
         </div>
     </div>
