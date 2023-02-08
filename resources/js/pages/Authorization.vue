@@ -108,8 +108,6 @@ function RevealPassword() {
         flex-direction: column;
         gap: 30px;
         margin-top: 100px;
-        margin-left: 200px;
-        margin-right: 200px;
     }
 }
 
