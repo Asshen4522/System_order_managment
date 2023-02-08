@@ -14,7 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::create('report_costs', function (Blueprint $table) {
-            $table->foreignId('report_id')->constrained('reports');
+            $table->foreignId('report_id')->constrained('reports')->onDelete('cascade');
             $table->foreignId('cost_id')->constrained('costs');
             $table->integer('price');
         });

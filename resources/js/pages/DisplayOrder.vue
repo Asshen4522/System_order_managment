@@ -18,6 +18,27 @@ function returnToCabinet() {
 function editOrder() {
     emit("editOrder", props.orderId);
 }
+function deleteOrder() {
+    let confirmation = confirm(
+        "Вы уверены? Данная команда окончательно удалит этот заказ."
+    );
+    if (confirmation) {
+        fetch("/Delete_order", {
+            method: "POST",
+            body: JSON.stringify({ id: props.orderId }),
+            headers: {
+                "X-CSRF-TOKEN": document.querySelector('[name="_token"]').value,
+                "Content-Type": "application/json",
+            },
+        })
+            .then((response) => response.json())
+            .then((response) => {
+                if (response) {
+                    returnToCabinet();
+                }
+            });
+    }
+}
 function writeReport(index) {
     let date = new Date();
     let nowDate = String(date.getFullYear()) + "-";
@@ -90,9 +111,9 @@ function getDisplayOrder() {
                 var spentCup = 0;
                 var spentWheelPairs = 0;
                 response[1].forEach((elem) => {
-                    spentTangen += elem.tangen;
-                    spentCup += elem.cup;
-                    spentWheelPairs += elem.wheel_pair;
+                    spentTangen += Number(elem.tangen);
+                    spentCup += Number(elem.cup);
+                    spentWheelPairs += Number(elem.wheel_pair);
                 });
                 local_data.order.tangenLeft = response[0].tangen - spentTangen;
                 local_data.order.cupLeft = response[0].cup - spentCup;
@@ -207,6 +228,9 @@ getDisplayOrder();
         <div class="buttons">
             <button @click="editOrder" v-show="props.roleId == 1">
                 Редактировать заказ
+            </button>
+            <button @click="deleteOrder" v-show="props.roleId == 1">
+                Удалить заказ
             </button>
             <button
                 @click="writeReport(local_data.order.id)"

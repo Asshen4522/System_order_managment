@@ -22,7 +22,7 @@ const local_data = reactive({
             phone: null,
         },
 
-        created_at: "2023-01-01",
+        created_at: new Date().toISOString().substr(0, 10),
 
         executor: null,
     },
@@ -53,7 +53,7 @@ const local_data = reactive({
 
     executors: [],
 
-    optionContact: "Существующий",
+    optionContact: true,
 });
 
 const emit = defineEmits(["openPage"]);
@@ -113,8 +113,8 @@ function getExecutors(params) {
         });
 }
 
-function pickOptionContact(param) {
-    local_data.optionContact = param;
+function toggleOptionContact() {
+    local_data.optionContact = !local_data.optionContact;
     local_data.order.contact.id = null;
     local_data.order.contact.fio = null;
     local_data.order.contact.phone = null;
@@ -321,25 +321,15 @@ getExecutors();
             Контактное лицо
             <div>
                 <div class="contact_buttons">
-                    <button
-                        @click="pickOptionContact('Существующий')"
-                        class="button-selector"
-                        :class="{
-                            active: local_data.optionContact == 'Существующий',
-                        }"
-                    >
-                        Выбрать из существующих
-                    </button>
-                    <button
-                        @click="pickOptionContact('Новый')"
-                        class="button-selector"
-                        :class="{ active: local_data.optionContact == 'Новый' }"
-                    >
-                        Создать нового
+                    <button @click="toggleOptionContact()">
+                        Выбрать /Добавить
                     </button>
                 </div>
                 <div class="contact_input">
-                    <div v-show="local_data.optionContact == 'Существующий'">
+                    <div
+                        class="contact_selector"
+                        v-show="local_data.optionContact == true"
+                    >
                         <select v-model="local_data.order.contact.id">
                             <option disabled value="">Контакт</option>
                             <option
@@ -350,7 +340,7 @@ getExecutors();
                             </option>
                         </select>
                     </div>
-                    <div v-show="local_data.optionContact == 'Новый'">
+                    <div v-show="local_data.optionContact == false">
                         <div class="line">
                             <customInput
                                 v-model="local_data.order.contact.phone"
@@ -381,18 +371,22 @@ getExecutors();
 
         <div>
             Исполнитель
-            <select v-model="local_data.order.executor">
-                <option disabled value="">Персона</option>
-                <option
-                    v-for="option in local_data.executors"
-                    :value="option.id"
-                >
-                    {{ option.name + " " + option.surname }}
-                </option>
-            </select>
+            <div class="select_executor">
+                <select v-model="local_data.order.executor">
+                    <option disabled value="">Персона</option>
+                    <option
+                        v-for="option in local_data.executors"
+                        :value="option.id"
+                    >
+                        {{ option.name + " " + option.surname }}
+                    </option>
+                </select>
+            </div>
         </div>
-        <button @click="SendData">Создать заказ</button>
-        <button @click="returnToCabinet(3)">Вернуться</button>
+        <div class="buttons">
+            <button @click="SendData">Создать заказ</button>
+            <button @click="returnToCabinet(3)">Назад</button>
+        </div>
     </div>
 </template>
 <style scoped>
@@ -412,23 +406,21 @@ getExecutors();
 .contact_buttons {
     display: flex;
     flex-direction: row;
-    gap: 50px;
-    justify-content: space-around;
+    margin-top: 20px;
+    justify-content: center;
+}
+
+.contact_selector {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
 }
 
 .contact_input {
     margin-top: 30px;
 }
-
-.button-selector {
-    color: var(--color-object);
-    background-color: white;
-    border-color: var(--color-object);
-    padding: 2px;
-    width: 100%;
-}
-.button-selector:hover {
-    color: white;
+.select_executor {
+    margin-top: 20px;
 }
 .active {
     color: white;
@@ -440,5 +432,12 @@ getExecutors();
     text-align: center;
     font-size: 20px;
     color: red;
+}
+
+.buttons {
+    gap: 10px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
 }
 </style>

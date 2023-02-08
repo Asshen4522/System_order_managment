@@ -125,9 +125,10 @@ function returnToCabinet() {
                 <option value="2">Исполнитель</option>
             </select>
         </div>
-
-        <button @click="Register">Создать</button>
-        <button @click="returnToCabinet">Вернуться в кабинет</button>
+        <div class="buttons">
+            <button @click="Register">Создать</button>
+            <button @click="returnToCabinet">Назад</button>
+        </div>
 
         <div class="error" v-show="local_data.errorRegister">
             Не все данные заполнены корректно или пользователя создать не
@@ -161,6 +162,13 @@ function returnToCabinet() {
     font-size: 20px;
     text-align: center;
     margin-bottom: 20px;
+}
+.buttons {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 10px;
 }
 
 .error {

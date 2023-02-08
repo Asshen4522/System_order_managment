@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('reports', function (Blueprint $table) {
             $table->id();
             $table->date('date');
-            $table->foreignId('order_id')->constrained('orders');
+            $table->foreignId('order_id')->constrained('orders')->onDelete('cascade');
             $table->integer('tangen');
             $table->integer('cup');
             $table->float('wheel_pair');

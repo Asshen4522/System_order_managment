@@ -62,11 +62,6 @@ getOrders();
 </script>
 <template>
     <div>
-        <div class="header">
-            <div v-show="props.roleId == 1">Личный кабинет менеджера</div>
-            <div v-show="props.roleId == 2">Личный кабинет исполнителя</div>
-        </div>
-
         <div class="field">
             <div v-for="option in local_data.orders">
                 <div v-show="option.status === 1">

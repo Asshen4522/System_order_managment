@@ -403,8 +403,9 @@ getWheelPairLeft();
             <textarea class="comment" v-model="local_data.report.comment"> </textarea>
         </div>
         <div class="buttons">
-            <button @click="returnToCabinet">Назад</button>
             <button @click="SendData">Создать отчет</button>
+            <button @click="returnToCabinet">Назад</button>
+            
         
         </div>
         

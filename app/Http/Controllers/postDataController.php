@@ -48,6 +48,18 @@ class postDataController extends Controller
             return false;
         }
     }
+
+    public function Delete_order(Request $request)
+    {
+        try {
+            order::destroy($request->id);
+            $answer = "true";
+            return $answer;
+        } catch (\Throwable $th) {
+            $answer = "false";
+            return $answer;
+        }
+    }
     public function Create_report(Request $request)
     {
         try {

@@ -98,8 +98,8 @@ function RevealPassword() {
         display: flex;
         flex-direction: column;
         gap: 30px;
-        margin-left: 200px;
-        margin-right: 200px;
+        margin-left: 300px;
+        margin-right: 300px;
     }
 }
 @media only screen and (max-width: 425px) {
@@ -108,6 +108,8 @@ function RevealPassword() {
         flex-direction: column;
         gap: 30px;
         margin-top: 100px;
+        margin-left: 200px;
+        margin-right: 200px;
     }
 }
 
@@ -121,14 +123,15 @@ function RevealPassword() {
     gap: 30px;
 }
 .pict {
-    width: 50px;
-    height: 50px;
+    width: 25px;
+    height: 25px;
     position: relative;
     margin-left: 20px;
 }
 .part {
     display: flex;
     flex-direction: row;
+    align-items: center;
     width: 100%;
 }
 

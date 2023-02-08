@@ -432,14 +432,24 @@ getExecutors();
                 </option>
             </select>
         </div>
-        <button @click="SendData">Закончить редактирование</button>
-        <button @click="returnToCabinet(3)">Вернуться</button>
+        <div class="buttons">
+            <button @click="SendData">Сохранить изменения</button>
+            <button @click="returnToCabinet(3)">Назад</button>
+        </div>
+
         <div class="error" v-show="local_data.createError">
             Не все поля заполнены верно
         </div>
     </div>
 </template>
 <style scoped>
+.buttons {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 10px;
+}
 .page {
     display: flex;
     flex-direction: column;
