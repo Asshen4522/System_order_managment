@@ -35,9 +35,20 @@ class getDataController extends Controller
         return $answer;
     }
 
-    public function Get_orders()
+    public function Get_orders(Request $request)
     {
-        $answer = order::all();
+        error_log("mes");
+        $orders = order::all();
+        foreach ($orders as $order) {
+            if ($order->created_at <= $request->date  and $order->status_id == 1) {
+
+                $x = order::find($order->id);
+                $x->status_id = 2;
+                $x->save();
+            }
+        }
+        $answer = order::orderBy('id')
+            ->get();
 
         return $answer;
     }

@@ -11,9 +11,23 @@ const local_data = reactive({
 const emit = defineEmits(["openPage", "displayOrder"]);
 
 function getOrders() {
+    let date = new Date();
+    let nowDate = String(date.getFullYear()) + "-";
+    if (String(date.getMonth() + 1).length == 1) {
+        nowDate += "0" + String(date.getMonth() + 1) + "-";
+    } else {
+        nowDate += String(date.getMonth() + 1) + "-";
+    }
+    if (String(date.getDate()).length == 1) {
+        nowDate += "0" + String(date.getDate());
+    } else {
+        nowDate += String(date.getDate());
+    }
+    local_data.orders = [];
     if (props.roleId == 1) {
         fetch("/Get_orders", {
-            method: "GET",
+            method: "POST",
+            body: JSON.stringify({ date: nowDate }),
             headers: {
                 "X-CSRF-TOKEN": document.querySelector('[name="_token"]').value,
                 "Content-Type": "application/json",

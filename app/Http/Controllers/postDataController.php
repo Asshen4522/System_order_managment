@@ -156,6 +156,9 @@ class postDataController extends Controller
         try {
             $order = order::find($request->id);
             $order->status_id = $request->status;
+            if ($request->status == 3) {
+                $order->date_end = $request->date;
+            }
             $order->save();
             $answer = "true";
             return $answer;

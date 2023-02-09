@@ -43,11 +43,24 @@ const local_data = reactive({
 });
 
 function updateStatus() {
-    let statusId = 2
+    let statusId = 2;
+    let nowDate = "";
     if (local_data.wheel_pair_left == local_data.report.wheel_pairs) {
         statusId = 3
+        let date = new Date();
+        nowDate = String(date.getFullYear()) + "-";
+        if (String(date.getMonth() + 1).length == 1) {
+            nowDate += "0" + String(date.getMonth() + 1) + "-";
+        } else {
+            nowDate += String(date.getMonth() + 1) + "-";
+        }
+        if (String(date.getDate()).length == 1) {
+            nowDate += "0" + String(date.getDate());
+        } else {
+            nowDate += String(date.getDate());
+        }
     }
-    const statusAndId = {id : props.orderId, status : statusId}
+    const statusAndId = {id : props.orderId, status : statusId, date : nowDate}
     fetch("/Update_status", {
         method: "POST",
         body: JSON.stringify(statusAndId),
@@ -66,7 +79,7 @@ function updateStatus() {
 }
 
 function returnToCabinet() {
-    emit("openPage", 3);
+    emit("openPage", 4);
 }
 
 function createCost() {
@@ -181,7 +194,6 @@ function getWheelPairLeft() {
     })
         .then((response) => response.json())
         .then((response) => {
-            console.log(response);
             let $start = response[0].wheel_pairs;
             if (response[1].length != 0) {
                 response[1].forEach(element => {

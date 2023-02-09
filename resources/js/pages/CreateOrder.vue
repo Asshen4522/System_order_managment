@@ -243,10 +243,9 @@ getExecutors();
                 :ifError="local_data.error_list.errorCity"
             />
         </div>
-
+        <div class="line">Модель локомотива</div>
         <div class="line">
-            <div>
-                <div>Модель локомотива</div>
+            <div class="locomotiveWheel">
                 <select
                     @change="selectLocomotive($event)"
                     v-model="local_data.order.locomotive"
@@ -259,8 +258,7 @@ getExecutors();
                         {{ option.model }}
                     </option>
                 </select>
-            </div>
-            <div>
+
                 <customInput
                     v-model="local_data.order.wheel_pairs"
                     inputname="Кол-во колесных пар"
@@ -390,6 +388,11 @@ getExecutors();
     </div>
 </template>
 <style scoped>
+.locomotiveWheel {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}
 .page {
     display: flex;
     flex-direction: column;
