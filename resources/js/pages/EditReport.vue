@@ -404,7 +404,7 @@ Promise.all([getCosts(),getActivities()]).then(getReport);
             <textarea class="comment" v-model="local_data.report.comment"> </textarea>
         </div>
         <div class="buttons">
-            <button @click="SendData">Закончить редактирование</button>
+            <button @click="SendData">Сохранить</button>
             <button @click="returnToCabinet">Назад</button>
             
         

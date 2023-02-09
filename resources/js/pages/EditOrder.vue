@@ -59,7 +59,7 @@ const local_data = reactive({
 
     executors: [],
 
-    optionContact: "Существующий",
+    optionContact: true,
 });
 
 const emit = defineEmits(["openPage"]);
@@ -119,8 +119,8 @@ function getExecutors(params) {
         });
 }
 
-function pickOptionContact(param) {
-    local_data.optionContact = param;
+function toggleOptionContact() {
+    local_data.optionContact = !local_data.optionContact;
     local_data.order.contact.id = null;
     local_data.order.contact.fio = null;
     local_data.order.contact.phone = null;
@@ -362,25 +362,15 @@ getExecutors();
             Контактное лицо
             <div>
                 <div class="contact_buttons">
-                    <button
-                        @click="pickOptionContact('Существующий')"
-                        class="button-selector"
-                        :class="{
-                            active: local_data.optionContact == 'Существующий',
-                        }"
-                    >
-                        Выбрать из существующих
-                    </button>
-                    <button
-                        @click="pickOptionContact('Новый')"
-                        class="button-selector"
-                        :class="{ active: local_data.optionContact == 'Новый' }"
-                    >
-                        Создать нового
+                    <button @click="toggleOptionContact()">
+                        Выбрать /Добавить
                     </button>
                 </div>
                 <div class="contact_input">
-                    <div v-show="local_data.optionContact == 'Существующий'">
+                    <div
+                        class="contact_selector"
+                        v-show="local_data.optionContact == true"
+                    >
                         <select v-model="local_data.order.contact.id">
                             <option disabled value="">Контакт</option>
                             <option
@@ -391,7 +381,7 @@ getExecutors();
                             </option>
                         </select>
                     </div>
-                    <div v-show="local_data.optionContact == 'Новый'">
+                    <div v-show="local_data.optionContact == false">
                         <div class="line">
                             <customInput
                                 v-model="local_data.order.contact.phone"

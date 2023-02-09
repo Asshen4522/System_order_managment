@@ -81,21 +81,15 @@ function returnToCabinet() {
 <template>
     <div class="page">
         <div>
-            <div class="header__head">Регистрация нового пользователя</div>
-            <div class="header__text">
-                Введите имя и фамилию нового пользователя, его номер телефона, а
-                также пароль, по которому он будет входить в систему. Также
-                выберите роль нового пользователя
-            </div>
-        </div>
-        <div>
             <customInput
+                class="inputs"
                 v-model="local_data.name"
                 inputname="Имя"
                 typeIn="text"
                 :ifError="local_data.errorName"
             />
             <customInput
+                class="inputs"
                 v-model="local_data.surname"
                 inputname="Фамилия"
                 typeIn="text"
@@ -103,6 +97,7 @@ function returnToCabinet() {
             />
         </div>
         <customInput
+            class="inputs"
             v-model="local_data.phone"
             inputname="Телефон"
             typeIn="text"
@@ -110,17 +105,28 @@ function returnToCabinet() {
         />
         <div class="part">
             <customInput
+                class="inputs"
                 v-model="local_data.password"
                 inputname="Пароль"
                 :typeIn="local_data.fieldType"
                 :ifError="local_data.errorPassword"
             />
-            <img @click="RevealPassword" class="pict" src="../../img/eye.png" />
+            <img
+                v-if="local_data.fieldType == 'password'"
+                @click="RevealPassword"
+                class="pict"
+                src="../../img/eye.png"
+            />
+            <img
+                v-if="local_data.fieldType == 'text'"
+                @click="RevealPassword"
+                class="pict"
+                src="../../img/hidden.png"
+            />
         </div>
-        <div>
+        <div class="selector">
             <div>Роль пользователя</div>
             <select v-model="local_data.roleId">
-                <option disabled value="">Роль</option>
                 <option value="1">Менеджер</option>
                 <option value="2">Исполнитель</option>
             </select>
@@ -137,32 +143,27 @@ function returnToCabinet() {
     </div>
 </template>
 <style scoped>
+.selector {
+    margin-left: 10%;
+}
 .page {
     display: flex;
     flex-direction: column;
     gap: 30px;
 }
 .pict {
-    width: 50px;
-    height: 50px;
+    width: 25px;
+    height: 25px;
+    margin-left: 20px;
     position: relative;
 }
 .part {
     display: flex;
     flex-direction: row;
+    align-items: center;
     width: 100%;
 }
 
-.header__head {
-    font-size: 30px;
-    text-align: center;
-    margin-bottom: 20px;
-}
-.header__text {
-    font-size: 20px;
-    text-align: center;
-    margin-bottom: 20px;
-}
 .buttons {
     margin-top: 20px;
     display: flex;
@@ -175,5 +176,13 @@ function returnToCabinet() {
     text-align: center;
     font-size: 20px;
     color: red;
+}
+.inputs {
+    width: 75%;
+    margin-left: 10%;
+}
+
+img:hover {
+    cursor: pointer;
 }
 </style>

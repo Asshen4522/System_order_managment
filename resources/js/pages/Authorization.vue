@@ -133,17 +133,6 @@ function RevealPassword() {
     width: 100%;
 }
 
-.header__head {
-    font-size: 30px;
-    text-align: center;
-    margin-bottom: 20px;
-}
-.header__text {
-    font-size: 20px;
-    text-align: center;
-    margin-bottom: 20px;
-}
-
 .error {
     text-align: center;
     font-size: 20px;
