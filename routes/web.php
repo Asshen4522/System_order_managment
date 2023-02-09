@@ -27,10 +27,12 @@ Route::post('/Create_order', [postDataController::class, 'Create_order']);
 Route::post('/Edit_order', [postDataController::class, 'Edit_order']);
 Route::post('/Create_contact', [postDataController::class, 'Create_contact']);
 Route::post('/Create_report', [postDataController::class, 'Create_report']);
+Route::post('/Edit_report', [postDataController::class, 'Edit_report']);
 Route::post('/Create_cost', [postDataController::class, 'Create_cost']);
 Route::post('/Create_activity', [postDataController::class, 'Create_activity']);
 Route::post('/Update_status', [postDataController::class, 'Update_status']);
 Route::post('/Delete_order', [postDataController::class, 'Delete_order']);
+
 
 Route::get('/Get_locomotives', [getDataController::class, 'Get_locomotives']);
 Route::get('/Get_contacts', [getDataController::class, 'Get_contacts']);
@@ -38,6 +40,7 @@ Route::get('/Get_executors', [getDataController::class, 'Get_executors']);
 Route::post('/Get_orders', [getDataController::class, 'Get_orders']);
 Route::get('/Get_my_orders', [getDataController::class, 'Get_my_orders']);
 Route::post('/Get_display_order', [getDataController::class, 'Get_display_order']);
+Route::post('/Get_report', [getDataController::class, 'Get_report']);
 Route::get('/Get_costs', [getDataController::class, 'Get_costs']);
 Route::get('/Get_activities', [getDataController::class, 'Get_activities']);
 Route::post('/Get_costs_order', [getDataController::class, 'Get_costs_order']);

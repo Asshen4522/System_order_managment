@@ -8,6 +8,9 @@ use App\Models\contactPerson;
 use App\Models\cost;
 use App\Models\locomotive;
 use App\Models\order;
+use App\Models\report;
+use App\Models\reportActivity;
+use App\Models\reportCost;
 use App\Models\user;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -59,6 +62,20 @@ class getDataController extends Controller
             ->where("status_id", '<', 3)
             ->get();
 
+        return $answer;
+    }
+
+    public function Get_report(Request $request)
+    {
+        $report = report::where([
+            "order_id" => $request->id,
+            "date" => $request->date
+        ])->first();
+        $reportActivity = reportActivity::where(["report_id" => $report->id])
+            ->get();
+        $reportCost = reportCost::where(["report_id" => $report->id])
+            ->get();
+        $answer = [$report, $reportActivity, $reportCost];
         return $answer;
     }
 

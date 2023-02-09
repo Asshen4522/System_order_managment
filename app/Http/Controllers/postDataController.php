@@ -97,6 +97,41 @@ class postDataController extends Controller
             return $th;
         }
     }
+    public function Edit_report(Request $request)
+    {
+        try {
+            $report = report::find($request->id);
+            $report->tangen = (int)$request->tangen;
+            $report->cup = (int)$request->cup;
+            $report->wheel_pair = (float)$request->wheel_pairs;
+            $report->comment = $request->comment;
+            $report->save();
+            reportCost::where('report_id', '=', $request->id)->delete();
+            reportActivity::where('report_id', '=', $request->id)->delete();
+            if (count($request->costs)) {
+                foreach ($request->costs as $cost) {
+                    reportCost::create([
+                        'report_id' => $report->id,
+                        'cost_id' => $cost['id'],
+                        'price' => (int)$cost['price'],
+                    ]);
+                }
+            }
+            if (count($request->activities)) {
+                foreach ($request->activities as $activity) {
+                    reportActivity::create([
+                        'report_id' => $report->id,
+                        'activity_id' => $activity['id'],
+                    ]);
+                }
+            }
+            $answer = "true";
+            return $answer;
+        } catch (\Throwable $th) {
+            return $th;
+        }
+    }
+
 
     public function Edit_order(Request $request)
     {

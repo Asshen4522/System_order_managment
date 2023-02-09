@@ -2,6 +2,7 @@
 import { reactive } from "vue";
 
 const props = defineProps({
+    nowDate: null,
     orderId: null,
     roleId: null,
 });
@@ -9,8 +10,14 @@ const local_data = reactive({
     order: {},
     reportDates: [],
     dateError: false,
+    editOrCreate: "create",
 });
-const emit = defineEmits(["openPage", "editOrder", "createReport"]);
+const emit = defineEmits([
+    "openPage",
+    "editOrder",
+    "createReport",
+    "editReport",
+]);
 
 function returnToCabinet() {
     emit("openPage", 3);
@@ -18,28 +25,12 @@ function returnToCabinet() {
 function editOrder() {
     emit("editOrder", props.orderId);
 }
+function editReport() {
+    emit("editReport", props.orderId);
+}
+
 function writeReport(index) {
-    let date = new Date();
-    let nowDate = String(date.getFullYear()) + "-";
-    if (String(date.getMonth() + 1).length == 1) {
-        nowDate += "0" + String(date.getMonth() + 1) + "-";
-    } else {
-        nowDate += String(date.getMonth() + 1) + "-";
-    }
-    if (String(date.getDate()).length == 1) {
-        nowDate += "0" + String(date.getDate());
-    } else {
-        nowDate += String(date.getDate());
-    }
-
-    let dataCheck = true;
-    local_data.reportDates.forEach((element) => {
-        if (element.date == nowDate) {
-            dataCheck = false;
-        }
-    });
-
-    if (dataCheck) {
+    if (local_data.order.startAt <= props.nowDate) {
         emit("createReport", index);
     } else {
         local_data.dateError = true;
@@ -57,6 +48,7 @@ function getDisplayOrder() {
     })
         .then((response) => response.json())
         .then((response) => {
+            local_data.order.startAt = response[0].created_at;
             local_data.order.id = props.orderId;
             local_data.order.city = response[0].city;
             local_data.order.model = response[0].model;
@@ -112,7 +104,12 @@ function getReportDates() {
         .then((response) => response.json())
         .then((response) => {
             response.forEach((element) => {
-                local_data.reportDates.push(element);
+                local_data.reportDates.push(element.date);
+                if (local_data.reportDates.includes(props.nowDate)) {
+                    local_data.editOrCreate = "edit";
+                } else {
+                    local_data.editOrCreate = "create";
+                }
             });
         });
 }
@@ -210,14 +207,22 @@ getDisplayOrder();
             </button>
             <button
                 @click="writeReport(local_data.order.id)"
-                v-show="props.roleId == 2"
+                v-show="
+                    props.roleId == 2 && local_data.editOrCreate == 'create'
+                "
             >
                 Создать отчет
+            </button>
+            <button
+                @click="editReport"
+                v-show="props.roleId == 2 && local_data.editOrCreate == 'edit'"
+            >
+                Редактировать отчет
             </button>
             <button @click="returnToCabinet">Назад</button>
         </div>
         <div class="error" v-show="local_data.dateError">
-            Сегодняшний отчет уже заполнен
+            Заказ еще не начат
         </div>
     </div>
 </template>
