@@ -40,7 +40,6 @@ class getDataController extends Controller
 
     public function Get_orders(Request $request)
     {
-        error_log("mes");
         $orders = order::all();
         foreach ($orders as $order) {
             if ($order->created_at <= $request->date  and $order->status_id == 1) {
@@ -100,6 +99,17 @@ class getDataController extends Controller
         return $answer;
     }
 
+    public function Get_display_report(Request $request)
+    {
+        $report = report::find($request->id);
+        $reportActivity = reportActivity::where(["report_id" => $request->id])
+            ->get();
+        $reportCost = reportCost::where(["report_id" => $request->id])
+            ->get();
+        $answer = [$report, $reportActivity, $reportCost];
+        return $answer;
+    }
+
     public function Get_order_report_dates(Request $request)
     {
         $answer = DB::table('reports')
@@ -134,6 +144,17 @@ class getDataController extends Controller
         return $answer;
     }
 
+    public function Get_inner_costs_report(Request $request)
+    {
+        $answer = DB::table('reports')
+            ->where(["reports.id" => $request->id])
+            ->leftJoin('orders', 'reports.order_id', '=', 'orders.id')
+            ->select('orders.daily_cost', 'orders.rent')
+            ->get();
+
+        return $answer;
+    }
+
     public function Get_wheel_pair_left(Request $request)
     {
         $order_wheels = DB::table('orders')
@@ -146,5 +167,15 @@ class getDataController extends Controller
             ->get();
         $answer = [$order_wheels, $order_reports];
         return $answer;
+    }
+
+    public function Get_reportList(Request $request)
+    {
+        $reports = DB::table('reports')
+            ->where(['order_id' => $request->id])
+            ->select('id', 'date')
+            ->get();
+
+        return $reports;
     }
 }

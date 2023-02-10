@@ -292,7 +292,6 @@ getExecutors();
                     @change="selectLocomotive($event)"
                     v-model="local_data.order.locomotive"
                 >
-                    <option disabled value="">Локомотив</option>
                     <option
                         v-for="option in local_data.locomotives"
                         :value="option.id"
@@ -372,7 +371,6 @@ getExecutors();
                         v-show="local_data.optionContact == true"
                     >
                         <select v-model="local_data.order.contact.id">
-                            <option disabled value="">Контакт</option>
                             <option
                                 v-for="option in local_data.contacts"
                                 :value="option.id"
@@ -413,7 +411,6 @@ getExecutors();
         <div>
             Исполнитель
             <select v-model="local_data.order.executor">
-                <option disabled value="">Персона</option>
                 <option
                     v-for="option in local_data.executors"
                     :value="option.id"

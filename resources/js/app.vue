@@ -7,11 +7,14 @@ import CreateReport from "./pages/CreateReport.vue";
 import CreateUser from "./pages/CreateUser.vue";
 import EditOrder from "./pages/EditOrder.vue";
 import EditReport from "./pages/EditReport.vue";
+import DisplayReport from "./pages/DisplayReport.vue";
+import ListReport from "./pages/ListReport.vue";
 import { reactive } from "vue";
 
 const local_data = reactive({
     currentPage: 1,
     pickOrder: null,
+    pickReport: null,
     roleId: null,
     nowDate: null,
 });
@@ -55,6 +58,14 @@ function editReport(orderId) {
     local_data.currentPage = 8;
     local_data.pickOrder = orderId;
 }
+function displayReport(reportId) {
+    local_data.currentPage = 10;
+    local_data.pickReport = reportId;
+}
+function displayReports(index) {
+    local_data.currentPage = 9;
+    local_data.pickOrder = index;
+}
 
 curDate();
 </script>
@@ -71,6 +82,7 @@ curDate();
             <Cabinet
                 @openPage="changePage"
                 @displayOrder="showOrder"
+                @displayReports="displayReports"
                 :roleId="local_data.roleId"
             />
         </div>
@@ -102,6 +114,19 @@ curDate();
                 @openPage="changePage"
                 :orderId="local_data.pickOrder"
                 :nowDate="local_data.nowDate"
+            />
+        </div>
+        <div v-if="local_data.currentPage === 9">
+            <ListReport
+                @openPage="changePage"
+                @displayReport="displayReport"
+                :orderId="local_data.pickOrder"
+            />
+        </div>
+        <div v-if="local_data.currentPage === 10">
+            <DisplayReport
+                @openPage="changePage"
+                :reportId="local_data.pickReport"
             />
         </div>
     </div>

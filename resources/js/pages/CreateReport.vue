@@ -318,7 +318,6 @@ getWheelPairLeft();
             <div class="display_line_act">Добавить траты</div>
             <div class="addCost">
                 <select class="addCostId" v-model="local_data.newCost.id">
-                    <option disabled value="">Траты</option>
                     <option
                         v-for="option in local_data.costs"
                         :value="option.id"
@@ -387,7 +386,7 @@ getWheelPairLeft();
             <div class="display_line_act">Добавить занятия</div>
             <div class="addCost">
                 <select class="addCostId" v-model="local_data.newActivity">
-                    <option disabled value="">Активность</option>
+                    
                     <option
                         v-for="option in local_data.activities"
                         :value="option.id"

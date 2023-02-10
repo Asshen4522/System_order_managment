@@ -8,7 +8,7 @@ const local_data = reactive({
     orders: [],
 });
 
-const emit = defineEmits(["openPage", "displayOrder"]);
+const emit = defineEmits(["openPage", "displayOrder", "displayReports"]);
 
 function getOrders() {
     let date = new Date();
@@ -67,10 +67,13 @@ function getOrders() {
 function nextPage(index) {
     emit("openPage", index);
 }
-
 function showOrder(index) {
     emit("displayOrder", index);
 }
+function displayReports(index) {
+    emit("displayReports", index);
+}
+
 function deleteOrder(elem) {
     let confirmation = confirm(
         "Вы уверены? Данная команда окончательно удалит этот заказ."
@@ -105,6 +108,12 @@ getOrders();
                             option.id
                         }}
                     </button>
+                    <button
+                        v-show="props.roleId == 1"
+                        @click="displayReports(option.id)"
+                    >
+                        Отчеты
+                    </button>
                     <img
                         @click="deleteOrder(option.id)"
                         v-show="props.roleId == 1"
@@ -116,6 +125,12 @@ getOrders();
                     <button @click="showOrder(option.id)" class="button-order">
                         <img class="pict" src="../../img/working.png" /> заказ
                         №{{ option.id }}
+                    </button>
+                    <button
+                        v-show="props.roleId == 1"
+                        @click="displayReports(option.id)"
+                    >
+                        Отчеты
                     </button>
                     <img
                         @click="deleteOrder(option.id)"
@@ -130,6 +145,12 @@ getOrders();
                             option.id
                         }}
                     </button>
+                    <button
+                        v-show="props.roleId == 1"
+                        @click="displayReports(option.id)"
+                    >
+                        Отчеты
+                    </button>
                     <img
                         @click="deleteOrder(option.id)"
                         v-show="props.roleId == 1"
@@ -141,6 +162,12 @@ getOrders();
                     <button @click="showOrder(option.id)" class="button-order">
                         <img class="pict" src="../../img/cancelled.png" /> заказ
                         №{{ option.id }}
+                    </button>
+                    <button
+                        v-show="props.roleId == 1"
+                        @click="displayReports(option.id)"
+                    >
+                        Отчеты
                     </button>
                     <img
                         @click="deleteOrder(option.id)"
