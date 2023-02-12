@@ -19,11 +19,6 @@ return new class extends Migration
             $table->string('fio');
             $table->string('phone');
         });
-
-        contactPerson::create([
-            'fio' => 'Сергей',
-            'phone' => '89633854682'
-        ]);
     }
 
     /**
