@@ -36,9 +36,11 @@ function Authorize() {
         })
             .then((response) => response.json())
             .then((response) => {
-                if (response == false) {
+                if (response == "no") {
                     local_data.errorLogin = true;
-                } else {
+                } else if (response == "banned") {
+                    alert("Ваш аккаунт заблокирован");
+                } else if (response == true) {
                     emit("auth", response);
                 }
             });

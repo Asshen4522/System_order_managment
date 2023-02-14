@@ -9,10 +9,11 @@ import EditOrder from "./pages/EditOrder.vue";
 import EditReport from "./pages/EditReport.vue";
 import DisplayReport from "./pages/DisplayReport.vue";
 import ListReport from "./pages/ListReport.vue";
+import ListUser from "./pages/ListUser.vue";
 import { reactive } from "vue";
 
 const local_data = reactive({
-    currentPage: 1,
+    currentPage: 11,
     pickOrder: null,
     pickReport: null,
     roleId: null,
@@ -33,6 +34,25 @@ function curDate() {
         nowDate += String(date.getDate());
     }
     local_data.nowDate = nowDate;
+}
+
+function ifAuth() {
+    return fetch("/If_auth", {
+        method: "GET",
+        headers: {
+            "X-CSRF-TOKEN": document.querySelector('[name="_token"]').value,
+            "Content-Type": "application/json",
+        },
+    })
+        .then((response) => response.json())
+        .then((response) => {
+            if (response) {
+                local_data.currentPage = 3;
+                local_data.roleId = response;
+            } else {
+                local_data.currentPage = 1;
+            }
+        });
 }
 
 function changePage(index) {
@@ -68,6 +88,7 @@ function displayReports(index) {
 }
 
 curDate();
+//ifAuth();
 </script>
 
 <template>
@@ -84,6 +105,7 @@ curDate();
                 @displayOrder="showOrder"
                 @displayReports="displayReports"
                 :roleId="local_data.roleId"
+                :nowDate="local_data.nowDate"
             />
         </div>
         <div v-if="local_data.currentPage === 4">
@@ -128,6 +150,9 @@ curDate();
                 @openPage="changePage"
                 :reportId="local_data.pickReport"
             />
+        </div>
+        <div v-if="local_data.currentPage === 11">
+            <ListUser @openPage="changePage" :roleId="local_data.roleId" />
         </div>
     </div>
 </template>

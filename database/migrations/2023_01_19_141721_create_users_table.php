@@ -22,6 +22,7 @@ return new class extends Migration
             $table->string('phone');
             $table->foreignId('role_id')->constrained('roles');
             $table->string('password');
+            $table->boolean('banned')->default(false);
         });
 
         user::create([

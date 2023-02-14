@@ -22,6 +22,8 @@ Route::get('/', function () {
 
 Route::post('/Authorizate', [userController::class, 'Authorizate']);
 Route::post('/Register', [userController::class, 'Register']);
+Route::get('/If_auth', [userController::class, 'If_auth']);
+Route::get('/Logout', [userController::class, 'Logout']);
 
 Route::post('/Create_order', [postDataController::class, 'Create_order']);
 Route::post('/Edit_order', [postDataController::class, 'Edit_order']);
@@ -49,3 +51,4 @@ Route::post('/Get_order_report_dates', [getDataController::class, 'Get_order_rep
 Route::post('/Get_wheel_pair_left', [getDataController::class, 'Get_wheel_pair_left']);
 Route::post('/Get_inner_costs_report', [getDataController::class, 'Get_inner_costs_report']);
 Route::post('/Get_reportList', [getDataController::class, 'Get_reportList']);
+Route::get('/Get_userList', [getDataController::class, 'Get_userList']);

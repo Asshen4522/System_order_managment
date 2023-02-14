@@ -3,6 +3,7 @@ import { reactive } from "vue";
 
 const props = defineProps({
     roleId: null,
+    nowDate: null,
 });
 const local_data = reactive({
     orders: [],
@@ -11,23 +12,11 @@ const local_data = reactive({
 const emit = defineEmits(["openPage", "displayOrder", "displayReports"]);
 
 function getOrders() {
-    let date = new Date();
-    let nowDate = String(date.getFullYear()) + "-";
-    if (String(date.getMonth() + 1).length == 1) {
-        nowDate += "0" + String(date.getMonth() + 1) + "-";
-    } else {
-        nowDate += String(date.getMonth() + 1) + "-";
-    }
-    if (String(date.getDate()).length == 1) {
-        nowDate += "0" + String(date.getDate());
-    } else {
-        nowDate += String(date.getDate());
-    }
     local_data.orders = [];
     if (props.roleId == 1) {
         fetch("/Get_orders", {
             method: "POST",
-            body: JSON.stringify({ date: nowDate }),
+            body: JSON.stringify({ date: props.nowDate }),
             headers: {
                 "X-CSRF-TOKEN": document.querySelector('[name="_token"]').value,
                 "Content-Type": "application/json",
@@ -36,9 +25,12 @@ function getOrders() {
             .then((response) => response.json())
             .then((response) => {
                 response.forEach((element) => {
+                    console.log(element);
                     const elem = {
+                        city: element.city,
                         status: element.status_id,
                         id: element.id,
+                        fio: element.name + " " + element.surname,
                     };
                     local_data.orders.push(elem);
                 });
@@ -74,14 +66,14 @@ function displayReports(index) {
     emit("displayReports", index);
 }
 
-function deleteOrder(elem) {
+function deleteOrder(orderId) {
     let confirmation = confirm(
         "Вы уверены? Данная команда окончательно удалит этот заказ."
     );
     if (confirmation) {
         fetch("/Delete_order", {
             method: "POST",
-            body: JSON.stringify({ id: elem }),
+            body: JSON.stringify({ id: orderId }),
             headers: {
                 "X-CSRF-TOKEN": document.querySelector('[name="_token"]').value,
                 "Content-Type": "application/json",
@@ -96,17 +88,39 @@ function deleteOrder(elem) {
     }
 }
 
+function logout() {
+    fetch("/Logout", {
+        method: "GET",
+        headers: {
+            "X-CSRF-TOKEN": document.querySelector('[name="_token"]').value,
+            "Content-Type": "application/json",
+        },
+    })
+        .then((response) => response.json())
+        .then((response) => {
+            emit("openPage", 1);
+        });
+}
+
 getOrders();
 </script>
 <template>
     <div>
+        <div class="logout">
+            <button @click="logout">Выйти</button>
+        </div>
         <div class="field">
             <div v-for="option in local_data.orders">
                 <div class="order_buttons" v-show="option.status === 1">
                     <button @click="showOrder(option.id)" class="button-order">
-                        <img class="pict" src="../../img/new.png" /> заказ №{{
-                            option.id
-                        }}
+                        <img class="pict" src="../../img/new.png" />
+                        <div>заказ №{{ option.id }}</div>
+                        <div class="addition">
+                            {{ option.city }}
+                        </div>
+                        <div class="addition">
+                            {{ option.fio }}
+                        </div>
                     </button>
                     <button
                         v-show="props.roleId == 1"
@@ -123,8 +137,14 @@ getOrders();
                 </div>
                 <div class="order_buttons" v-show="option.status === 2">
                     <button @click="showOrder(option.id)" class="button-order">
-                        <img class="pict" src="../../img/working.png" /> заказ
-                        №{{ option.id }}
+                        <img class="pict" src="../../img/working.png" />
+                        <div>заказ №{{ option.id }}</div>
+                        <div class="addition">
+                            {{ option.city }}
+                        </div>
+                        <div class="addition">
+                            {{ option.fio }}
+                        </div>
                     </button>
                     <button
                         v-show="props.roleId == 1"
@@ -141,9 +161,14 @@ getOrders();
                 </div>
                 <div class="order_buttons" v-show="option.status === 3">
                     <button @click="showOrder(option.id)" class="button-order">
-                        <img class="pict" src="../../img/ready.png" /> заказ №{{
-                            option.id
-                        }}
+                        <img class="pict" src="../../img/ready.png" />
+                        <div>заказ №{{ option.id }}</div>
+                        <div class="addition">
+                            {{ option.city }}
+                        </div>
+                        <div class="addition">
+                            {{ option.fio }}
+                        </div>
                     </button>
                     <button
                         v-show="props.roleId == 1"
@@ -160,8 +185,14 @@ getOrders();
                 </div>
                 <div class="order_buttons" v-show="option.status === 4">
                     <button @click="showOrder(option.id)" class="button-order">
-                        <img class="pict" src="../../img/cancelled.png" /> заказ
-                        №{{ option.id }}
+                        <img class="pict" src="../../img/cancelled.png" />
+                        <div>заказ №{{ option.id }}</div>
+                        <div class="addition">
+                            {{ option.city }}
+                        </div>
+                        <div class="addition">
+                            {{ option.fio }}
+                        </div>
                     </button>
                     <button
                         v-show="props.roleId == 1"
@@ -185,6 +216,20 @@ getOrders();
     </div>
 </template>
 <style scoped>
+@media only screen and (min-width: 1441px) {
+}
+@media only screen and (max-width: 425px) {
+    .addition {
+        display: none;
+    }
+}
+
+.logout {
+    display: flex;
+    flex-direction: row;
+    justify-content: right;
+}
+
 .order_buttons {
     display: flex;
     flex-direction: row;
@@ -227,12 +272,18 @@ getOrders();
 }
 
 .button-order {
+    width: 75%;
     display: flex;
     flex-direction: row;
     align-items: center;
+    justify-content: left;
+    gap: 20px;
     background-color: white;
     border-color: var(--color-accent);
     color: var(--color-accent);
+}
+.addition {
+    width: 30%;
 }
 
 .button-order:hover {

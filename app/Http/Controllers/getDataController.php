@@ -49,7 +49,10 @@ class getDataController extends Controller
                 $x->save();
             }
         }
-        $answer = order::orderBy('id')
+        $answer = DB::table('orders')
+            ->leftJoin('users', 'users.id', '=', 'orders.executor_id')
+            ->orderBy('orders.id', 'asc')
+            ->select('orders.id', 'city', 'status_id', 'users.name', 'users.surname')
             ->get();
 
         return $answer;
@@ -177,5 +180,12 @@ class getDataController extends Controller
             ->get();
 
         return $reports;
+    }
+
+    public function Get_userList()
+    {
+        $users = user::where("id", '>', 1)
+            ->get();
+        return $users;
     }
 }

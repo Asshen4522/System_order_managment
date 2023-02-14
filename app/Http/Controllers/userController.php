@@ -13,10 +13,17 @@ class userController extends Controller
     public function Authorizate(Request $request)
     {
         if (Auth::attempt($request->only('phone', 'password'))) {
-            $answer = auth()->user()->role_id;
+            $answer = '';
+            if (auth()->user()->banned) {
+                auth()->logout();
+                $answer = ['banned'];
+            } else {
+                $answer = auth()->user()->role_id;
+            }
+
             return $answer;
         } else {
-            $answer = 'false';
+            $answer = ['no'];
             return $answer;
         }
     }
@@ -37,5 +44,22 @@ class userController extends Controller
             $answer = 'false';
             return $answer;
         }
+    }
+
+    public function If_auth()
+    {
+        if (auth()->user()) {
+            $answer = auth()->user()->role_id;
+        } else {
+            $answer = 'false';
+        }
+        return $answer;
+    }
+
+    public function Logout()
+    {
+        auth()->logout();
+        $answer = "true";
+        return $answer;
     }
 }
