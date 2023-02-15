@@ -10,7 +10,9 @@ use App\Models\order;
 use App\Models\report;
 use App\Models\reportActivity;
 use App\Models\reportCost;
+use App\Models\user;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class postDataController extends Controller
 {
@@ -199,6 +201,36 @@ class postDataController extends Controller
             return $answer;
         } catch (\Throwable $th) {
             dd($th);
+        }
+    }
+    public function Delete_user(Request $request)
+    {
+        try {
+            user::destroy($request->id);
+            $answer = "true";
+            return $answer;
+        } catch (\Throwable $th) {
+            $answer = "false";
+            return $answer;
+        }
+    }
+    public function Edit_user(Request $request)
+    {
+        try {
+            $user = user::find($request->id);
+            $user->phone = $request->phone;
+            $user->name = $request->name;
+            $user->surname = $request->surname;
+            $user->role_id = $request->roleId;
+            if ($request->password) {
+                $user->password = Hash::make($request->password);
+            }
+            $user->save();
+
+            $answer = "true";
+            return $answer;
+        } catch (\Throwable $th) {
+            return $th;
         }
     }
 }

@@ -10,10 +10,13 @@ import EditReport from "./pages/EditReport.vue";
 import DisplayReport from "./pages/DisplayReport.vue";
 import ListReport from "./pages/ListReport.vue";
 import ListUser from "./pages/ListUser.vue";
+import DisplayUser from "./pages/DisplayUser.vue";
+import EditUser from "./pages/EditUser.vue";
 import { reactive } from "vue";
 
 const local_data = reactive({
-    currentPage: 11,
+    currentPage: null,
+    pickUser: null,
     pickOrder: null,
     pickReport: null,
     roleId: null,
@@ -86,9 +89,13 @@ function displayReports(index) {
     local_data.currentPage = 9;
     local_data.pickOrder = index;
 }
+function displayUser(index) {
+    local_data.currentPage = 12;
+    local_data.pickUser = index;
+}
 
 curDate();
-//ifAuth();
+ifAuth();
 </script>
 
 <template>
@@ -152,7 +159,17 @@ curDate();
             />
         </div>
         <div v-if="local_data.currentPage === 11">
-            <ListUser @openPage="changePage" :roleId="local_data.roleId" />
+            <ListUser
+                @openPage="changePage"
+                @displayUser="displayUser"
+                :roleId="local_data.roleId"
+            />
+        </div>
+        <div v-if="local_data.currentPage === 12">
+            <DisplayUser @openPage="changePage" :userId="local_data.pickUser" />
+        </div>
+        <div v-if="local_data.currentPage === 13">
+            <EditUser @openPage="changePage" :userId="local_data.pickUser" />
         </div>
     </div>
 </template>

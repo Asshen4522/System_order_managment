@@ -24,6 +24,8 @@ Route::post('/Authorizate', [userController::class, 'Authorizate']);
 Route::post('/Register', [userController::class, 'Register']);
 Route::get('/If_auth', [userController::class, 'If_auth']);
 Route::get('/Logout', [userController::class, 'Logout']);
+Route::post('/Ban', [userController::class, 'Ban']);
+Route::post('/UnBan', [userController::class, 'UnBan']);
 
 Route::post('/Create_order', [postDataController::class, 'Create_order']);
 Route::post('/Edit_order', [postDataController::class, 'Edit_order']);
@@ -34,7 +36,8 @@ Route::post('/Create_cost', [postDataController::class, 'Create_cost']);
 Route::post('/Create_activity', [postDataController::class, 'Create_activity']);
 Route::post('/Update_status', [postDataController::class, 'Update_status']);
 Route::post('/Delete_order', [postDataController::class, 'Delete_order']);
-
+Route::post('/Delete_user', [postDataController::class, 'Delete_user']);
+Route::post('/Edit_user', [postDataController::class, 'Edit_user']);
 
 Route::get('/Get_locomotives', [getDataController::class, 'Get_locomotives']);
 Route::get('/Get_contacts', [getDataController::class, 'Get_contacts']);
@@ -52,3 +55,4 @@ Route::post('/Get_wheel_pair_left', [getDataController::class, 'Get_wheel_pair_l
 Route::post('/Get_inner_costs_report', [getDataController::class, 'Get_inner_costs_report']);
 Route::post('/Get_reportList', [getDataController::class, 'Get_reportList']);
 Route::get('/Get_userList', [getDataController::class, 'Get_userList']);
+Route::post('/Get_user', [getDataController::class, 'Get_user']);

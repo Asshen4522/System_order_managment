@@ -185,7 +185,19 @@ class getDataController extends Controller
     public function Get_userList()
     {
         $users = user::where("id", '>', 1)
+            ->where("id", "!=", auth()->user()->id)
             ->get();
         return $users;
+    }
+
+    public function Get_user(Request $request)
+    {
+        $user = DB::table('users')
+            ->where(["users.id" => $request->id])
+            ->leftJoin('roles', 'users.role_id', '=', 'roles.id')
+            ->select('users.id', 'users.name', 'users.surname', 'users.phone', 'roles.name AS roleName', 'users.role_id')
+            ->first();
+
+        return $user;
     }
 }

@@ -20,11 +20,11 @@ return new class extends Migration
         });
 
         role::create([
-            'name' => 'manager'
+            'name' => 'Менеджер'
         ]);
 
         role::create([
-            'name' => 'executor'
+            'name' => 'Исполнитель'
         ]);
     }
 

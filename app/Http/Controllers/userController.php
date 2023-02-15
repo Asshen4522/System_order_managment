@@ -62,4 +62,21 @@ class userController extends Controller
         $answer = "true";
         return $answer;
     }
+
+    public function Ban(Request $request)
+    {
+        $user = user::find($request->id);
+        $user->banned = 1;
+        $user->save();
+        $answer = 'true';
+        return $answer;
+    }
+    public function UnBan(Request $request)
+    {
+        $user = user::find($request->id);
+        $user->banned = 0;
+        $user->save();
+        $answer = 'true';
+        return $answer;
+    }
 }

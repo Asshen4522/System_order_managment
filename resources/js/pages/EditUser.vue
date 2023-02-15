@@ -2,7 +2,9 @@
 import customInput from "../components/Input.vue";
 import { reactive } from "vue";
 
-const emit = defineEmits(["openPage"]);
+const props = defineProps({
+    userId: null,
+});
 
 const local_data = reactive({
     name: "",
@@ -19,7 +21,15 @@ const local_data = reactive({
     errorPassword: false,
 
     errorRegister: false,
+
+    editPassword: false,
 });
+
+const emit = defineEmits(["openPage"]);
+
+function returnToCabinet() {
+    emit("openPage", 12);
+}
 
 function RevealPassword() {
     if (local_data.fieldType === "password") {
@@ -32,7 +42,12 @@ function Validate() {
     local_data.errorName = local_data.name == "";
     local_data.errorSurname = local_data.surname == "";
     local_data.errorPhone = !/^(8|\+7)(\d){10}$/.test(local_data.phone);
-    local_data.errorPassword = local_data.password == "";
+    if (local_data.editPassword) {
+        local_data.errorPassword = local_data.password == "";
+        local_data.password = null;
+    } else {
+        local_data.errorPassword = false;
+    }
     if (
         !local_data.errorName &&
         !local_data.errorSurname &&
@@ -40,24 +55,23 @@ function Validate() {
         !local_data.errorPassword &&
         local_data.roleId != null
     ) {
-        console.log(true);
         return true;
     } else {
-        console.log(false);
         local_data.errorRegister = true;
         return false;
     }
 }
 function Register() {
     if (Validate()) {
-        fetch("/Register", {
+        fetch("/Edit_user", {
             method: "POST",
             body: JSON.stringify({
+                id: props.userId,
                 phone: local_data.phone,
                 password: local_data.password,
                 name: local_data.name,
                 surname: local_data.surname,
-                roleId: +local_data.roleId,
+                roleId: local_data.roleId,
             }),
             headers: {
                 "X-CSRF-TOKEN": document.querySelector('[name="_token"]').value,
@@ -74,9 +88,26 @@ function Register() {
             });
     }
 }
-function returnToCabinet() {
-    emit("openPage", 11);
+
+function getUser(params) {
+    fetch("/Get_user", {
+        method: "POST",
+        body: JSON.stringify({ id: props.userId }),
+        headers: {
+            "X-CSRF-TOKEN": document.querySelector('[name="_token"]').value,
+            "Content-Type": "application/json",
+        },
+    })
+        .then((response) => response.json())
+        .then((response) => {
+            local_data.name = response.name;
+            local_data.surname = response.surname;
+            local_data.roleId = response.role_id;
+            local_data.phone = response.phone;
+        });
 }
+
+getUser();
 </script>
 <template>
     <div class="page">
@@ -103,7 +134,13 @@ function returnToCabinet() {
             typeIn="text"
             :ifError="local_data.errorPhone"
         />
-        <div class="part">
+        <button
+            class="button_password"
+            @click="local_data.editPassword = !local_data.editPassword"
+        >
+            Новый пароль
+        </button>
+        <div class="part" v-if="local_data.editPassword">
             <customInput
                 class="inputs"
                 v-model="local_data.password"
@@ -132,7 +169,7 @@ function returnToCabinet() {
             </select>
         </div>
         <div class="buttons">
-            <button @click="Register">Создать</button>
+            <button @click="Register">Закончить редактирование</button>
             <button @click="returnToCabinet">Назад</button>
         </div>
 
@@ -143,6 +180,10 @@ function returnToCabinet() {
     </div>
 </template>
 <style scoped>
+.button_password {
+    width: 50%;
+    align-self: center;
+}
 .selector {
     margin-left: 10%;
 }

@@ -211,7 +211,7 @@ getOrders();
         </div>
         <div class="buttons" v-show="props.roleId == 1">
             <button @click="nextPage(2)">Добавить заказ</button>
-            <button @click="nextPage(6)">Добавить пользователя</button>
+            <button @click="nextPage(11)">Список пользователей</button>
         </div>
     </div>
 </template>
