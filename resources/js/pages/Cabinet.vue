@@ -25,7 +25,6 @@ function getOrders() {
             .then((response) => response.json())
             .then((response) => {
                 response.forEach((element) => {
-                    console.log(element);
                     const elem = {
                         city: element.city,
                         status: element.status_id,
@@ -233,6 +232,7 @@ getOrders();
 .order_buttons {
     display: flex;
     flex-direction: row;
+    justify-content: space-between;
     align-items: center;
     gap: 20px;
 }

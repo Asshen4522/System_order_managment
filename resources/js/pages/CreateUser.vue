@@ -40,10 +40,8 @@ function Validate() {
         !local_data.errorPassword &&
         local_data.roleId != null
     ) {
-        console.log(true);
         return true;
     } else {
-        console.log(false);
         local_data.errorRegister = true;
         return false;
     }

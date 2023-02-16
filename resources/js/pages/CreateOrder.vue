@@ -178,7 +178,6 @@ function contact() {
         })
             .then((response) => response.json())
             .then((response) => {
-                console.log({ response });
                 return response;
             });
     } else {
@@ -247,6 +246,7 @@ getExecutors();
         <div class="line">
             <div class="locomotiveWheel">
                 <select
+                    class="locomotiveWheel__item"
                     @change="selectLocomotive($event)"
                     v-model="local_data.order.locomotive"
                 >
@@ -259,6 +259,7 @@ getExecutors();
                 </select>
 
                 <customInput
+                    class="locomotiveWheel__item"
                     v-model="local_data.order.wheel_pairs"
                     inputname="Кол-во колесных пар"
                     typeIn="text"
@@ -386,9 +387,15 @@ getExecutors();
 </template>
 <style scoped>
 .locomotiveWheel {
+    width: 100%;
     display: flex;
     flex-direction: row;
+    justify-content: space-between;
     gap: 10px;
+}
+
+.locomotiveWheel__item {
+    width: 50%;
 }
 .page {
     display: flex;
@@ -397,6 +404,7 @@ getExecutors();
 }
 
 .line {
+    width: 100%;
     display: flex;
     flex-direction: row;
     justify-content: space-between;

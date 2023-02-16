@@ -40,7 +40,7 @@ function Authorize() {
                     local_data.errorLogin = true;
                 } else if (response == "banned") {
                     alert("Ваш аккаунт заблокирован");
-                } else if (response == true) {
+                } else {
                     emit("auth", response);
                 }
             });

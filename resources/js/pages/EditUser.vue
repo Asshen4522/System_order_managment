@@ -169,7 +169,7 @@ getUser();
             </select>
         </div>
         <div class="buttons">
-            <button @click="Register">Закончить редактирование</button>
+            <button @click="Register">Сохранить</button>
             <button @click="returnToCabinet">Назад</button>
         </div>
 
@@ -181,7 +181,6 @@ getUser();
 </template>
 <style scoped>
 .button_password {
-    width: 50%;
     align-self: center;
 }
 .selector {
@@ -211,6 +210,8 @@ getUser();
     flex-direction: row;
     justify-content: space-between;
     gap: 10px;
+    margin-left: 10%;
+    margin-right: 10%;
 }
 
 .error {

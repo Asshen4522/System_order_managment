@@ -136,6 +136,7 @@ getUsers();
     margin-bottom: 20px;
     display: flex;
     flex-direction: column;
+
     gap: 15px;
 }
 
@@ -143,6 +144,7 @@ getUsers();
     display: flex;
     flex-direction: row;
     align-items: center;
+    justify-content: space-between;
     gap: 20px;
 }
 .user-btn {

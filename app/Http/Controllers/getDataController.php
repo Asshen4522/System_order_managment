@@ -60,9 +60,13 @@ class getDataController extends Controller
 
     public function Get_my_orders()
     {
-        $answer = order::where(["executor_id" => auth()->user()->id,])
+        $answer = DB::table('orders')
+            ->where(["orders.id" => auth()->user()->id])
             ->where("status_id", '<', 3)
+            ->orderBy('orders.id', 'asc')
+            ->select('orders.id', 'city', 'status_id', 'users.name', 'users.surname')
             ->get();
+
 
         return $answer;
     }

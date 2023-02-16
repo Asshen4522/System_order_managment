@@ -184,7 +184,6 @@ function contact() {
         })
             .then((response) => response.json())
             .then((response) => {
-                console.log({ response });
                 return response;
             });
     } else {
@@ -229,7 +228,6 @@ function SendData() {
                     if (response == true) {
                         returnToCabinet(3);
                     } else {
-                        console.log(response);
                     }
                 });
         });

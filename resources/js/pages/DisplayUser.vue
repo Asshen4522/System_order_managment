@@ -39,8 +39,8 @@ getUser();
     <div>
         <div class="block">
             <div class="block_header">{{ local_data.user.fio }}</div>
-            <div class="block_line">Телефон: "{{ local_data.user.phone }}"</div>
-            <div class="block_line">Роль: "{{ local_data.user.role }}"</div>
+            <div class="block_line">Телефон: {{ local_data.user.phone }}</div>
+            <div class="block_line">Роль: {{ local_data.user.role }}</div>
         </div>
         <div class="buttons">
             <button @click="returnToCabinet(13)">Редактировать</button>
