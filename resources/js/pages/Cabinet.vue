@@ -48,6 +48,7 @@ function getOrders() {
                     const elem = {
                         status: element.status_id,
                         id: element.id,
+                        city: element.city,
                     };
                     local_data.orders.push(elem);
                 });
@@ -87,27 +88,10 @@ function deleteOrder(orderId) {
     }
 }
 
-function logout() {
-    fetch("/Logout", {
-        method: "GET",
-        headers: {
-            "X-CSRF-TOKEN": document.querySelector('[name="_token"]').value,
-            "Content-Type": "application/json",
-        },
-    })
-        .then((response) => response.json())
-        .then((response) => {
-            emit("openPage", 1);
-        });
-}
-
 getOrders();
 </script>
 <template>
     <div>
-        <div class="logout">
-            <button @click="logout">Выйти</button>
-        </div>
         <div class="field">
             <div v-for="option in local_data.orders">
                 <div class="order_buttons" v-show="option.status === 1">
@@ -117,7 +101,7 @@ getOrders();
                         <div class="addition">
                             {{ option.city }}
                         </div>
-                        <div class="addition">
+                        <div v-if="props.roleId == 1" class="addition">
                             {{ option.fio }}
                         </div>
                     </button>
@@ -141,7 +125,7 @@ getOrders();
                         <div class="addition">
                             {{ option.city }}
                         </div>
-                        <div class="addition">
+                        <div v-if="props.roleId == 1" class="addition">
                             {{ option.fio }}
                         </div>
                     </button>
@@ -165,7 +149,7 @@ getOrders();
                         <div class="addition">
                             {{ option.city }}
                         </div>
-                        <div class="addition">
+                        <div v-if="props.roleId == 1" class="addition">
                             {{ option.fio }}
                         </div>
                     </button>
@@ -189,7 +173,7 @@ getOrders();
                         <div class="addition">
                             {{ option.city }}
                         </div>
-                        <div class="addition">
+                        <div v-if="props.roleId == 1" class="addition">
                             {{ option.fio }}
                         </div>
                     </button>
@@ -210,7 +194,6 @@ getOrders();
         </div>
         <div class="buttons" v-show="props.roleId == 1">
             <button @click="nextPage(2)">Добавить заказ</button>
-            <button @click="nextPage(11)">Список пользователей</button>
         </div>
     </div>
 </template>
@@ -221,12 +204,6 @@ getOrders();
     .addition {
         display: none;
     }
-}
-
-.logout {
-    display: flex;
-    flex-direction: row;
-    justify-content: right;
 }
 
 .order_buttons {
@@ -261,7 +238,6 @@ getOrders();
 .field {
     display: flex;
     flex-direction: column;
-    margin-top: 30px;
     gap: 10px;
 }
 

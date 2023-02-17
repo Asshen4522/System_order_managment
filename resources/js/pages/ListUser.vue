@@ -126,17 +126,15 @@ getUsers();
 
         <div class="buttons">
             <button @click="returnToCabinet(6)">Создать пользователя</button>
-            <button @click="returnToCabinet(3)">Назад</button>
         </div>
     </div>
 </template>
 <style scoped>
 .list {
     width: 100%;
-    margin-bottom: 20px;
     display: flex;
     flex-direction: column;
-
+    margin-bottom: 20px;
     gap: 15px;
 }
 

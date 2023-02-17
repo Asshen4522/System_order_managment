@@ -12,6 +12,7 @@ import ListReport from "./pages/ListReport.vue";
 import ListUser from "./pages/ListUser.vue";
 import DisplayUser from "./pages/DisplayUser.vue";
 import EditUser from "./pages/EditUser.vue";
+import Header from "./pages/Header.vue";
 import { reactive } from "vue";
 
 const local_data = reactive({
@@ -100,6 +101,9 @@ ifAuth();
 
 <template>
     <div class="zone">
+        <div>
+            <Header @openPage="changePage" :roleId="local_data.roleId" />
+        </div>
         <div v-if="local_data.currentPage === 1">
             <Authorization @auth="authorizate" />
         </div>
