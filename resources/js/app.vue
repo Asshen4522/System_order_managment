@@ -101,7 +101,7 @@ ifAuth();
 
 <template>
     <div class="zone">
-        <div>
+        <div v-if="local_data.currentPage != 1">
             <Header @openPage="changePage" :roleId="local_data.roleId" />
         </div>
         <div v-if="local_data.currentPage === 1">

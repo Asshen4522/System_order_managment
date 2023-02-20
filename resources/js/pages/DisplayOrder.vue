@@ -253,6 +253,9 @@ getDisplayOrder();
     width: 70%;
     text-align: center;
     border-bottom-style: solid;
+    border-width: 2px;
+    border-color: var(--color-input);
+    margin-right: 10px;
 }
 .line_in {
     margin-left: 10px;
@@ -262,6 +265,8 @@ getDisplayOrder();
     border-style: solid;
     border-radius: 10px;
     margin-bottom: 20px;
+    border-width: 1px;
+    border-color: var(--color-input);
 }
 .block_header {
     margin-bottom: 15px;

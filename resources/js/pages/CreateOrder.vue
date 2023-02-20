@@ -35,8 +35,6 @@ const local_data = reactive({
         errorRent: false,
         errorDailyCost: false,
 
-        errorHousing: false,
-
         errorTangen: false,
         errorCup: false,
 
@@ -123,25 +121,29 @@ function toggleOptionContact() {
 function Validate() {
     local_data.error_list.errorCity = local_data.order.city == "";
     local_data.error_list.errorWheelPairs =
-        local_data.order.locomotive == null ||
-        !/^\d+$/.test(local_data.order.wheel_pairs);
+        local_data.order.locomotive == null &&
+        (!/^\d+$/.test(local_data.order.wheel_pairs) ||
+            local_data.order.wheel_pairs != null);
 
-    local_data.error_list.errorBudget = !/^\d+$/.test(local_data.order.budget);
-    local_data.error_list.errorRent = !/^\d+$/.test(local_data.order.rent);
-    local_data.error_list.errorDailyCost = !/^\d+$/.test(
-        local_data.order.daily_cost
-    );
+    local_data.error_list.errorBudget =
+        !/^\d+$/.test(local_data.order.budget) &&
+        local_data.order.budget != null;
+    local_data.error_list.errorRent =
+        !/^\d+$/.test(local_data.order.rent) && local_data.order.rent != null;
+    local_data.error_list.errorDailyCost =
+        !/^\d+$/.test(local_data.order.daily_cost) &&
+        local_data.order.daily_cost != null;
 
-    local_data.error_list.errorHousing = local_data.order.housing == "";
-
-    local_data.error_list.errorTangen = !/^\d+$/.test(local_data.order.tangen);
-    local_data.error_list.errorCup = !/^\d+$/.test(local_data.order.cup);
+    local_data.error_list.errorTangen =
+        !/^\d+$/.test(local_data.order.tangen) &&
+        local_data.order.tangen != null;
+    local_data.error_list.errorCup =
+        !/^\d+$/.test(local_data.order.cup) && local_data.order.cup != null;
 
     local_data.error_list.errorFio =
-        local_data.order.contact.id == null &&
-        local_data.order.contact.fio == "";
+        !local_data.optionContact && local_data.order.contact.fio == "";
     local_data.error_list.errorPhone =
-        local_data.order.contact.id == null &&
+        !local_data.optionContact &&
         !/^(8|\+7)(\d){10}$/.test(local_data.order.contact.phone);
 
     if (
@@ -150,13 +152,11 @@ function Validate() {
         !local_data.error_list.errorBudget &&
         !local_data.error_list.errorRent &&
         !local_data.error_list.errorDailyCost &&
-        !local_data.error_list.errorHousing &&
         !local_data.error_list.errorTangen &&
         !local_data.error_list.errorCup &&
         !local_data.error_list.errorFio &&
         !local_data.error_list.errorPhone &&
-        !local_data.error_list.errorDate &&
-        local_data.order.executor != null
+        !local_data.error_list.errorDate
     ) {
         return true;
     } else {
@@ -164,7 +164,7 @@ function Validate() {
     }
 }
 function contact() {
-    if (local_data.order.contact.id == null) {
+    if (!local_data.optionContact) {
         return fetch("/Create_contact", {
             method: "POST",
             body: JSON.stringify({
@@ -223,7 +223,9 @@ function SendData() {
                 });
         });
     } else {
-        alert("Не все поля заполнены верно");
+        alert(
+            "Не все поля заполнены верно. Необходимо ввести как минимум город и вид локомотива"
+        );
     }
 }
 
@@ -259,9 +261,8 @@ getExecutors();
                 </select>
 
                 <customInput
-                    class="locomotiveWheel__item"
                     v-model="local_data.order.wheel_pairs"
-                    inputname="Кол-во колесных пар"
+                    inputname="Колесные пары"
                     typeIn="text"
                     :ifError="local_data.error_list.errorWheelPairs"
                 />
@@ -287,7 +288,7 @@ getExecutors();
                 v-model="local_data.order.housing"
                 inputname="Адрес жилья"
                 typeIn="text"
-                :ifError="local_data.error_list.errorHousing"
+                :ifError="false"
             />
             <customInput
                 v-model="local_data.order.rent"
@@ -328,7 +329,10 @@ getExecutors();
                         class="contact_selector"
                         v-show="local_data.optionContact == true"
                     >
-                        <select v-model="local_data.order.contact.id">
+                        <select
+                            class="contact_selector"
+                            v-model="local_data.order.contact.id"
+                        >
                             <option
                                 v-for="option in local_data.contacts"
                                 :value="option.id"
@@ -369,7 +373,10 @@ getExecutors();
         <div>
             Исполнитель
             <div class="select_executor">
-                <select v-model="local_data.order.executor">
+                <select
+                    class="select_executor"
+                    v-model="local_data.order.executor"
+                >
                     <option
                         v-for="option in local_data.executors"
                         :value="option.id"
@@ -389,13 +396,16 @@ getExecutors();
 .locomotiveWheel {
     width: 100%;
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     justify-content: space-between;
-    gap: 10px;
+    gap: 20px;
 }
 
 .locomotiveWheel__item {
-    width: 50%;
+    display: flex;
+    flex-direction: row;
+    align-self: center;
+    width: 170px;
 }
 .page {
     display: flex;
@@ -422,6 +432,7 @@ getExecutors();
     display: flex;
     flex-direction: row;
     justify-content: center;
+    min-width: 170px;
 }
 
 .contact_input {
@@ -429,6 +440,7 @@ getExecutors();
 }
 .select_executor {
     margin-top: 20px;
+    min-width: 170px;
 }
 .active {
     color: white;

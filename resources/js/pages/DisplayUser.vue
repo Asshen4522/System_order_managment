@@ -55,6 +55,8 @@ getUser();
     margin-bottom: 10px;
 }
 .block {
+    border-width: 1px;
+    border-color: var(--color-input);
     border-style: solid;
     border-radius: 10px;
     margin-bottom: 20px;

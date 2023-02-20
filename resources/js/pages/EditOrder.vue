@@ -129,25 +129,29 @@ function toggleOptionContact() {
 function Validate() {
     local_data.error_list.errorCity = local_data.order.city == "";
     local_data.error_list.errorWheelPairs =
-        local_data.order.locomotive == null ||
-        !/^\d+$/.test(local_data.order.wheel_pairs);
+        local_data.order.locomotive == null &&
+        (!/^\d+$/.test(local_data.order.wheel_pairs) ||
+            local_data.order.wheel_pairs != null);
 
-    local_data.error_list.errorBudget = !/^\d+$/.test(local_data.order.budget);
-    local_data.error_list.errorRent = !/^\d+$/.test(local_data.order.rent);
-    local_data.error_list.errorDailyCost = !/^\d+$/.test(
-        local_data.order.daily_cost
-    );
+    local_data.error_list.errorBudget =
+        !/^\d+$/.test(local_data.order.budget) &&
+        local_data.order.budget != null;
+    local_data.error_list.errorRent =
+        !/^\d+$/.test(local_data.order.rent) && local_data.order.rent != null;
+    local_data.error_list.errorDailyCost =
+        !/^\d+$/.test(local_data.order.daily_cost) &&
+        local_data.order.daily_cost != null;
 
-    local_data.error_list.errorHousing = local_data.order.housing == "";
-
-    local_data.error_list.errorTangen = !/^\d+$/.test(local_data.order.tangen);
-    local_data.error_list.errorCup = !/^\d+$/.test(local_data.order.cup);
+    local_data.error_list.errorTangen =
+        !/^\d+$/.test(local_data.order.tangen) &&
+        local_data.order.tangen != null;
+    local_data.error_list.errorCup =
+        !/^\d+$/.test(local_data.order.cup) && local_data.order.cup != null;
 
     local_data.error_list.errorFio =
-        local_data.order.contact.id == null &&
-        local_data.order.contact.fio == "";
+        !local_data.optionContact && local_data.order.contact.fio == "";
     local_data.error_list.errorPhone =
-        local_data.order.contact.id == null &&
+        !local_data.optionContact &&
         !/^(8|\+7)(\d){10}$/.test(local_data.order.contact.phone);
 
     if (
@@ -156,13 +160,11 @@ function Validate() {
         !local_data.error_list.errorBudget &&
         !local_data.error_list.errorRent &&
         !local_data.error_list.errorDailyCost &&
-        !local_data.error_list.errorHousing &&
         !local_data.error_list.errorTangen &&
         !local_data.error_list.errorCup &&
         !local_data.error_list.errorFio &&
         !local_data.error_list.errorPhone &&
-        !local_data.error_list.errorDate &&
-        local_data.order.executor != null
+        !local_data.error_list.errorDate
     ) {
         return true;
     } else {
@@ -170,7 +172,7 @@ function Validate() {
     }
 }
 function contact() {
-    if (local_data.order.contact.id == null) {
+    if (!local_data.optionContact) {
         return fetch("/Create_contact", {
             method: "POST",
             body: JSON.stringify({
@@ -368,7 +370,10 @@ getExecutors();
                         class="contact_selector"
                         v-show="local_data.optionContact == true"
                     >
-                        <select v-model="local_data.order.contact.id">
+                        <select
+                            class="contact_selector"
+                            v-model="local_data.order.contact.id"
+                        >
                             <option
                                 v-for="option in local_data.contacts"
                                 :value="option.id"
@@ -408,14 +413,19 @@ getExecutors();
 
         <div>
             Исполнитель
-            <select v-model="local_data.order.executor">
-                <option
-                    v-for="option in local_data.executors"
-                    :value="option.id"
+            <div class="select_executor">
+                <select
+                    class="select_executor"
+                    v-model="local_data.order.executor"
                 >
-                    {{ option.name + " " + option.surname }}
-                </option>
-            </select>
+                    <option
+                        v-for="option in local_data.executors"
+                        :value="option.id"
+                    >
+                        {{ option.name + " " + option.surname }}
+                    </option>
+                </select>
+            </div>
         </div>
         <div class="buttons">
             <button @click="SendData">Сохранить изменения</button>
@@ -451,8 +461,8 @@ getExecutors();
 .contact_buttons {
     display: flex;
     flex-direction: row;
-    gap: 50px;
-    justify-content: space-around;
+    margin-top: 20px;
+    justify-content: center;
 }
 
 .contact_input {
@@ -479,5 +489,15 @@ getExecutors();
     text-align: center;
     font-size: 20px;
     color: red;
+}
+.select_executor {
+    margin-top: 20px;
+    min-width: 170px;
+}
+.contact_selector {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    min-width: 170px;
 }
 </style>

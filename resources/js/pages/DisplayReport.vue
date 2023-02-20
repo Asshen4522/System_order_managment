@@ -196,6 +196,8 @@ Promise.all([getCosts(), getActivities()]).then(getReport);
     border-radius: 10px;
     margin-bottom: 20px;
     margin-top: 20px;
+    border-width: 1px;
+    border-color: var(--color-input);
 }
 .block_header {
     margin-bottom: 15px;

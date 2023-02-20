@@ -65,6 +65,8 @@ function logout() {
     width: 100%;
     margin-bottom: 20px;
     border-bottom-style: solid;
+    border-width: 1px;
+    border-color: var(--color-input);
     padding-bottom: 20px;
 }
 
