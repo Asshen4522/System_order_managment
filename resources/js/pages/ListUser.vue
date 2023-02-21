@@ -144,11 +144,10 @@ getUsers();
     justify-content: space-between;
     flex-direction: row;
     gap: 10px;
-    min-width: 65%;
+    min-width: 75%;
     border-color: var(--color-accent);
     color: var(--color-accent);
 }
-
 .user-btn:hover {
     background-color: var(--color-accent);
     color: white;
@@ -165,7 +164,6 @@ getUsers();
 .close_pict {
     height: 20px;
 }
-
 .close_pict:hover {
     cursor: pointer;
 }
@@ -204,8 +202,17 @@ getUsers();
 }
 
 @media only screen and (max-width: 425px) {
+    .user-btn {
+        min-width: 65%;
+    }
+}
+@media only screen and (max-width: 375px) {
     .switch_on::after {
         left: 16px;
+    }
+    .switch_btn {
+        min-width: 38px; /* ширина */
+        width: 38px;
     }
 }
 </style>

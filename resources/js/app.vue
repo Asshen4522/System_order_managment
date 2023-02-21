@@ -13,6 +13,7 @@ import ListUser from "./pages/ListUser.vue";
 import DisplayUser from "./pages/DisplayUser.vue";
 import EditUser from "./pages/EditUser.vue";
 import Header from "./pages/Header.vue";
+import Modal from "./components/Modal.vue";
 import { reactive } from "vue";
 
 const local_data = reactive({
@@ -22,7 +23,26 @@ const local_data = reactive({
     pickReport: null,
     roleId: null,
     nowDate: null,
+
+    showModal: false,
+    typeModal: "confirm",
+    textModal: "",
 });
+
+function modal(data) {
+    local_data.showModal = true;
+    local_data.typeModal = data[0];
+    local_data.textModal = data[1];
+}
+function closeModal() {
+    local_data.showModal = false;
+}
+function yesModal() {
+    local_data.showModal = true;
+}
+function noModal() {
+    local_data.showModal = true;
+}
 
 function curDate() {
     let date = new Date();
@@ -101,14 +121,22 @@ ifAuth();
 
 <template>
     <div class="zone">
+        <Modal
+            v-if="local_data.showModal"
+            @close="closeModal"
+            @yes="yesModal"
+            @no="noModal"
+            :type="local_data.typeModal"
+            :text="local_data.textModal"
+        />
         <div v-if="local_data.currentPage != 1">
             <Header @openPage="changePage" :roleId="local_data.roleId" />
         </div>
         <div v-if="local_data.currentPage === 1">
-            <Authorization @auth="authorizate" />
+            <Authorization @auth="authorizate" @modal="modal" />
         </div>
         <div v-if="local_data.currentPage === 2">
-            <CreateOrder @openPage="changePage" />
+            <CreateOrder @openPage="changePage" @modal="modal" />
         </div>
         <div v-if="local_data.currentPage === 3">
             <Cabinet

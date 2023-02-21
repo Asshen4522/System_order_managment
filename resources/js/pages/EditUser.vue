@@ -44,7 +44,7 @@ function Validate() {
     local_data.errorPhone = !/^(8|\+7)(\d){10}$/.test(local_data.phone);
     if (local_data.editPassword) {
         local_data.errorPassword = local_data.password == "";
-        local_data.password = null;
+        local_data.editPassword = null;
     } else {
         local_data.errorPassword = false;
     }

@@ -54,7 +54,7 @@ const local_data = reactive({
     optionContact: true,
 });
 
-const emit = defineEmits(["openPage"]);
+const emit = defineEmits(["openPage", "modal"]);
 
 function selectLocomotive(selector) {
     local_data.order.wheel_pairs =
@@ -223,9 +223,10 @@ function SendData() {
                 });
         });
     } else {
-        alert(
-            "Не все поля заполнены верно. Необходимо ввести как минимум город и вид локомотива"
-        );
+        emit("modal", [
+            "confirm",
+            "Не все поля заполнены верно. Необходимо ввести как минимум город и вид локомотива",
+        ]);
     }
 }
 

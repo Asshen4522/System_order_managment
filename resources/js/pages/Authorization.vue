@@ -2,7 +2,7 @@
 import customInput from "../components/Input.vue";
 import { reactive, ref } from "vue";
 
-const emit = defineEmits(["auth"]);
+const emit = defineEmits(["auth", "modal"]);
 
 const local_data = reactive({
     phone: null,
@@ -39,7 +39,7 @@ function Authorize() {
                 if (response == "no") {
                     local_data.errorLogin = true;
                 } else if (response == "banned") {
-                    alert("Ваш аккаунт заблокирован");
+                    emit("modal", ["confirm", "Ваш аккаунт заблокирован"]);
                 } else {
                     emit("auth", response);
                 }
