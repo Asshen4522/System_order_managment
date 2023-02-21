@@ -12,8 +12,6 @@ const local_data = reactive({
 
     errorPhone: false,
     errorPassword: false,
-
-    errorLogin: false,
 });
 
 function Validate() {
@@ -37,7 +35,7 @@ function Authorize() {
             .then((response) => response.json())
             .then((response) => {
                 if (response == "no") {
-                    local_data.errorLogin = true;
+                    emit("modal", ["confirm", "Неверная пара логин-парполь"]);
                 } else if (response == "banned") {
                     emit("modal", ["confirm", "Ваш аккаунт заблокирован"]);
                 } else {
@@ -87,10 +85,6 @@ function RevealPassword() {
         </div>
         <div class="for_button">
             <button @click="Authorize">Войти</button>
-        </div>
-
-        <div class="error" v-show="local_data.errorLogin">
-            Неверная пара телефон-пароль
         </div>
     </div>
 </template>
