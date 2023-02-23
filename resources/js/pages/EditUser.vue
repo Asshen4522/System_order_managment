@@ -20,8 +20,6 @@ const local_data = reactive({
     errorPhone: false,
     errorPassword: false,
 
-    errorRegister: false,
-
     editPassword: false,
 });
 
@@ -57,7 +55,6 @@ function Validate() {
     ) {
         return true;
     } else {
-        local_data.errorRegister = true;
         return false;
     }
 }
@@ -81,7 +78,10 @@ function Register() {
             .then((response) => response.json())
             .then((response) => {
                 if (response == false) {
-                    local_data.errorLogin = true;
+                    emit("modal", [
+                        "confirm",
+                        "Не все данные заполнены корректно или пользователя отредактировать не удалось",
+                    ]);
                 } else {
                     returnToCabinet();
                 }
@@ -172,11 +172,6 @@ getUser();
             <button @click="Register">Сохранить</button>
             <button @click="returnToCabinet">Назад</button>
         </div>
-
-        <div class="error" v-show="local_data.errorRegister">
-            Не все данные заполнены корректно или пользователя создать не
-            удалось
-        </div>
     </div>
 </template>
 <style scoped>
@@ -214,11 +209,6 @@ getUser();
     margin-right: 10%;
 }
 
-.error {
-    text-align: center;
-    font-size: 20px;
-    color: red;
-}
 .inputs {
     width: 75%;
     margin-left: 10%;

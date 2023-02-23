@@ -153,6 +153,7 @@ ifAuth();
                 @openPage="changePage"
                 @editOrder="editOrder"
                 @editReport="editReport"
+                @modal="modal"
                 :orderId="local_data.pickOrder"
                 :roleId="local_data.roleId"
                 :nowDate="local_data.nowDate"
@@ -165,10 +166,14 @@ ifAuth();
             />
         </div>
         <div v-if="local_data.currentPage === 6">
-            <CreateUser @openPage="changePage" />
+            <CreateUser @openPage="changePage" @modal="modal" />
         </div>
         <div v-if="local_data.currentPage === 7">
-            <EditOrder @openPage="changePage" :orderId="local_data.pickOrder" />
+            <EditOrder
+                @openPage="changePage"
+                @modal="modal"
+                :orderId="local_data.pickOrder"
+            />
         </div>
         <div v-if="local_data.currentPage === 8">
             <EditReport
@@ -201,7 +206,11 @@ ifAuth();
             <DisplayUser @openPage="changePage" :userId="local_data.pickUser" />
         </div>
         <div v-if="local_data.currentPage === 13">
-            <EditUser @openPage="changePage" :userId="local_data.pickUser" />
+            <EditUser
+                @openPage="changePage"
+                @modal="modal"
+                :userId="local_data.pickUser"
+            />
         </div>
     </div>
 </template>

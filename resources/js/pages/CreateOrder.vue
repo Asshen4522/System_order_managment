@@ -411,7 +411,7 @@ getExecutors();
 .page {
     display: flex;
     flex-direction: column;
-    gap: 30px;
+    gap: 10px;
 }
 
 .line {
@@ -419,13 +419,13 @@ getExecutors();
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    margin-top: 20px;
+    margin-top: 10px;
 }
 
 .contact_buttons {
     display: flex;
     flex-direction: row;
-    margin-top: 20px;
+    margin-top: 10px;
     justify-content: center;
 }
 
@@ -440,7 +440,7 @@ getExecutors();
     margin-top: 30px;
 }
 .select_executor {
-    margin-top: 20px;
+    margin-top: 10px;
     min-width: 170px;
 }
 .active {

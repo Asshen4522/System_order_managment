@@ -9,7 +9,6 @@ const props = defineProps({
 const local_data = reactive({
     order: {},
     reportDates: [],
-    dateError: false,
     editOrCreate: "create",
 });
 const emit = defineEmits([
@@ -17,6 +16,7 @@ const emit = defineEmits([
     "editOrder",
     "createReport",
     "editReport",
+    "modal",
 ]);
 
 function returnToCabinet() {
@@ -33,7 +33,7 @@ function writeReport(index) {
     if (local_data.order.startAt <= props.nowDate) {
         emit("createReport", index);
     } else {
-        local_data.dateError = true;
+        emit("modal", ["confirm", "Заказ еще не начат"]);
     }
 }
 
@@ -220,9 +220,6 @@ getDisplayOrder();
                 Редактировать отчет
             </button>
             <button @click="returnToCabinet">Назад</button>
-        </div>
-        <div class="error" v-show="local_data.dateError">
-            Заказ еще не начат
         </div>
     </div>
 </template>

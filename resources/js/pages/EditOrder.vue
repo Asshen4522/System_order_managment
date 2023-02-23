@@ -51,7 +51,6 @@ const local_data = reactive({
 
         errorDate: false,
     },
-    createError: false,
 
     locomotives: [],
 
@@ -62,7 +61,7 @@ const local_data = reactive({
     optionContact: true,
 });
 
-const emit = defineEmits(["openPage"]);
+const emit = defineEmits(["openPage", "modal"]);
 
 function selectLocomotive(selector) {
     local_data.order.wheel_pairs =
@@ -234,7 +233,7 @@ function SendData() {
                 });
         });
     } else {
-        local_data.createError = true;
+        emit("modal", ["confirm", "Не все поля заполнены верно"]);
     }
 }
 
@@ -286,9 +285,9 @@ getExecutors();
         </div>
 
         <div class="line">
-            <div>
-                <div>Модель локомотива</div>
+            <div class="locomotiveWheel">
                 <select
+                    class="locomotiveWheel__item"
                     @change="selectLocomotive($event)"
                     v-model="local_data.order.locomotive"
                 >
@@ -299,11 +298,10 @@ getExecutors();
                         {{ option.model }}
                     </option>
                 </select>
-            </div>
-            <div>
+
                 <customInput
                     v-model="local_data.order.wheel_pairs"
-                    inputname="Кол-во колесных пар"
+                    inputname="Колесные пары"
                     typeIn="text"
                     :ifError="local_data.error_list.errorWheelPairs"
                 />
@@ -431,15 +429,24 @@ getExecutors();
             <button @click="SendData">Сохранить изменения</button>
             <button @click="returnToCabinet(3)">Назад</button>
         </div>
-
-        <div class="error" v-show="local_data.createError">
-            Не все поля заполнены верно
-        </div>
     </div>
 </template>
 <style scoped>
+.locomotiveWheel {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.locomotiveWheel__item {
+    display: flex;
+    flex-direction: row;
+    align-self: center;
+    width: 170px;
+}
 .buttons {
-    margin-top: 20px;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -448,20 +455,20 @@ getExecutors();
 .page {
     display: flex;
     flex-direction: column;
-    gap: 30px;
+    gap: 10px;
 }
 
 .line {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    margin-top: 20px;
+    margin-top: 10px;
 }
 
 .contact_buttons {
     display: flex;
     flex-direction: row;
-    margin-top: 20px;
+    margin-top: 10px;
     justify-content: center;
 }
 
@@ -484,14 +491,8 @@ getExecutors();
     background-color: var(--color-object);
 }
 
-.error {
-    margin-top: 20px;
-    text-align: center;
-    font-size: 20px;
-    color: red;
-}
 .select_executor {
-    margin-top: 20px;
+    margin-top: 10px;
     min-width: 170px;
 }
 .contact_selector {

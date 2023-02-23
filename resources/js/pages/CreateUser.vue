@@ -2,7 +2,7 @@
 import customInput from "../components/Input.vue";
 import { reactive } from "vue";
 
-const emit = defineEmits(["openPage"]);
+const emit = defineEmits(["openPage", "modal"]);
 
 const local_data = reactive({
     name: "",
@@ -42,7 +42,6 @@ function Validate() {
     ) {
         return true;
     } else {
-        local_data.errorRegister = true;
         return false;
     }
 }
@@ -70,6 +69,11 @@ function Register() {
                     returnToCabinet();
                 }
             });
+    } else {
+        emit("modal", [
+            "confirm",
+            "Не все данные заполнены корректно или пользователя создать не удалось",
+        ]);
     }
 }
 function returnToCabinet() {
@@ -133,11 +137,6 @@ function returnToCabinet() {
             <button @click="Register">Создать</button>
             <button @click="returnToCabinet">Назад</button>
         </div>
-
-        <div class="error" v-show="local_data.errorRegister">
-            Не все данные заполнены корректно или пользователя создать не
-            удалось
-        </div>
     </div>
 </template>
 <style scoped>
@@ -168,12 +167,6 @@ function returnToCabinet() {
     flex-direction: row;
     justify-content: space-between;
     gap: 10px;
-}
-
-.error {
-    text-align: center;
-    font-size: 20px;
-    color: red;
 }
 .inputs {
     width: 75%;
