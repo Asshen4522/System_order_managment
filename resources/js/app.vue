@@ -130,7 +130,11 @@ ifAuth();
             :text="local_data.textModal"
         />
         <div v-if="local_data.currentPage != 1">
-            <Header @openPage="changePage" :roleId="local_data.roleId" />
+            <Header
+                @openPage="changePage"
+                :roleId="local_data.roleId"
+                :currentPage="local_data.currentPage"
+            />
         </div>
         <div v-if="local_data.currentPage === 1">
             <Authorization @auth="authorizate" @modal="modal" />

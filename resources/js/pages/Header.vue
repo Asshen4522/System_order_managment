@@ -1,13 +1,27 @@
 <script setup>
-import { reactive } from "vue";
+import { reactive, computed } from "vue";
 
 const local_data = reactive({
     showPhone: false,
 });
 const props = defineProps({
     roleId: null,
+    currentPage: null,
 });
 const emit = defineEmits(["openPage"]);
+
+const menuActive = computed(() => {
+    if (
+        props.currentPage == 6 ||
+        props.currentPage == 11 ||
+        props.currentPage == 12 ||
+        props.currentPage == 13
+    ) {
+        return "user";
+    } else {
+        return "order";
+    }
+});
 
 function nextPage(index) {
     emit("openPage", index);
@@ -40,16 +54,40 @@ function logout() {
                     :class="{ notShow: !local_data.showPhone }"
                     class="phone-menu"
                 >
-                    <button @click="nextPage(3)">Заказы</button>
-                    <button @click="nextPage(11)">Пользователи</button>
+                    <div
+                        :class="{ menu_link_active: menuActive == 'order' }"
+                        class="menu-link"
+                        @click="nextPage(3)"
+                    >
+                        Заказы
+                    </div>
+                    <div
+                        :class="{ menu_link_active: menuActive == 'user' }"
+                        class="menu-link"
+                        @click="nextPage(11)"
+                    >
+                        Пользователи
+                    </div>
                     <button @click="logout">Выйти</button>
                 </div>
             </div>
 
             <div v-if="props.roleId == 1" class="top-menu">
                 <div class="menu-buttons">
-                    <button @click="nextPage(3)">Заказы</button>
-                    <button @click="nextPage(11)">Пользователи</button>
+                    <div
+                        :class="{ menu_link_active: menuActive == 'order' }"
+                        class="menu-link"
+                        @click="nextPage(3)"
+                    >
+                        Заказы
+                    </div>
+                    <div
+                        :class="{ menu_link_active: menuActive == 'user' }"
+                        class="menu-link"
+                        @click="nextPage(11)"
+                    >
+                        Пользователи
+                    </div>
                 </div>
 
                 <button @click="logout">Выйти</button>
@@ -116,6 +154,20 @@ function logout() {
     display: flex;
     flex-direction: row;
     justify-content: flex-end;
+}
+
+.menu-link {
+    color: var(--color-input);
+    transition: 1s;
+}
+.menu-link:hover {
+    cursor: pointer;
+    text-decoration: underline;
+    transition: 1s;
+    font-size: 20px;
+}
+.menu_link_active {
+    color: black;
 }
 
 @media only screen and (max-width: 425px) {
