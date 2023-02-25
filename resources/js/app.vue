@@ -23,6 +23,7 @@ const local_data = reactive({
     pickReport: null,
     roleId: null,
     nowDate: null,
+    userFia: null,
 
     showModal: false,
     typeModal: "confirm",
@@ -72,7 +73,8 @@ function ifAuth() {
         .then((response) => {
             if (response) {
                 local_data.currentPage = 3;
-                local_data.roleId = response;
+                local_data.roleId = response[0];
+                local_data.userFia = response[1] + " " + response[2];
             } else {
                 local_data.currentPage = 1;
             }
@@ -134,6 +136,7 @@ ifAuth();
                 @openPage="changePage"
                 :roleId="local_data.roleId"
                 :currentPage="local_data.currentPage"
+                :userFia="local_data.userFia"
             />
         </div>
         <div v-if="local_data.currentPage === 1">

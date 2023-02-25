@@ -7,6 +7,7 @@ const local_data = reactive({
 const props = defineProps({
     roleId: null,
     currentPage: null,
+    userFia: null,
 });
 const emit = defineEmits(["openPage"]);
 
@@ -68,6 +69,7 @@ function logout() {
                     >
                         Пользователи
                     </div>
+                    <div>{{ props.userFia }}</div>
                     <button @click="logout">Выйти</button>
                 </div>
             </div>
@@ -89,7 +91,7 @@ function logout() {
                         Пользователи
                     </div>
                 </div>
-
+                <div>{{ props.userFia }}</div>
                 <button @click="logout">Выйти</button>
             </div>
             <div v-if="props.roleId == 2" class="logout">
@@ -141,6 +143,7 @@ function logout() {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+    align-items: center;
     gap: 10px;
 }
 .menu-buttons {

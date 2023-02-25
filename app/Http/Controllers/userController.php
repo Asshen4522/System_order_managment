@@ -49,7 +49,7 @@ class userController extends Controller
     public function If_auth()
     {
         if (auth()->user()) {
-            $answer = auth()->user()->role_id;
+            $answer = [auth()->user()->role_id, auth()->user()->name, auth()->user()->surname];
         } else {
             $answer = 'false';
         }
