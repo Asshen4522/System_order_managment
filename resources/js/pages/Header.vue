@@ -94,7 +94,8 @@ function logout() {
                 <div>{{ props.userFia }}</div>
                 <button @click="logout">Выйти</button>
             </div>
-            <div v-if="props.roleId == 2" class="logout">
+            <div v-if="props.roleId == 2" class="logout top-menu">
+                <div>{{ props.userFia }}</div>
                 <button @click="logout">Выйти</button>
             </div>
         </div>
@@ -160,7 +161,6 @@ function logout() {
 }
 
 .menu-link {
-    color: var(--color-input);
     transition: 1s;
 }
 .menu-link:hover {
@@ -170,7 +170,7 @@ function logout() {
     font-size: 20px;
 }
 .menu_link_active {
-    color: black;
+    color: var(--color-accent);
 }
 
 @media only screen and (max-width: 425px) {

@@ -96,10 +96,6 @@ function showOrder(index) {
     local_data.currentPage = 4;
     local_data.pickOrder = index;
 }
-function authorizate(roleId) {
-    local_data.currentPage = 3;
-    local_data.roleId = roleId;
-}
 function editReport(orderId) {
     local_data.currentPage = 8;
     local_data.pickOrder = orderId;
@@ -140,7 +136,7 @@ ifAuth();
             />
         </div>
         <div v-if="local_data.currentPage === 1">
-            <Authorization @auth="authorizate" @modal="modal" />
+            <Authorization @auth="ifAuth" @modal="modal" />
         </div>
         <div v-if="local_data.currentPage === 2">
             <CreateOrder @openPage="changePage" @modal="modal" />

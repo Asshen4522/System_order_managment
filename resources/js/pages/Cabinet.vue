@@ -7,6 +7,7 @@ const props = defineProps({
 });
 const local_data = reactive({
     orders: [],
+    filterStatus: 0,
 });
 
 const emit = defineEmits(["openPage", "displayOrder", "displayReports"]);
@@ -93,82 +94,37 @@ getOrders();
 <template>
     <div>
         <div class="field">
+            <div class="filters" v-show="props.roleId == 1">
+                <select v-model="local_data.filterStatus">
+                    <option :value="0">Без фильтрации</option>
+                    <option :value="1">Новые</option>
+                    <option :value="2">В работе</option>
+                    <option :value="3">Законченные</option>
+                    <option :value="4">Отмененные</option>
+                </select>
+            </div>
             <div v-for="option in local_data.orders">
-                <div class="order_buttons" v-show="option.status === 1">
+                <div
+                    class="order_buttons"
+                    v-if="
+                        local_data.filterStatus == 0 ||
+                        local_data.filterStatus == option.status
+                    "
+                >
                     <button @click="showOrder(option.id)" class="button-order">
-                        <img class="pict" src="../../img/new.png" />
-                        <div>заказ №{{ option.id }}</div>
-                        <div class="addition">
-                            {{ option.city }}
+                        <div v-if="option.status === 1">
+                            <img class="pict" src="../../img/new.png" />
                         </div>
-                        <div v-if="props.roleId == 1" class="addition">
-                            {{ option.fio }}
+                        <div v-else-if="option.status === 2">
+                            <img class="pict" src="../../img/working.png" />
                         </div>
-                    </button>
-                    <button
-                        v-show="props.roleId == 1"
-                        @click="displayReports(option.id)"
-                    >
-                        Отчеты
-                    </button>
-                    <img
-                        @click="deleteOrder(option.id)"
-                        v-show="props.roleId == 1"
-                        class="close_pict"
-                        src="../../img/delete.png"
-                    />
-                </div>
-                <div class="order_buttons" v-show="option.status === 2">
-                    <button @click="showOrder(option.id)" class="button-order">
-                        <img class="pict" src="../../img/working.png" />
-                        <div>заказ №{{ option.id }}</div>
-                        <div class="addition">
-                            {{ option.city }}
+                        <div v-else-if="option.status === 3">
+                            <img class="pict" src="../../img/ready.png" />
                         </div>
-                        <div v-if="props.roleId == 1" class="addition">
-                            {{ option.fio }}
+                        <div v-else>
+                            <img class="pict" src="../../img/cancelled.png" />
                         </div>
-                    </button>
-                    <button
-                        v-show="props.roleId == 1"
-                        @click="displayReports(option.id)"
-                    >
-                        Отчеты
-                    </button>
-                    <img
-                        @click="deleteOrder(option.id)"
-                        v-show="props.roleId == 1"
-                        class="close_pict"
-                        src="../../img/delete.png"
-                    />
-                </div>
-                <div class="order_buttons" v-show="option.status === 3">
-                    <button @click="showOrder(option.id)" class="button-order">
-                        <img class="pict" src="../../img/ready.png" />
-                        <div>заказ №{{ option.id }}</div>
-                        <div class="addition">
-                            {{ option.city }}
-                        </div>
-                        <div v-if="props.roleId == 1" class="addition">
-                            {{ option.fio }}
-                        </div>
-                    </button>
-                    <button
-                        v-show="props.roleId == 1"
-                        @click="displayReports(option.id)"
-                    >
-                        Отчеты
-                    </button>
-                    <img
-                        @click="deleteOrder(option.id)"
-                        v-show="props.roleId == 1"
-                        class="close_pict"
-                        src="../../img/delete.png"
-                    />
-                </div>
-                <div class="order_buttons" v-show="option.status === 4">
-                    <button @click="showOrder(option.id)" class="button-order">
-                        <img class="pict" src="../../img/cancelled.png" />
+
                         <div>заказ №{{ option.id }}</div>
                         <div class="addition">
                             {{ option.city }}
