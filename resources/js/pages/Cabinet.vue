@@ -8,6 +8,8 @@ const props = defineProps({
 const local_data = reactive({
     orders: [],
     filterStatus: 0,
+    dateStart: "",
+    dateEnd: "",
 });
 
 const emit = defineEmits(["openPage", "displayOrder", "displayReports"]);
@@ -31,6 +33,7 @@ function getOrders() {
                         status: element.status_id,
                         id: element.id,
                         fio: element.name + " " + element.surname,
+                        date: element.created_at,
                     };
                     local_data.orders.push(elem);
                 });
@@ -95,20 +98,41 @@ getOrders();
     <div>
         <div class="field">
             <div class="filters" v-show="props.roleId == 1">
-                <select v-model="local_data.filterStatus">
-                    <option :value="0">Без фильтрации</option>
-                    <option :value="1">Новые</option>
-                    <option :value="2">В работе</option>
-                    <option :value="3">Законченные</option>
-                    <option :value="4">Отмененные</option>
-                </select>
+                <div class="filter_elem">
+                    <div>Фильтровать по статусу</div>
+                    <select v-model="local_data.filterStatus">
+                        <option :value="0">Без фильтрации</option>
+                        <option :value="1">Новые</option>
+                        <option :value="2">В работе</option>
+                        <option :value="3">Законченные</option>
+                        <option :value="4">Отмененные</option>
+                    </select>
+                </div>
+
+                <div class="filter_elem">
+                    <div>Фильтровать по дате</div>
+                    <div class="date_filter">
+                        <div class="date_lines">
+                            <div>От</div>
+                            <input v-model="local_data.dateStart" type="date" />
+                        </div>
+                        <div class="date_lines">
+                            <div>До</div>
+                            <input v-model="local_data.dateEnd" type="date" />
+                        </div>
+                    </div>
+                </div>
             </div>
             <div v-for="option in local_data.orders">
                 <div
                     class="order_buttons"
                     v-if="
-                        local_data.filterStatus == 0 ||
-                        local_data.filterStatus == option.status
+                        (local_data.filterStatus == 0 ||
+                            local_data.filterStatus == option.status) &&
+                        (local_data.dateStart == '' ||
+                            local_data.dateStart <= option.date) &&
+                        (local_data.dateEnd == '' ||
+                            local_data.dateEnd >= option.date)
                     "
                 >
                     <button @click="showOrder(option.id)" class="button-order">
@@ -154,12 +178,28 @@ getOrders();
     </div>
 </template>
 <style scoped>
-@media only screen and (min-width: 1441px) {
+.filters {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 10%;
+    margin-bottom: 15px;
 }
-@media only screen and (max-width: 425px) {
-    .addition {
-        display: none;
-    }
+.filter_elem {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 40%;
+}
+.date_filter {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+.date_lines {
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
 }
 
 .order_buttons {
@@ -222,5 +262,18 @@ getOrders();
     background-color: var(--color-accent);
     color: white;
     transition: 1s;
+}
+
+@media only screen and (min-width: 1441px) {
+}
+@media only screen and (max-width: 425px) {
+    .addition {
+        display: none;
+    }
+    .date_filter {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
 }
 </style>
