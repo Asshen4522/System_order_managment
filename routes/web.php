@@ -56,3 +56,4 @@ Route::post('/Get_inner_costs_report', [getDataController::class, 'Get_inner_cos
 Route::post('/Get_reportList', [getDataController::class, 'Get_reportList']);
 Route::get('/Get_userList', [getDataController::class, 'Get_userList']);
 Route::post('/Get_user', [getDataController::class, 'Get_user']);
+Route::get('/Get_stats', [getDataController::class, 'Get_stats']);

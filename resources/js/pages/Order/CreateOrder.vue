@@ -1,15 +1,9 @@
 <script setup>
-import customInput from "../components/Input.vue";
-import { reactive, ref, computed } from "vue";
-
-const props = defineProps({
-    orderId: null,
-});
+import customInput from "../../components/Input.vue";
+import { reactive, ref } from "vue";
 
 const local_data = reactive({
     order: {
-        id: props.orderId,
-
         city: "",
         locomotive: null,
         wheel_pairs: null,
@@ -28,7 +22,7 @@ const local_data = reactive({
             phone: null,
         },
 
-        created_at: "2023-01-01",
+        created_at: new Date().toISOString().substr(0, 10),
 
         executor: null,
     },
@@ -41,8 +35,6 @@ const local_data = reactive({
         errorRent: false,
         errorDailyCost: false,
 
-        errorHousing: false,
-
         errorTangen: false,
         errorCup: false,
 
@@ -51,6 +43,7 @@ const local_data = reactive({
 
         errorDate: false,
     },
+    createError: false,
 
     locomotives: [],
 
@@ -195,8 +188,6 @@ function SendData() {
     if (Validate()) {
         contact().then((response) => {
             const datuum = {
-                id: props.orderId,
-
                 city: local_data.order.city,
                 locomotive: local_data.order.locomotive,
                 wheel_pairs: local_data.order.wheel_pairs,
@@ -215,7 +206,7 @@ function SendData() {
 
                 executor: local_data.order.executor,
             };
-            fetch("/Edit_order", {
+            fetch("/Create_order", {
                 method: "POST",
                 body: JSON.stringify(datuum),
                 headers: {
@@ -227,54 +218,25 @@ function SendData() {
                 .then((response) => response.json())
                 .then((response) => {
                     if (response == true) {
-                        returnToCabinet(3);
-                    } else {
+                        returnToCabinet("order-main");
                     }
                 });
         });
     } else {
-        emit("modal", ["confirm", "Не все поля заполнены верно"]);
+        emit("modal", [
+            "confirm",
+            "Не все поля заполнены верно. Необходимо ввести как минимум город и вид локомотива",
+        ]);
     }
 }
 
-function getDisplayOrder() {
-    fetch("/Get_display_order", {
-        method: "POST",
-        body: JSON.stringify({ id: props.orderId }),
-        headers: {
-            "X-CSRF-TOKEN": document.querySelector('[name="_token"]').value,
-            "Content-Type": "application/json",
-        },
-    })
-        .then((response) => response.json())
-        .then((response) => {
-            local_data.order.city = response[0].city;
-            local_data.order.locomotive = response[0].locomotive_id;
-            local_data.order.wheel_pairs = response[0].wheel_pairs;
-
-            local_data.order.budget = response[0].budget;
-            local_data.order.daily_cost = response[0].daily_cost;
-            local_data.order.housing = response[0].housing;
-            local_data.order.rent = response[0].rent;
-
-            local_data.order.tangen = response[0].tangen;
-            local_data.order.cup = response[0].cup;
-
-            local_data.order.contact.id = response[0].contact_id;
-
-            local_data.order.created_at = response[0].created_at;
-
-            local_data.order.executor = response[0].executor_id;
-        });
-}
-getDisplayOrder();
 getLocomotives();
 getContacts();
 getExecutors();
 </script>
 <template>
     <div class="page">
-        <div>Редактирование заказа №{{ props.orderId }}</div>
+        <div>Создание</div>
         <div>
             <customInput
                 v-model="local_data.order.city"
@@ -283,7 +245,7 @@ getExecutors();
                 :ifError="local_data.error_list.errorCity"
             />
         </div>
-
+        <div class="line">Модель локомотива</div>
         <div class="line">
             <div class="locomotiveWheel">
                 <select
@@ -327,7 +289,7 @@ getExecutors();
                 v-model="local_data.order.housing"
                 inputname="Адрес жилья"
                 typeIn="text"
-                :ifError="local_data.error_list.errorHousing"
+                :ifError="false"
             />
             <customInput
                 v-model="local_data.order.rent"
@@ -426,8 +388,8 @@ getExecutors();
             </div>
         </div>
         <div class="buttons">
-            <button @click="SendData">Сохранить изменения</button>
-            <button @click="returnToCabinet(3)">Назад</button>
+            <button @click="SendData">Создать</button>
+            <button @click="returnToCabinet('order-main')">Назад</button>
         </div>
     </div>
 </template>
@@ -446,12 +408,6 @@ getExecutors();
     align-self: center;
     width: 170px;
 }
-.buttons {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    gap: 10px;
-}
 .page {
     display: flex;
     flex-direction: column;
@@ -459,6 +415,7 @@ getExecutors();
 }
 
 .line {
+    width: 100%;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -472,33 +429,36 @@ getExecutors();
     justify-content: center;
 }
 
+.contact_selector {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    min-width: 170px;
+}
+
 .contact_input {
     margin-top: 30px;
 }
-
-.button-selector {
-    color: var(--color-object);
-    background-color: white;
-    border-color: var(--color-object);
-    padding: 2px;
-    width: 100%;
-}
-.button-selector:hover {
-    color: white;
+.select_executor {
+    margin-top: 10px;
+    min-width: 170px;
 }
 .active {
     color: white;
     background-color: var(--color-object);
 }
 
-.select_executor {
-    margin-top: 10px;
-    min-width: 170px;
+.error {
+    margin-top: 20px;
+    text-align: center;
+    font-size: 20px;
+    color: red;
 }
-.contact_selector {
+
+.buttons {
+    gap: 10px;
     display: flex;
     flex-direction: row;
-    justify-content: center;
-    min-width: 170px;
+    justify-content: space-between;
 }
 </style>

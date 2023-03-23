@@ -11,7 +11,7 @@ const local_data = reactive({
 const emit = defineEmits(["openPage", "displayReport"]);
 
 function returnToCabinet() {
-    emit("openPage", 3);
+    emit("openPage", "order-main");
 }
 
 function showReport(index) {

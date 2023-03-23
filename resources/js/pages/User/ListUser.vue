@@ -111,13 +111,15 @@ getUsers();
                 <img
                     @click="deleteUser(user.id)"
                     class="close_pict"
-                    src="../../img/delete.png"
+                    src="../../../img/delete.png"
                 />
             </div>
         </div>
 
         <div class="buttons">
-            <button @click="returnToCabinet(6)">Создать пользователя</button>
+            <button @click="returnToCabinet('user-add')">
+                Создать пользователя
+            </button>
         </div>
     </div>
 </template>
@@ -171,6 +173,7 @@ getUsers();
 .switch_btn {
     display: inline-block;
     width: 72px; /* ширина */
+    min-width: 72px;
     height: 24px; /* высота */
     border-radius: 19px; /* радиус скругления */
     background: #bfbfbf; /* цвет фона */
@@ -201,7 +204,7 @@ getUsers();
     left: 50px;
 }
 
-@media only screen and (max-width: 425px) {
+@media only screen and (max-width: 768px) {
     .user-btn {
         min-width: 65%;
     }

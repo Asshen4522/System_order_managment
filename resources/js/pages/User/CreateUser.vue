@@ -1,5 +1,5 @@
 <script setup>
-import customInput from "../components/Input.vue";
+import customInput from "../../components/Input.vue";
 import { reactive } from "vue";
 
 const emit = defineEmits(["openPage", "modal"]);
@@ -65,19 +65,17 @@ function Register() {
             .then((response) => {
                 if (response == false) {
                     local_data.errorLogin = true;
+                    emit("modal", ["confirm", "Ошибка базы данных"]);
                 } else {
                     returnToCabinet();
                 }
             });
     } else {
-        emit("modal", [
-            "confirm",
-            "Не все данные заполнены корректно или пользователя создать не удалось",
-        ]);
+        emit("modal", ["confirm", "Не все данные заполнены корректно"]);
     }
 }
 function returnToCabinet() {
-    emit("openPage", 11);
+    emit("openPage", "user-main");
 }
 </script>
 <template>

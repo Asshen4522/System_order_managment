@@ -24,7 +24,7 @@ const local_data = reactive({
 const emit = defineEmits(["openPage"]);
 
 function returnToCabinet() {
-    emit("openPage", 9);
+    emit("openPage", "report-main");
 }
 
 function getActivities() {

@@ -1,11 +1,11 @@
 <script setup>
 import { reactive } from "vue";
-import customInput from "../components/Input.vue";
-
+import customInput from "../../components/Input.vue";
 
 const emit = defineEmits(["openPage"]);
 const props = defineProps({
     orderId: null,
+    nowDate: null,
 });
 const local_data = reactive({
     report: {
@@ -15,7 +15,6 @@ const local_data = reactive({
         costs: [],
         activities: [],
         comment: null,
-        date: null,
         id:props.orderId,
     },
     orderStatus: null,
@@ -42,44 +41,8 @@ const local_data = reactive({
     errorNewActivity : false,
 });
 
-function updateStatus() {
-    let statusId = 2;
-    let nowDate = "";
-    if (local_data.wheel_pair_left == local_data.report.wheel_pairs) {
-        statusId = 3
-        let date = new Date();
-        nowDate = String(date.getFullYear()) + "-";
-        if (String(date.getMonth() + 1).length == 1) {
-            nowDate += "0" + String(date.getMonth() + 1) + "-";
-        } else {
-            nowDate += String(date.getMonth() + 1) + "-";
-        }
-        if (String(date.getDate()).length == 1) {
-            nowDate += "0" + String(date.getDate());
-        } else {
-            nowDate += String(date.getDate());
-        }
-    }
-    const statusAndId = {id : props.orderId, status : statusId, date : nowDate}
-    fetch("/Update_status", {
-        method: "POST",
-        body: JSON.stringify(statusAndId),
-        headers: {
-            "X-CSRF-TOKEN":
-                document.querySelector('[name="_token"]').value,
-            "Content-Type": "application/json",
-        },
-    })
-        .then((response) => response.json())
-        .then((response) => {
-            if (response) {
-                returnToCabinet();
-            }
-        });
-}
-
-function returnToCabinet() {
-    emit("openPage", 4);
+function returnToOrder() {
+    emit("openPage", 'order-show');
 }
 
 function createCost() {
@@ -133,7 +96,7 @@ function createActivity() {
 
 function getActivities() {
     local_data.activities = [];
-    fetch("/Get_activities", {
+    return fetch("/Get_activities", {
         method: "GET",
         headers: {
             "X-CSRF-TOKEN": document.querySelector('[name="_token"]').value,
@@ -149,7 +112,7 @@ function getActivities() {
 }
 function getCosts() {
     local_data.costs = [];
-    fetch("/Get_costs", {
+    return fetch("/Get_costs", {
         method: "GET",
         headers: {
             "X-CSRF-TOKEN": document.querySelector('[name="_token"]').value,
@@ -178,10 +141,6 @@ function getOrderCosts() {
                 local_data.inner_costs.push(element);
             });
         });
-}
-function getDate() {
-    let date = new Date()
-    local_data.report.date = String(date.getFullYear())+'-'+String(date.getMonth()+1)+'-'+String(date.getDate())
 }
 function getWheelPairLeft() {
     fetch("/Get_wheel_pair_left", {
@@ -268,8 +227,41 @@ function moreTangen() {
     local_data.report.tangen+=1
 }
 
+function getReport() {
+    fetch("/Get_report", {
+        method: "POST",
+        body: JSON.stringify({ id: props.orderId, date:props.nowDate}),
+        headers: {
+            "X-CSRF-TOKEN": document.querySelector('[name="_token"]').value,
+            "Content-Type": "application/json",
+        },
+    })
+        .then((response) => response.json())
+        .then((response) => {
+            local_data.report.id= response[0].id,
+        local_data.report.wheel_pairs= response[0].wheel_pair,
+        local_data.report.tangen= response[0].tangen,
+        local_data.report.cup= response[0].cup,
+        local_data.report.comment= response[0].comment,
+        response[1].forEach(element => {
+            local_data.report.activities.push({
+                id: element.activity_id,
+                name: local_data.activities[element.activity_id - 1].name,
+            })
+        });
+
+        response[2].forEach(element => {
+            local_data.report.costs.push({
+                id: element.cost_id,
+                price: element.price,
+                name: local_data.costs[element.cost_id - 1].name,
+            })
+        });
+        })
+}
+
 function SendData() {
-    fetch("/Create_report", {
+    fetch("/Edit_report", {
         method: "POST",
         body: JSON.stringify(local_data.report),
         headers: {
@@ -280,22 +272,19 @@ function SendData() {
     })
         .then((response) => response.json())
         .then((response) => {
-            if (response) {
-                updateStatus();
+            if(response){
+                returnToOrder();
             }
         });
 }
 
-
-getCosts();
-getActivities();
 getOrderCosts();
-getDate();
 getWheelPairLeft();
+Promise.all([getCosts(),getActivities()]).then(getReport);
 </script>
 <template>
     <div>
-        <div>Дневной отчет от {{local_data.report.date}}</div>
+        <div>Дневной отчет от {{props.nowDate}}</div>
         <div class="block">
             <div class="block_header">Финансовые затраты</div>
             <div class="display_line">
@@ -318,6 +307,7 @@ getWheelPairLeft();
             <div class="display_line_act">Добавить траты</div>
             <div class="addCost">
                 <select class="addCostId" v-model="local_data.newCost.id">
+                   
                     <option
                         v-for="option in local_data.costs"
                         :value="option.id"
@@ -414,8 +404,8 @@ getWheelPairLeft();
             <textarea class="comment" v-model="local_data.report.comment"> </textarea>
         </div>
         <div class="buttons">
-            <button @click="SendData">Создать отчет</button>
-            <button @click="returnToCabinet">Назад</button>
+            <button @click="SendData">Сохранить</button>
+            <button @click="returnToOrder">Назад</button>
             
         
         </div>
@@ -423,7 +413,6 @@ getWheelPairLeft();
     </div>
 </template>
 <style scoped>
-
 .smallButtons{
     font-size:30px;
     align-self:right;
@@ -499,7 +488,6 @@ getWheelPairLeft();
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+    gap:10px;
 }
-
-
 </style>

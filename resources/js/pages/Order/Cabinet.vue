@@ -137,16 +137,19 @@ getOrders();
                 >
                     <button @click="showOrder(option.id)" class="button-order">
                         <div v-if="option.status === 1">
-                            <img class="pict" src="../../img/new.png" />
+                            <img class="pict" src="../../../img/new.png" />
                         </div>
                         <div v-else-if="option.status === 2">
-                            <img class="pict" src="../../img/working.png" />
+                            <img class="pict" src="../../../img/working.png" />
                         </div>
                         <div v-else-if="option.status === 3">
-                            <img class="pict" src="../../img/ready.png" />
+                            <img class="pict" src="../../../img/ready.png" />
                         </div>
                         <div v-else>
-                            <img class="pict" src="../../img/cancelled.png" />
+                            <img
+                                class="pict"
+                                src="../../../img/cancelled.png"
+                            />
                         </div>
 
                         <div>заказ №{{ option.id }}</div>
@@ -167,13 +170,13 @@ getOrders();
                         @click="deleteOrder(option.id)"
                         v-show="props.roleId == 1"
                         class="close_pict"
-                        src="../../img/delete.png"
+                        src="../../../img/delete.png"
                     />
                 </div>
             </div>
         </div>
         <div class="buttons" v-show="props.roleId == 1">
-            <button @click="nextPage(2)">Добавить заказ</button>
+            <button @click="nextPage('order-add')">Добавить заказ</button>
         </div>
     </div>
 </template>

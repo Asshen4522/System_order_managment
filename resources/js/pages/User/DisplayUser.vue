@@ -43,8 +43,8 @@ getUser();
             <div class="block_line">Роль: {{ local_data.user.role }}</div>
         </div>
         <div class="buttons">
-            <button @click="returnToCabinet(13)">Редактировать</button>
-            <button @click="returnToCabinet(11)">Назад</button>
+            <button @click="returnToCabinet('user-edit')">Редактировать</button>
+            <button @click="returnToCabinet('user-main')">Назад</button>
         </div>
     </div>
 </template>

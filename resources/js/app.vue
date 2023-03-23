@@ -1,19 +1,25 @@
 <script setup>
 import Authorization from "./pages/Authorization.vue";
-import CreateOrder from "./pages/CreateOrder.vue";
-import Cabinet from "./pages/Cabinet.vue";
-import DisplayOrder from "./pages/DisplayOrder.vue";
-import CreateReport from "./pages/CreateReport.vue";
-import CreateUser from "./pages/CreateUser.vue";
-import EditOrder from "./pages/EditOrder.vue";
-import EditReport from "./pages/EditReport.vue";
-import DisplayReport from "./pages/DisplayReport.vue";
-import ListReport from "./pages/ListReport.vue";
-import ListUser from "./pages/ListUser.vue";
-import DisplayUser from "./pages/DisplayUser.vue";
-import EditUser from "./pages/EditUser.vue";
 import Header from "./pages/Header.vue";
 import Modal from "./components/Modal.vue";
+
+import Cabinet from "./pages/Order/Cabinet.vue";
+import CreateOrder from "./pages/Order/CreateOrder.vue";
+import DisplayOrder from "./pages/Order/DisplayOrder.vue";
+import EditOrder from "./pages/Order/EditOrder.vue";
+
+import ListReport from "./pages/Report/ListReport.vue";
+import CreateReport from "./pages/Report/CreateReport.vue";
+import DisplayReport from "./pages/Report/DisplayReport.vue";
+import EditReport from "./pages/Report/EditReport.vue";
+
+import ListUser from "./pages/User/ListUser.vue";
+import CreateUser from "./pages/User/CreateUser.vue";
+import DisplayUser from "./pages/User/DisplayUser.vue";
+import EditUser from "./pages/User/EditUser.vue";
+
+import Stats from "./pages/Statistiks/Stats.vue";
+
 import { reactive } from "vue";
 
 const local_data = reactive({
@@ -72,11 +78,11 @@ function ifAuth() {
         .then((response) => response.json())
         .then((response) => {
             if (response) {
-                local_data.currentPage = 3;
+                local_data.currentPage = "order-main";
                 local_data.roleId = response[0];
                 local_data.userFia = response[1] + " " + response[2];
             } else {
-                local_data.currentPage = 1;
+                local_data.currentPage = "auth";
             }
         });
 }
@@ -85,31 +91,31 @@ function changePage(index) {
     local_data.currentPage = index;
 }
 function editOrder(orderId) {
-    local_data.currentPage = 7;
+    local_data.currentPage = "order-edit";
     local_data.pickOrder = orderId;
 }
 function writeReport(index) {
     local_data.pickOrder = index;
-    local_data.currentPage = 5;
+    local_data.currentPage = "report-add";
 }
 function showOrder(index) {
-    local_data.currentPage = 4;
+    local_data.currentPage = "order-show";
     local_data.pickOrder = index;
 }
 function editReport(orderId) {
-    local_data.currentPage = 8;
+    local_data.currentPage = "report-edit";
     local_data.pickOrder = orderId;
 }
 function displayReport(reportId) {
-    local_data.currentPage = 10;
+    local_data.currentPage = "report-show";
     local_data.pickReport = reportId;
 }
 function displayReports(index) {
-    local_data.currentPage = 9;
+    local_data.currentPage = "report-main";
     local_data.pickOrder = index;
 }
 function displayUser(index) {
-    local_data.currentPage = 12;
+    local_data.currentPage = "user-show";
     local_data.pickUser = index;
 }
 
@@ -127,7 +133,7 @@ ifAuth();
             :type="local_data.typeModal"
             :text="local_data.textModal"
         />
-        <div v-if="local_data.currentPage != 1">
+        <div v-if="local_data.currentPage != 'auth'">
             <Header
                 @openPage="changePage"
                 :roleId="local_data.roleId"
@@ -135,13 +141,10 @@ ifAuth();
                 :userFia="local_data.userFia"
             />
         </div>
-        <div v-if="local_data.currentPage === 1">
+        <div v-if="local_data.currentPage === 'auth'">
             <Authorization @auth="ifAuth" @modal="modal" />
         </div>
-        <div v-if="local_data.currentPage === 2">
-            <CreateOrder @openPage="changePage" @modal="modal" />
-        </div>
-        <div v-if="local_data.currentPage === 3">
+        <div v-if="local_data.currentPage === 'order-main'">
             <Cabinet
                 @openPage="changePage"
                 @displayOrder="showOrder"
@@ -150,7 +153,10 @@ ifAuth();
                 :nowDate="local_data.nowDate"
             />
         </div>
-        <div v-if="local_data.currentPage === 4">
+        <div v-if="local_data.currentPage === 'order-add'">
+            <CreateOrder @openPage="changePage" @modal="modal" />
+        </div>
+        <div v-if="local_data.currentPage === 'order-show'">
             <DisplayOrder
                 @createReport="writeReport"
                 @openPage="changePage"
@@ -162,58 +168,65 @@ ifAuth();
                 :nowDate="local_data.nowDate"
             />
         </div>
-        <div v-if="local_data.currentPage === 5">
-            <CreateReport
-                :orderId="local_data.pickOrder"
-                @openPage="changePage"
-            />
-        </div>
-        <div v-if="local_data.currentPage === 6">
-            <CreateUser @openPage="changePage" @modal="modal" />
-        </div>
-        <div v-if="local_data.currentPage === 7">
+        <div v-if="local_data.currentPage === 'order-edit'">
             <EditOrder
                 @openPage="changePage"
                 @modal="modal"
                 :orderId="local_data.pickOrder"
             />
         </div>
-        <div v-if="local_data.currentPage === 8">
-            <EditReport
-                @openPage="changePage"
-                :orderId="local_data.pickOrder"
-                :nowDate="local_data.nowDate"
-            />
-        </div>
-        <div v-if="local_data.currentPage === 9">
+
+        <div v-if="local_data.currentPage === 'report-main'">
             <ListReport
                 @openPage="changePage"
                 @displayReport="displayReport"
                 :orderId="local_data.pickOrder"
             />
         </div>
-        <div v-if="local_data.currentPage === 10">
+        <div v-if="local_data.currentPage === 'report-add'">
+            <CreateReport
+                :orderId="local_data.pickOrder"
+                :nowDate="local_data.nowDate"
+                @openPage="changePage"
+            />
+        </div>
+        <div v-if="local_data.currentPage === 'report-show'">
             <DisplayReport
                 @openPage="changePage"
                 :reportId="local_data.pickReport"
             />
         </div>
-        <div v-if="local_data.currentPage === 11">
+        <div v-if="local_data.currentPage === 'report-edit'">
+            <EditReport
+                @openPage="changePage"
+                :orderId="local_data.pickOrder"
+                :nowDate="local_data.nowDate"
+            />
+        </div>
+
+        <div v-if="local_data.currentPage === 'user-main'">
             <ListUser
                 @openPage="changePage"
                 @displayUser="displayUser"
                 :roleId="local_data.roleId"
             />
         </div>
-        <div v-if="local_data.currentPage === 12">
+        <div v-if="local_data.currentPage === 'user-add'">
+            <CreateUser @openPage="changePage" @modal="modal" />
+        </div>
+        <div v-if="local_data.currentPage === 'user-show'">
             <DisplayUser @openPage="changePage" :userId="local_data.pickUser" />
         </div>
-        <div v-if="local_data.currentPage === 13">
+        <div v-if="local_data.currentPage === 'user-edit'">
             <EditUser
                 @openPage="changePage"
                 @modal="modal"
                 :userId="local_data.pickUser"
             />
+        </div>
+
+        <div v-if="local_data.currentPage === 'stat'">
+            <Stats @openPage="changePage" :nowDate="local_data.nowDate" />
         </div>
     </div>
 </template>

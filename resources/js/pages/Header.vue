@@ -12,16 +12,11 @@ const props = defineProps({
 const emit = defineEmits(["openPage"]);
 
 const menuActive = computed(() => {
-    if (
-        props.currentPage == 6 ||
-        props.currentPage == 11 ||
-        props.currentPage == 12 ||
-        props.currentPage == 13
-    ) {
-        return "user";
-    } else {
-        return "order";
+    let page = props.currentPage.split("-")[0];
+    if (page == "report") {
+        page = "order";
     }
+    return page;
 });
 
 function nextPage(index) {
@@ -38,7 +33,7 @@ function logout() {
     })
         .then((response) => response.json())
         .then((response) => {
-            emit("openPage", 1);
+            emit("openPage", "auth");
         });
 }
 </script>
@@ -58,16 +53,23 @@ function logout() {
                     <div
                         :class="{ menu_link_active: menuActive == 'order' }"
                         class="menu-link"
-                        @click="nextPage(3)"
+                        @click="nextPage('order-main')"
                     >
                         Заказы
                     </div>
                     <div
                         :class="{ menu_link_active: menuActive == 'user' }"
                         class="menu-link"
-                        @click="nextPage(11)"
+                        @click="nextPage('user-main')"
                     >
                         Пользователи
+                    </div>
+                    <div
+                        :class="{ menu_link_active: menuActive == 'stat' }"
+                        class="menu-link"
+                        @click="nextPage('stat')"
+                    >
+                        Аналитика
                     </div>
                     <div>{{ props.userFia }}</div>
                     <button @click="logout">Выйти</button>
@@ -79,22 +81,29 @@ function logout() {
                     <div
                         :class="{ menu_link_active: menuActive == 'order' }"
                         class="menu-link"
-                        @click="nextPage(3)"
+                        @click="nextPage('order-main')"
                     >
                         Заказы
                     </div>
                     <div
                         :class="{ menu_link_active: menuActive == 'user' }"
                         class="menu-link"
-                        @click="nextPage(11)"
+                        @click="nextPage('user-main')"
                     >
                         Пользователи
+                    </div>
+                    <div
+                        :class="{ menu_link_active: menuActive == 'stat' }"
+                        class="menu-link"
+                        @click="nextPage('stat')"
+                    >
+                        Аналитика
                     </div>
                 </div>
                 <div>{{ props.userFia }}</div>
                 <button @click="logout">Выйти</button>
             </div>
-            <div v-if="props.roleId == 2" class="logout top-menu">
+            <div v-if="props.roleId == 2" class="logout top-menu-ex">
                 <div>{{ props.userFia }}</div>
                 <button @click="logout">Выйти</button>
             </div>
@@ -140,6 +149,14 @@ function logout() {
 }
 
 .top-menu {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+}
+.top-menu-ex {
     width: 100%;
     display: flex;
     flex-direction: row;

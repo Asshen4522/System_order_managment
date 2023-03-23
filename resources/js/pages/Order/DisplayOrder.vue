@@ -20,7 +20,7 @@ const emit = defineEmits([
 ]);
 
 function returnToCabinet() {
-    emit("openPage", 3);
+    emit("openPage", "order-main");
 }
 function editOrder() {
     emit("editOrder", props.orderId);

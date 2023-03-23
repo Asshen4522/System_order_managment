@@ -204,4 +204,12 @@ class getDataController extends Controller
 
         return $user;
     }
+    
+    public function Get_stats()
+    {
+        $orders = order::all();
+        $reports = report::all();
+        $answer = [$orders,$reports];
+        return $answer ;
+    }
 }

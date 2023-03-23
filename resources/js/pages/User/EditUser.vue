@@ -1,5 +1,5 @@
 <script setup>
-import customInput from "../components/Input.vue";
+import customInput from "../../components/Input.vue";
 import { reactive } from "vue";
 
 const props = defineProps({
@@ -26,7 +26,7 @@ const local_data = reactive({
 const emit = defineEmits(["openPage"]);
 
 function returnToCabinet() {
-    emit("openPage", 12);
+    emit("openPage", "user-show");
 }
 
 function RevealPassword() {
@@ -152,13 +152,13 @@ getUser();
                 v-if="local_data.fieldType == 'password'"
                 @click="RevealPassword"
                 class="pict"
-                src="../../img/eye.png"
+                src="../../../img/eye.png"
             />
             <img
                 v-if="local_data.fieldType == 'text'"
                 @click="RevealPassword"
                 class="pict"
-                src="../../img/hidden.png"
+                src="../../../img/hidden.png"
             />
         </div>
         <div class="selector">
