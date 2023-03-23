@@ -115,13 +115,13 @@ function returnToCabinet() {
                 v-if="local_data.fieldType == 'password'"
                 @click="RevealPassword"
                 class="pict"
-                src="../../img/eye.png"
+                src="../../../img/eye.png"
             />
             <img
                 v-if="local_data.fieldType == 'text'"
                 @click="RevealPassword"
                 class="pict"
-                src="../../img/hidden.png"
+                src="../../../img/hidden.png"
             />
         </div>
         <div class="selector">
