@@ -49,7 +49,6 @@ class postDataController extends Controller
             ]);
             $order->refresh();
             foreach ($request->locomotive as $locomotive) {
-                dd($locomotive);
                 orderLocomotive::create([
                     'order_id' => $order->id,
                     'locomotive_id' => $locomotive['id'],
