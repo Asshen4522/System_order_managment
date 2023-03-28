@@ -32,13 +32,16 @@ class postDataController extends Controller
         try {
             $order = order::create([
                 'city' => $request->city,
+                'housing' => $request->housing,
+
                 'budget' => $request->budget,
                 'daily_cost' => $request->daily_cost,
-                'housing' => $request->housing,
                 'rent' => $request->rent,
                 'payment' => $request->payment,
+
                 'tangen' => $request->tangen,
                 'cup' => $request->cup,
+                
                 'contact_id' => $request->contact,
                 'created_at' => $request->created_at,
                 'executor_id' => $request->executor,
@@ -46,6 +49,7 @@ class postDataController extends Controller
             ]);
             $order->refresh();
             foreach ($request->locomotive as $locomotive) {
+                dd($locomotive);
                 orderLocomotive::create([
                     'order_id' => $order->id,
                     'locomotive_id' => $locomotive['id'],
