@@ -208,7 +208,6 @@ function addCost() {
     local_data.newCost.id = null;
     local_data.newCost.price = null;
     }
-    
 }
 function deleteCost(params) {
     local_data.report.costs.splice([params],1);

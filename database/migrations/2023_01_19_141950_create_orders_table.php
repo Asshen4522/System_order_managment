@@ -17,18 +17,17 @@ return new class extends Migration
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->string('city');
-            $table->foreignId('locomotive_id')->constrained('locomotives');
-            $table->integer('budget');
-            $table->integer('daily_cost');
-            $table->string('housing');
-            $table->integer('rent');
-            $table->integer('tangen');
-            $table->integer('cup');
-            $table->integer('wheel_pairs');
-            $table->foreignId('contact_id')->constrained('contact_people');
-            $table->date('created_at');
+            $table->integer('budget')->nullable(true);
+            $table->integer('daily_cost')->nullable(true);
+            $table->string('housing')->nullable(true);
+            $table->integer('rent')->nullable(true);
+            $table->integer('tangen')->nullable(true);
+            $table->integer('cup')->nullable(true);
+            $table->integer('payment')->nullable(true);
+            $table->foreignId('contact_id')->nullable(true)->constrained('contact_people');
+            $table->date('created_at')->nullable(true);
             $table->date('date_end')->nullable(true);
-            $table->foreignId('executor_id')->constrained('users')->nullable(true);
+            $table->foreignId('executor_id')->nullable(true)->constrained('users')->nullable(true);
             $table->foreignId('status_id')->constrained('statuses');
         });
     }

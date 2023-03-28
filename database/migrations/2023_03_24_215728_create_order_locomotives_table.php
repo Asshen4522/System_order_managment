@@ -13,11 +13,12 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('orders', function (Blueprint $table) {
-            $table->dropForeign(['contact_id']);
-            $table->dropForeign(['executor_id']);
-            $table->dropColumn(['contact_id']);
-            $table->dropColumn(['executor_id']);
+        Schema::create('order_locomotives', function (Blueprint $table) {
+            $table->foreignId('locomotive_id')->constrained('locomotives');
+            $table->foreignId('order_id')->constrained('orders');
+            $table->integer('amount');
+            $table->integer('wheel_pairs');
+            $table->integer('done')->default(0);
         });
     }
 
@@ -28,6 +29,6 @@ return new class extends Migration
      */
     public function down()
     {
-        //
+        Schema::dropIfExists('order_locomotives');
     }
 };

@@ -88,9 +88,8 @@ class getDataController extends Controller
     public function Get_display_order(Request $request)
     {
         $order = DB::table('orders')
-            ->leftJoin('contact_people', 'orders.contact_id', '=', 'contact_people.id')
-            ->leftJoin('locomotives', 'orders.locomotive_id', '=', 'locomotives.id')
             ->where(["orders.id" => $request->id])
+            ->leftJoin('contact_people', 'orders.contact_id', '=', 'contact_people.id')
             ->first();
         $order_reports = DB::table('reports')
             ->where(["reports.order_id" => $request->id])
@@ -101,7 +100,12 @@ class getDataController extends Controller
             ->where(["reports.order_id" => $request->id])
             ->select('reports.id', 'report_costs.price')
             ->get();
-        $answer = [$order, $order_reports, $order_costs];
+        $order_locomotives = DB::table('order_locomotives')
+            ->where(["order_locomotives.order_id" => $request->id])
+            ->leftJoin('locomotives', 'locomotives.id', '=', 'order_locomotives.locomotive_id')
+            ->select('locomotives.id','locomotives.model','order_locomotives.amount','order_locomotives.wheel_pairs','order_locomotives.done')
+            ->get();
+        $answer = [$order, $order_reports, $order_costs,$order_locomotives];
 
         return $answer;
     }

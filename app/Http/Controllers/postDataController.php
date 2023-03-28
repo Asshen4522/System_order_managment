@@ -10,6 +10,7 @@ use App\Models\order;
 use App\Models\report;
 use App\Models\reportActivity;
 use App\Models\reportCost;
+use App\Models\orderLocomotive;
 use App\Models\user;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -29,25 +30,32 @@ class postDataController extends Controller
     public function Create_order(Request $request)
     {
         try {
-            $request = order::create([
+            $order = order::create([
                 'city' => $request->city,
-                'locomotive_id' => $request->locomotive,
                 'budget' => $request->budget,
                 'daily_cost' => $request->daily_cost,
                 'housing' => $request->housing,
                 'rent' => $request->rent,
+                'payment' => $request->payment,
                 'tangen' => $request->tangen,
                 'cup' => $request->cup,
-                'wheel_pairs' => $request->wheel_pairs,
                 'contact_id' => $request->contact,
                 'created_at' => $request->created_at,
                 'executor_id' => $request->executor,
                 'status_id' => 1
             ]);
-
+            $order->refresh();
+            foreach ($request->locomotive as $locomotive) {
+                orderLocomotive::create([
+                    'order_id' => $order->id,
+                    'locomotive_id' => $locomotive['id'],
+                    'amount' => (int)$locomotive['count'],
+                    'wheel_pairs' => (int)$locomotive['wheel_pairs'],
+                ]);
+            }
             return true;
         } catch (\Throwable $th) {
-            return false;
+            return $th;
         }
     }
 
@@ -140,18 +148,31 @@ class postDataController extends Controller
         try {
             $order = order::find($request->id);
             $order->city = $request->city;
-            $order->locomotive_id = $request->locomotive;
+
             $order->budget = $request->budget;
             $order->daily_cost = $request->daily_cost;
             $order->housing = $request->housing;
             $order->rent = $request->rent;
+            $order->payment = $request->payment;
+
             $order->tangen = $request->tangen;
             $order->cup = $request->cup;
-            $order->wheel_pairs = $request->wheel_pairs;
+
             $order->contact_id = $request->contact;
             $order->created_at = $request->created_at;
             $order->executor_id = $request->executor;
             $order->save();
+
+            orderLocomotive::where('order_id', '=', $request->id)->delete();
+
+            foreach ($request->locomotive as $locomotive) {
+                orderLocomotive::create([
+                    'order_id' => $order->id,
+                    'locomotive_id' => $locomotive['id'],
+                    'amount' => (int)$locomotive['amount'],
+                    'wheel_pairs' => (int)$locomotive['wheel_pairs'],
+                ]);
+            }
 
             $answer = "true";
             return $answer;

@@ -154,7 +154,11 @@ ifAuth();
             />
         </div>
         <div v-if="local_data.currentPage === 'order-add'">
-            <CreateOrder @openPage="changePage" @modal="modal" />
+            <CreateOrder
+                @openPage="changePage"
+                @modal="modal"
+                :nowDate="local_data.nowDate"
+            />
         </div>
         <div v-if="local_data.currentPage === 'order-show'">
             <DisplayOrder

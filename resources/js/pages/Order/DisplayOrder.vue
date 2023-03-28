@@ -9,6 +9,7 @@ const props = defineProps({
 const local_data = reactive({
     order: {},
     reportDates: [],
+    locomotives: [],
     editOrCreate: "create",
 });
 const emit = defineEmits([
@@ -50,46 +51,20 @@ function getDisplayOrder() {
         .then((response) => {
             local_data.order.startAt = response[0].created_at;
             local_data.order.id = props.orderId;
+
             local_data.order.city = response[0].city;
-            local_data.order.model = response[0].model;
             local_data.order.housing = response[0].housing;
+
             local_data.order.fio = response[0].fio;
             local_data.order.phone = response[0].phone;
-            local_data.order.budget = response[0].budget;
 
-            if (response[1] == null) {
-                local_data.order.moneyLeft = response[0].budget;
-            } else {
-                var spent =
-                    (response[0].daily_cost + response[0].rent) *
-                    response[1].length;
-                response[2].forEach((elem) => {
-                    spent += elem.price;
-                });
-                local_data.order.moneyLeft = response[0].budget - spent;
-            }
+            local_data.order.budget = response[0].budget;
+            local_data.order.payment = response[0].payment;
 
             local_data.order.tangen = response[0].tangen;
             local_data.order.cup = response[0].cup;
-            local_data.order.wheel_pair = response[0].wheel_pairs;
 
-            if (response[1] == null) {
-                local_data.order.tangenLeft = response[0].tangen;
-                local_data.order.cupLeft = response[0].cup;
-                local_data.order.wheel_pairs_ready = 0;
-            } else {
-                var spentTangen = 0;
-                var spentCup = 0;
-                var spentWheelPairs = 0;
-                response[1].forEach((elem) => {
-                    spentTangen += Number(elem.tangen);
-                    spentCup += Number(elem.cup);
-                    spentWheelPairs += Number(elem.wheel_pair);
-                });
-                local_data.order.tangenLeft = response[0].tangen - spentTangen;
-                local_data.order.cupLeft = response[0].cup - spentCup;
-                local_data.order.wheel_pairs_ready = spentWheelPairs;
-            }
+            local_data.order.wheel_pairs = response[3];
         });
 }
 function getReportDates() {
@@ -113,93 +88,89 @@ function getReportDates() {
             });
         });
 }
-
-getReportDates();
 getDisplayOrder();
+getReportDates();
 </script>
 <template>
-    <div>
-        <div class="header">Заказ № {{ local_data.order.id }}</div>
-        <div class="line_fields">
-            <div>Город</div>
-            <div class="line_out">{{ local_data.order.city }}</div>
-        </div>
-        <div class="line_fields">
-            <div>Модель</div>
-            <div class="line_out">{{ local_data.order.model }}</div>
-        </div>
-        <div class="line_fields">
-            <div>Жилье</div>
-            <div class="line_out">{{ local_data.order.housing }}</div>
+    <div class="page">
+        <div>Заказ № {{ local_data.order.id }}</div>
+        <div class="block">
+            <div class="block_line">
+                <div>Город</div>
+                <div class="block_line_text">{{ local_data.order.city }}</div>
+            </div>
+            <div class="block_line">
+                <div>Жилье</div>
+                <div class="block_line_text">
+                    {{ local_data.order.housing }}
+                </div>
+            </div>
         </div>
         <div class="block">
             <div class="block_header">Контактное лицо</div>
-            <div class="line_fields">
-                <div class="line_in">ФИО</div>
-                <div class="line_out">{{ local_data.order.fio }}</div>
+            <div class="block_line">
+                <div>ФИО</div>
+                <div class="block_line_text">{{ local_data.order.fio }}</div>
             </div>
-            <div class="line_fields">
-                <div class="line_in">Телефон</div>
-                <div class="line_out">{{ local_data.order.phone }}</div>
+            <div class="block_line">
+                <div>Телефон</div>
+                <div class="block_line_text">{{ local_data.order.phone }}</div>
             </div>
         </div>
         <div class="block">
-            <div class="block_header">Бюджет</div>
-            <table class="tables">
-                <thead>
-                    <tr>
-                        <th>Выделено</th>
-                        <th>Осталось</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <th>{{ local_data.order.budget }}</th>
-                        <th>{{ local_data.order.moneyLeft }}</th>
-                    </tr>
-                </tbody>
-            </table>
+            <div class="block_header">Финансы</div>
+            <div class="block_line">
+                <div>Оплата</div>
+                <div class="block_line_text">
+                    {{ local_data.order.payment }} р.
+                </div>
+            </div>
+            <div class="block_list_line">
+                <div></div>
+                <div>Выделено</div>
+                <div>Осталось</div>
+            </div>
+            <div class="block_list_line">
+                <div>Бюджет</div>
+                <div>{{ local_data.order.budget }} р.</div>
+                <div>{{ local_data.order.moneyLeft }} р.</div>
+            </div>
         </div>
         <div class="block">
             <div class="block_header">Резцы</div>
-            <table class="tables">
-                <thead>
-                    <tr>
-                        <th></th>
-                        <th>Выделено</th>
-                        <th>Осталось</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <th>Тангец</th>
-                        <th>{{ local_data.order.tangen }}</th>
-                        <th>{{ local_data.order.tangenLeft }}</th>
-                    </tr>
-                    <tr>
-                        <th>Чашка</th>
-                        <th>{{ local_data.order.cup }}</th>
-                        <th>{{ local_data.order.cupLeft }}</th>
-                    </tr>
-                </tbody>
-            </table>
+            <div class="block_list_line">
+                <div></div>
+                <div>Выделено</div>
+                <div>Осталось</div>
+            </div>
+            <div class="block_list_line">
+                <div>Тангец</div>
+                <div>{{ local_data.order.tangen }}</div>
+                <div>{{ local_data.order.tangenLeft }}</div>
+            </div>
+            <div class="block_list_line">
+                <div>Чашка</div>
+                <div>{{ local_data.order.cup }}</div>
+                <div>{{ local_data.order.cupLeft }}</div>
+            </div>
         </div>
         <div class="block">
             <div class="block_header">Колесные пары</div>
-            <table class="tables">
-                <thead>
-                    <tr>
-                        <th>Всего</th>
-                        <th>Обточено</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <th>{{ local_data.order.wheel_pair }}</th>
-                        <th>{{ local_data.order.wheel_pairs_ready }}</th>
-                    </tr>
-                </tbody>
-            </table>
+            <div class="block_wheels_line">
+                <div>Поезд</div>
+                <div>Кол-во поездов</div>
+                <div>Кол-во КП</div>
+                <div>Сделано КП</div>
+            </div>
+            <div
+                class="block_wheels_line"
+                v-for="elem in local_data.order.wheel_pairs"
+            >
+                <div>{{ elem.model }}</div>
+                <div>{{ elem.amount }}</div>
+                <div>{{ elem.wheel_pairs }}</div>
+                <div>{{ elem.done }}</div>
+            </div>
         </div>
         <div class="buttons">
             <button @click="editOrder" v-show="props.roleId == 1">
@@ -224,11 +195,52 @@ getDisplayOrder();
     </div>
 </template>
 <style scoped>
-.header {
+.page {
     display: flex;
-    text-align: center;
-    align-self: center;
-    margin-bottom: 30px;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.block {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+
+    border-style: solid;
+    border-radius: 10px;
+    border-color: var(--color-input);
+    border-width: 1px;
+
+    padding-bottom: 20px;
+    padding-left: 15px;
+    padding-right: 15px;
+    padding-top: 30px;
+}
+.block_header {
+    margin-bottom: 15px;
+}
+.block_line {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+.block_line_text {
+    border-bottom-style: solid;
+    border-color: var(--color-input);
+    border-width: 1px;
+}
+.block_list_line {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    align-items: center;
+    margin-left: 10px;
+}
+.block_wheels_line {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    align-items: center;
+    margin-left: 10px;
 }
 
 .buttons {
@@ -236,49 +248,5 @@ getDisplayOrder();
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-}
-
-.line_fields {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    width: 100%;
-    margin-bottom: 10px;
-}
-
-.line_out {
-    width: 70%;
-    text-align: center;
-    border-bottom-style: solid;
-    border-width: 2px;
-    border-color: var(--color-input);
-    margin-right: 10px;
-}
-.line_in {
-    margin-left: 10px;
-}
-
-.block {
-    border-style: solid;
-    border-radius: 10px;
-    margin-bottom: 20px;
-    border-width: 1px;
-    border-color: var(--color-input);
-}
-.block_header {
-    margin-bottom: 15px;
-    margin-top: 5px;
-    margin-left: 10px;
-}
-
-.tables {
-    width: 100%;
-}
-
-.error {
-    margin-top: 20px;
-    text-align: center;
-    font-size: 20px;
-    color: red;
 }
 </style>

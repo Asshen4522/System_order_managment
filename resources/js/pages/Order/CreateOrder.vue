@@ -2,16 +2,20 @@
 import customInput from "../../components/Input.vue";
 import { reactive, ref } from "vue";
 
+const props = defineProps({
+    nowDate: null
+})
+
 const local_data = reactive({
     order: {
         city: "",
-        locomotive: null,
-        wheel_pairs: null,
+        locomotive: [],
 
         budget: null,
         daily_cost: null,
         housing: "",
         rent: null,
+        payment: null,
 
         tangen: null,
         cup: null,
@@ -22,18 +26,30 @@ const local_data = reactive({
             phone: null,
         },
 
-        created_at: new Date().toISOString().substr(0, 10),
+        created_at: props.nowDate,
 
         executor: null,
     },
 
+    locomotives: [],
+    newLocomotive: {
+        id: null,
+        count: null,
+        wheel_pairs:null,
+    },
+    errorLocomotive: false,
+    errorWheelPairs: false,
+
+    
+
     error_list: {
         errorCity: false,
-        errorWheelPairs: false,
+        
 
         errorBudget: false,
         errorRent: false,
         errorDailyCost: false,
+        errorPayment:false,
 
         errorTangen: false,
         errorCup: false,
@@ -45,7 +61,7 @@ const local_data = reactive({
     },
     createError: false,
 
-    locomotives: [],
+    
 
     contacts: [],
 
@@ -55,11 +71,6 @@ const local_data = reactive({
 });
 
 const emit = defineEmits(["openPage", "modal"]);
-
-function selectLocomotive(selector) {
-    local_data.order.wheel_pairs =
-        local_data.locomotives[selector.target.value - 1].wheel_pairs;
-}
 
 function returnToCabinet(index) {
     emit("openPage", index);
@@ -111,6 +122,28 @@ function getExecutors(params) {
         });
 }
 
+function addLocomotive() {
+    if (/^\d+$/.test(local_data.newLocomotive.count) && /^\d+$/.test(local_data.newLocomotive.wheel_pairs) && local_data.newLocomotive.id != null ) {
+        local_data.order.locomotive.push({
+            id: local_data.newLocomotive.id,
+            name: local_data.locomotives[local_data.newLocomotive.id - 1].model,
+            count: local_data.newLocomotive.count,
+            wheel_pairs: local_data.newLocomotive.wheel_pairs,
+        });
+        local_data.newLocomotive.id = null;
+        local_data.newLocomotive.count = null;
+        local_data.newLocomotive.wheel_pairs = null;
+        local_data.errorLocomotive = false;
+        local_data.errorWheelPairs = false;
+    }else{
+        local_data.errorLocomotive = true;
+        local_data.errorWheelPairs = true;
+    }
+}
+function deleteLocomotive(params) {
+    local_data.order.locomotive.splice([params],1);
+}
+
 function toggleOptionContact() {
     local_data.optionContact = !local_data.optionContact;
     local_data.order.contact.id = null;
@@ -120,10 +153,6 @@ function toggleOptionContact() {
 
 function Validate() {
     local_data.error_list.errorCity = local_data.order.city == "";
-    local_data.error_list.errorWheelPairs =
-        local_data.order.locomotive == null &&
-        (!/^\d+$/.test(local_data.order.wheel_pairs) ||
-            local_data.order.wheel_pairs != null);
 
     local_data.error_list.errorBudget =
         !/^\d+$/.test(local_data.order.budget) &&
@@ -133,6 +162,9 @@ function Validate() {
     local_data.error_list.errorDailyCost =
         !/^\d+$/.test(local_data.order.daily_cost) &&
         local_data.order.daily_cost != null;
+    local_data.error_list.errorPayment =
+        !/^\d+$/.test(local_data.order.payment) &&
+        local_data.order.payment != null;
 
     local_data.error_list.errorTangen =
         !/^\d+$/.test(local_data.order.tangen) &&
@@ -148,7 +180,6 @@ function Validate() {
 
     if (
         !local_data.error_list.errorCity &&
-        !local_data.error_list.errorWheelPairs &&
         !local_data.error_list.errorBudget &&
         !local_data.error_list.errorRent &&
         !local_data.error_list.errorDailyCost &&
@@ -190,12 +221,12 @@ function SendData() {
             const datuum = {
                 city: local_data.order.city,
                 locomotive: local_data.order.locomotive,
-                wheel_pairs: local_data.order.wheel_pairs,
 
                 budget: local_data.order.budget,
                 daily_cost: local_data.order.daily_cost,
                 housing: local_data.order.housing,
                 rent: local_data.order.rent,
+                payment: local_data.order.payment,
 
                 tangen: local_data.order.tangen,
                 cup: local_data.order.cup,
@@ -225,7 +256,7 @@ function SendData() {
     } else {
         emit("modal", [
             "confirm",
-            "Не все поля заполнены верно. Необходимо ввести как минимум город и вид локомотива",
+            "Не все поля заполнены верно. Необходимо ввести как минимум город и локомотивы",
         ]);
     }
 }
@@ -237,22 +268,38 @@ getExecutors();
 <template>
     <div class="page">
         <div>Создание</div>
-        <div>
+        <div class="block">
+            <div class="block_header">Место жительства</div>
             <customInput
                 v-model="local_data.order.city"
                 inputname="Город"
                 typeIn="text"
                 :ifError="local_data.error_list.errorCity"
             />
+            <customInput
+                v-model="local_data.order.housing"
+                inputname="Адрес жилья"
+                typeIn="text"
+                :ifError="false"
+            />
         </div>
-        <div class="line">Модель локомотива</div>
-        <div class="line">
-            <div class="locomotiveWheel">
-                <select
-                    class="locomotiveWheel__item"
-                    @change="selectLocomotive($event)"
-                    v-model="local_data.order.locomotive"
-                >
+        <div class="block"> 
+            <div class="block_header">Список локомотивов</div>
+            <div class="block_list_line">
+                <div >Название</div>
+                <div >Количество </div>
+                <div > КП</div>
+                <div ></div>
+            </div>
+            <div class="block_list_line" v-for="elem,index in local_data.order.locomotive">
+                <div >{{ elem.name }}</div>
+                <div >{{ elem.count }} </div>
+                <div > {{ elem.wheel_pairs }}</div>
+                <div class="smallButtons" @click="deleteLocomotive(index)">&#215</div>
+            </div>
+            <div class="block_header">Добавить Локомотивы</div>
+            <div class="block_add_line">
+                <select class="block_add_line_elem"  v-model="local_data.newLocomotive.id">
                     <option
                         v-for="option in local_data.locomotives"
                         :value="option.id"
@@ -261,16 +308,23 @@ getExecutors();
                     </option>
                 </select>
 
-                <customInput
-                    v-model="local_data.order.wheel_pairs"
+                <customInput class="block_add_line_elem" 
+                    v-model="local_data.newLocomotive.count"
+                    inputname="Количество локомотивов"
+                    typeIn="text"
+                    :ifError="local_data.errorLocomotive"
+                />
+                <customInput 
+                    v-model="local_data.newLocomotive.wheel_pairs"
                     inputname="Колесные пары"
                     typeIn="text"
-                    :ifError="local_data.error_list.errorWheelPairs"
+                    :ifError="local_data.errorWheelPairs"
                 />
+                <button class="block_add_line_elem"  @click="addLocomotive">Добавить</button>
             </div>
         </div>
-
-        <div class="line">
+        <div class="block">
+            <div class="block_header">Финансы</div>
             <customInput
                 v-model="local_data.order.budget"
                 inputname="Бюджет"
@@ -283,26 +337,22 @@ getExecutors();
                 typeIn="text"
                 :ifError="local_data.error_list.errorDailyCost"
             />
-        </div>
-        <div class="line">
-            <customInput
-                v-model="local_data.order.housing"
-                inputname="Адрес жилья"
-                typeIn="text"
-                :ifError="false"
-            />
             <customInput
                 v-model="local_data.order.rent"
                 inputname="Рента"
                 typeIn="text"
                 :ifError="local_data.error_list.errorRent"
             />
+            <customInput
+                v-model="local_data.order.payment"
+                inputname="Оплата"
+                typeIn="text"
+                :ifError="local_data.error_list.errorPayment"
+            />
         </div>
-
-        <div>
-            Резцы
-            <div class="line">
-                <customInput
+        <div class="block">
+            <div class="block_header">Резцы</div>
+            <customInput
                     v-model="local_data.order.tangen"
                     inputname="Тангец"
                     typeIn="text"
@@ -314,26 +364,18 @@ getExecutors();
                     typeIn="text"
                     :ifError="local_data.error_list.errorCup"
                 />
-            </div>
         </div>
-
-        <div>
-            Контактное лицо
+        <div class="block">
+            <div class="block_header">Контактное лицо</div>
             <div>
-                <div class="contact_buttons">
+                <div class="block_line">
                     <button @click="toggleOptionContact()">
                         Выбрать /Добавить
                     </button>
                 </div>
-                <div class="contact_input">
-                    <div
-                        class="contact_selector"
-                        v-show="local_data.optionContact == true"
-                    >
-                        <select
-                            class="contact_selector"
-                            v-model="local_data.order.contact.id"
-                        >
+                <div class="block_line">
+                    <div v-show="local_data.optionContact == true" >
+                        <select v-model="local_data.order.contact.id">
                             <option
                                 v-for="option in local_data.contacts"
                                 :value="option.id"
@@ -343,7 +385,7 @@ getExecutors();
                         </select>
                     </div>
                     <div v-show="local_data.optionContact == false">
-                        <div class="line">
+                        <div class="block_line">
                             <customInput
                                 v-model="local_data.order.contact.phone"
                                 inputname="Телефон"
@@ -360,24 +402,9 @@ getExecutors();
                     </div>
                 </div>
             </div>
-        </div>
-
-        <div>
-            <customInput
-                v-model="local_data.order.created_at"
-                inputname="Дата начала"
-                typeIn="date"
-                :ifError="local_data.error_list.errorDate"
-            />
-        </div>
-
-        <div>
-            Исполнитель
-            <div class="select_executor">
-                <select
-                    class="select_executor"
-                    v-model="local_data.order.executor"
-                >
+            <div class="block_header">Исполнитель</div>
+            <div class="block_line">
+                <select v-model="local_data.order.executor">
                     <option
                         v-for="option in local_data.executors"
                         :value="option.id"
@@ -387,6 +414,15 @@ getExecutors();
                 </select>
             </div>
         </div>
+        <customInput
+                v-model="local_data.order.created_at"
+                inputname="Дата начала"
+                typeIn="date"
+                :ifError="local_data.error_list.errorDate"
+            />
+        
+            
+
         <div class="buttons">
             <button @click="SendData">Создать</button>
             <button @click="returnToCabinet('order-main')">Назад</button>
@@ -394,65 +430,60 @@ getExecutors();
     </div>
 </template>
 <style scoped>
-.locomotiveWheel {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    gap: 20px;
-}
-
-.locomotiveWheel__item {
-    display: flex;
-    flex-direction: row;
-    align-self: center;
-    width: 170px;
-}
 .page {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 15px;
 }
 
-.line {
-    width: 100%;
+.block {
+    display:flex;
+    flex-direction:column;
+    gap: 15px;
+
+    border-style: solid;
+    border-radius: 10px;
+    border-color: var(--color-input);
+    border-width:1px;
+
+    padding-bottom: 20px;
+    padding-left: 15px;
+    padding-right: 15px;
+    padding-top: 30px;
+}
+.block_header{
+    margin-bottom: 15px;
+}
+.block_list_line{ 
+    display:grid;
+    grid-template-columns: 50% 20% 20% 10%;
+    align-items:center;
+    margin-left: 10px;
+    }
+.smallButtons{
+    font-size:30px;
+}
+.smallButtons:hover{
+    cursor: pointer;
+}
+.block_add_line{
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    margin-top: 10px;
 }
-
-.contact_buttons {
-    display: flex;
-    flex-direction: row;
-    margin-top: 10px;
-    justify-content: center;
-}
-
-.contact_selector {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    min-width: 170px;
-}
-
-.contact_input {
-    margin-top: 30px;
-}
-.select_executor {
-    margin-top: 10px;
-    min-width: 170px;
-}
-.active {
-    color: white;
-    background-color: var(--color-object);
-}
-
-.error {
-    margin-top: 20px;
-    text-align: center;
-    font-size: 20px;
-    color: red;
+.block_add_line_elem:nth-of-type(1) {height: 40.19px;};
+.block_add_line_elem:nth-of-type(2) { 
+    padding-left: 10px;
+    padding-right: 10px;
+    width:30%;};
+.block_add_line_elem:nth-of-type(3){height: 39.19px;}
+.block_line{
+    display:flex;
+    flex-direction:row;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    margin-bottom: 15px;
 }
 
 .buttons {
@@ -461,4 +492,8 @@ getExecutors();
     flex-direction: row;
     justify-content: space-between;
 }
+select{
+    min-width: 170px;
+}
+
 </style>

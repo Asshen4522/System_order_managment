@@ -6,7 +6,7 @@ const props = defineProps({
 });
 const local_data = reactive({
     menuActive: 1,
-    reqYear: "2023",
+    reqYear: props.nowDate.slice(0, 4),
     years: [],
     month: [
         "Январь",
@@ -33,6 +33,7 @@ const tableOne = computed(() => {
         table.push([local_data.month[index], [0, 0], [0, 0], [0, 0]]);
     }
     let a = new Set();
+    a.add(props.nowDate.slice(0, 4));
     local_data.orders.forEach((element) => {
         a.add(element.created_at.slice(0, 4));
         if (local_data.reqYear === element.created_at.slice(0, 4)) {
