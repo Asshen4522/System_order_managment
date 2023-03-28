@@ -243,7 +243,7 @@ function SendData() {
                 let obj ={
                     id: element.id,
                     name: element.name,
-                    count: element.count,
+                    amount: element.amount,
                     wheel_pairs: element.wheel_pairs}
                 datuum.locomotive.push(obj)
 
