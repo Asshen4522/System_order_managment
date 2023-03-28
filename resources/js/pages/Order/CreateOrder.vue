@@ -237,6 +237,7 @@ function SendData() {
 
                 executor: local_data.order.executor,
             };
+            console.log(datuum);
             fetch("/Create_order", {
                 method: "POST",
                 body: JSON.stringify(datuum),
