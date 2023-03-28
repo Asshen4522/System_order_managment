@@ -220,7 +220,7 @@ function SendData() {
         contact().then((response) => {
             const datuum = {
                 city: local_data.order.city,
-                locomotive: local_data.order.locomotive,
+                locomotive: [],
 
                 budget: local_data.order.budget,
                 daily_cost: local_data.order.daily_cost,
@@ -237,6 +237,15 @@ function SendData() {
 
                 executor: local_data.order.executor,
             };
+            local_data.order.locomotive.forEach(element => {
+                let obj ={
+                    id: element.id,
+                    name: element.name,
+                    count: element.count,
+                    wheel_pairs: element.wheel_pairs}
+                datuum.locomotive.push(obj)
+
+            });
             console.log(datuum);
             fetch("/Create_order", {
                 method: "POST",
