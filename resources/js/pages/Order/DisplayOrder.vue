@@ -52,6 +52,7 @@ function getDisplayOrder() {
             local_data.order.startAt = response[0].created_at;
             local_data.order.id = props.orderId;
 
+            local_data.order.firm = response[0].firm;
             local_data.order.city = response[0].city;
             local_data.order.housing = response[0].housing;
 
@@ -95,6 +96,10 @@ getReportDates();
     <div class="page">
         <div>Заказ № {{ local_data.order.id }}</div>
         <div class="block">
+            <div class="block_line">
+                <div>Фирма</div>
+                <div class="block_line_text">{{ local_data.order.firm }}</div>
+            </div>
             <div class="block_line">
                 <div>Город</div>
                 <div class="block_line_text">{{ local_data.order.city }}</div>

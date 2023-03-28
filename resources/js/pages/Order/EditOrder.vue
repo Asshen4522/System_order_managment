@@ -10,6 +10,7 @@ const local_data = reactive({
     order: {
         id: props.orderId,
 
+        firm: null,
         city: "",
         locomotive: [],
 
@@ -221,6 +222,7 @@ function SendData() {
             const datuum = {
                 id: props.orderId,
 
+                firm: local_data.order.firm,
                 city: local_data.order.city,
                 locomotive: [],
 
@@ -282,6 +284,7 @@ function getDisplayOrder() {
     })
         .then((response) => response.json())
         .then((response) => {
+            local_data.order.firm = response[0].firm;
             local_data.order.city = response[0].city;
             
 
@@ -322,6 +325,12 @@ getExecutors();
         <div>Редактирование заказа №{{ props.orderId }}</div>
         <div class="block">
             <div class="block_header">Место жительства</div>
+            <customInput
+                v-model="local_data.order.firm"
+                inputname="Фирма"
+                typeIn="text"
+                :ifError="false"
+            />
             <customInput
                 v-model="local_data.order.city"
                 inputname="Город"

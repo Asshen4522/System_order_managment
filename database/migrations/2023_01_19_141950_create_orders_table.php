@@ -17,6 +17,7 @@ return new class extends Migration
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->string('city');
+            $table->string('firm')->nullable(true);
             $table->integer('budget')->nullable(true);
             $table->integer('daily_cost')->nullable(true);
             $table->string('housing')->nullable(true);

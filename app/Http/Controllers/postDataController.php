@@ -31,6 +31,7 @@ class postDataController extends Controller
     {
         try {
             $order = order::create([
+                'firm' => $request->firm,
                 'city' => $request->city,
                 'housing' => $request->housing,
 
@@ -150,6 +151,7 @@ class postDataController extends Controller
     {
         try {
             $order = order::find($request->id);
+            $order->firm = $request->firm;
             $order->city = $request->city;
 
             $order->budget = $request->budget;

@@ -8,6 +8,7 @@ const props = defineProps({
 
 const local_data = reactive({
     order: {
+        firm: null,
         city: "",
         locomotive: [],
 
@@ -219,6 +220,7 @@ function SendData() {
     if (Validate()) {
         contact().then((response) => {
             const datuum = {
+                firm: local_data.order.firm,
                 city: local_data.order.city,
                 locomotive: [],
 
@@ -280,6 +282,12 @@ getExecutors();
         <div>Создание</div>
         <div class="block">
             <div class="block_header">Место жительства</div>
+            <customInput
+                v-model="local_data.order.firm"
+                inputname="Фирма"
+                typeIn="text"
+                :ifError="false"
+            />
             <customInput
                 v-model="local_data.order.city"
                 inputname="Город"
