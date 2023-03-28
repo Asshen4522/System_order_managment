@@ -471,11 +471,11 @@ getExecutors();
     flex-direction: row;
     justify-content: space-between;
 }
-.block_add_line_elem:nth-of-type(1) {height: 40.19px;};
+.block_add_line_elem:nth-of-type(1) {height: 40.19px;}
 .block_add_line_elem:nth-of-type(2) { 
     padding-left: 10px;
     padding-right: 10px;
-    width:30%;};
+    width:30%;}
 .block_add_line_elem:nth-of-type(3){height: 39.19px;}
 .block_line{
     display:flex;
