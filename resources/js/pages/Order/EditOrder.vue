@@ -50,7 +50,6 @@ const local_data = reactive({
     errorNewModel: false,
 
     error_list: {
-        errorCity: false,
 
         errorBudget: false,
         errorRent: false,
@@ -196,7 +195,6 @@ function toggleOptionContact() {
 }
 
 function Validate() {
-    local_data.error_list.errorCity = local_data.order.city == "";
 
     local_data.error_list.errorBudget =
         !/^\d+$/.test(local_data.order.budget) &&
@@ -403,7 +401,7 @@ getExecutors();
             </div>
             <div class="block_header">Добавить Локомотивы</div>
             <div class="block_add_line">
-                <select class="block_add_line_elem"  v-model="local_data.newLocomotive.id">
+                <select v-model="local_data.newLocomotive.id">
                     <option
                         v-for="option in local_data.locomotives"
                         :value="option.id"
@@ -412,7 +410,7 @@ getExecutors();
                     </option>
                 </select>
 
-                <customInput class="block_add_line_elem"  @change="calcWheels"
+                <customInput  @change="calcWheels"
                     v-model="local_data.newLocomotive.count"
                     inputname="Количество локомотивов"
                     typeIn="text"
@@ -424,7 +422,7 @@ getExecutors();
                     typeIn="text"
                     :ifError="local_data.errorWheelPairs"
                 />
-                <button class="block_add_line_elem"  @click="addLocomotive">Добавить</button>
+                <button @click="addLocomotive">Добавить</button>
             </div>
             <div class="block_header">Добавить Модель</div>
             <div class="block_line">
@@ -591,12 +589,6 @@ getExecutors();
     flex-direction: row;
     justify-content: space-between;
 }
-.block_add_line_elem:nth-of-type(1) {height: 40.19px;}
-.block_add_line_elem:nth-of-type(2) { 
-    padding-left: 10px;
-    padding-right: 10px;
-    width:30%;}
-.block_add_line_elem:nth-of-type(3){height: 39.19px;}
 .block_line{
     display:flex;
     flex-direction:row;
@@ -612,6 +604,4 @@ getExecutors();
     flex-direction: row;
     justify-content: space-between;
 }
-select{
-    min-width: 170px;
-}</style>
+</style>

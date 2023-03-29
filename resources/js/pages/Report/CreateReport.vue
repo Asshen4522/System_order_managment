@@ -10,9 +10,9 @@ const props = defineProps({
 });
 const local_data = reactive({
     report: {
-        wheel_pairs: 0,
         tangen: 0,
         cup: 0,
+        wheel_pairs:[],
         costs: [],
         activities: [],
         comment: null,
@@ -20,7 +20,6 @@ const local_data = reactive({
         id:props.orderId,
     },
     orderStatus: null,
-    wheel_pair_left : null,
 
     newActivity: null,
     newCost: {
@@ -89,8 +88,11 @@ function createCost() {
                 if (response == false) {
                     local_data.errorNewCost = true;
                 } else {
+                    local_data.costs.push({
+                        id: response,
+                        name: local_data.createNewCost,
+                    });
                     local_data.createNewCost = "";
-                    getCosts();
                 }
             });
     }
@@ -113,8 +115,11 @@ function createActivity() {
                 if (response == false) {
                     local_data.errorNewActivity = true;
                 } else {
+                    local_data.activities.push({
+                        id: response,
+                        name: local_data.createNewActivity,
+                    });
                     local_data.createNewActivity = "";
-                    getActivities();
                 }
             });
     }
@@ -168,11 +173,7 @@ function getOrderCosts() {
             });
         });
 }
-function getDate() {
-    let date = new Date()
-    local_data.report.date = String(date.getFullYear())+'-'+String(date.getMonth()+1)+'-'+String(date.getDate())
-}
-function getWheelPairLeft() {
+function getWheelPair() {
     fetch("/Get_wheel_pair_left", {
         method: "POST",
         body: JSON.stringify({ id: props.orderId }),
@@ -183,14 +184,7 @@ function getWheelPairLeft() {
     })
         .then((response) => response.json())
         .then((response) => {
-            let $start = response[0].wheel_pairs;
-            if (response[1].length != 0) {
-                response[1].forEach(element => {
-                    $start -= element.wheel_pair
-                });
-            };
-            local_data.wheel_pair_left = $start;
-            local_data.orderStatus = response[0].status_id
+            local_data.report.wheel_pairs = response;
         });
 }
 
@@ -278,34 +272,30 @@ function SendData() {
 getCosts();
 getActivities();
 getOrderCosts();
-getDate();
-getWheelPairLeft();
+getWheelPair();
 </script>
 <template>
-    <div>
-        <div>Дневной отчет от {{local_data.report.date}}</div>
+    <div class="page">
+        <div class="block_header">Дневной отчет от {{props.nowDate}}</div>
         <div class="block">
             <div class="block_header">Финансовые затраты</div>
-            <div class="display_line">
-                <div class="display_line_first">Суточные</div>
-                <div class="display_line_second">{{ local_data.inner_costs[0]?.daily_cost }} р.</div>
+            <div class="block_list_line">
+                <div>Суточные</div>
+                <div>{{ local_data.inner_costs[0]?.daily_cost }} р.</div>
             </div>
-            <div class="display_line">
-                <div class="display_line_first">Квартира</div>
-                <div class="display_line_second">{{ local_data.inner_costs[0]?.rent }} р.</div>
+            <div class="block_list_line">
+                <div>Квартира</div>
+                <div>{{ local_data.inner_costs[0]?.rent }} р.</div>
             </div>
 
-            <div class="display_line" v-for="elem,index in local_data.report.costs">
-                <div class="display_line_first">{{ elem.name }}</div>
-                <div class="display_line_second">{{ elem.price }} р.</div>
+            <div class="block_list_line" v-for="elem,index in local_data.report.costs">
+                <div>{{ elem.name }}</div>
+                <div>{{ elem.price }} р.</div>
                 <div class="smallButtons" @click="deleteCost(index)">&#215</div>
             </div>
-
-
-
-            <div class="display_line_act">Добавить траты</div>
-            <div class="addCost">
-                <select class="addCostId" v-model="local_data.newCost.id">
+            <div class="block_header">Добавить траты</div>
+            <div class="block_add_line">
+                <select v-model="local_data.newCost.id" class="block_add_line_elem">
                     <option
                         v-for="option in local_data.costs"
                         :value="option.id"
@@ -313,27 +303,26 @@ getWheelPairLeft();
                         {{ option.name }}
                     </option>
                 </select>
-                <customInput
+                <customInput class="block_add_line_elem"
                     v-model="local_data.newCost.price"
                     inputname="Сумма"
                     typeIn="text"
                     :ifError="local_data.errorCost"
                 />
-                <button @click="addCost" class="addCostButton">Добавить</button>
+                <button @click="addCost">Добавить</button>
             </div>
-        </div>
-        <div class="block">
-            <div class="block_header">Введите название новой затраты, только если их нет в списке выше!</div>
-            <div class="display_line">
+            <div class="block_header">Добавить вид трат</div>
+            <div class="block_add_line">
                 <customInput
                     v-model="local_data.createNewCost"
                     inputname="Затрата"
                     typeIn="text"
                     :ifError="local_data.errorNewCost"
                 />
-                <button @click="createCost" class="addCostButton">Добавить</button>
+                <button @click="createCost">Добавить</button>
             </div>
-        </div>        
+        </div>
+       
         <div class="block">
             <div class="block_header">Занятость</div>
             <div class="display_line">
@@ -411,8 +400,53 @@ getWheelPairLeft();
     </div>
 </template>
 <style scoped>
+.page {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
 
+.block {
+    display:flex;
+    flex-direction:column;
+    gap: 15px;
+
+    border-style: solid;
+    border-radius: 10px;
+    border-color: var(--color-input);
+    border-width:1px;
+
+    padding-bottom: 20px;
+    padding-left: 15px;
+    padding-right: 15px;
+    padding-top: 30px;
+}
+.block_header{
+    margin-bottom: 15px;
+}
+.block_list_line{ 
+    display:grid;
+    grid-template-columns: 50% 40% 10%;
+    align-items:center;
+    margin-left: 10px;
+    }
 .smallButtons{
+    font-size:30px;
+}
+.smallButtons:hover{
+    cursor: pointer;
+}
+.block_add_line{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    gap:10px;
+}
+
+select{
+    min-width: 170px;
+}
+/* .smallButtons{
     font-size:30px;
     align-self:right;
 }
@@ -487,7 +521,7 @@ getWheelPairLeft();
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-}
+} */
 
 
 </style>

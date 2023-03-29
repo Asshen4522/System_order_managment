@@ -209,11 +209,11 @@ class postDataController extends Controller
     public function Create_cost(Request $request)
     {
         try {
-            cost::create([
+            $cost = cost::create([
                 'name' => $request->name
             ]);
-            $answer = "true";
-            return $answer;
+            $cost->refresh();
+            return $cost->id;
         } catch (\Throwable $th) {
             $answer = "false";
             return $answer;
@@ -223,11 +223,11 @@ class postDataController extends Controller
     public function Create_activity(Request $request)
     {
         try {
-            activity::create([
+            $activity = activity::create([
                 'name' => $request->name
             ]);
-            $answer = "true";
-            return $answer;
+            $activity->refresh();
+            return $activity->id;
         } catch (\Throwable $th) {
             $answer = "false";
             return $answer;
