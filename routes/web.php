@@ -38,6 +38,8 @@ Route::post('/Update_status', [postDataController::class, 'Update_status']);
 Route::post('/Delete_order', [postDataController::class, 'Delete_order']);
 Route::post('/Delete_user', [postDataController::class, 'Delete_user']);
 Route::post('/Edit_user', [postDataController::class, 'Edit_user']);
+Route::post('/Create_model', [postDataController::class, 'Create_model']);
+
 
 Route::get('/Get_locomotives', [getDataController::class, 'Get_locomotives']);
 Route::get('/Get_contacts', [getDataController::class, 'Get_contacts']);

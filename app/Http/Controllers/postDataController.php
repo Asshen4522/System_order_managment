@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\locomotive;
 use App\Models\activity;
 use App\Models\contactPerson;
 use App\Models\cost;
@@ -27,6 +28,25 @@ class postDataController extends Controller
 
         return ($person->id);
     }
+    public function Create_model(Request $request)
+    {
+        try {
+            $train = locomotive::create([
+                'model' => $request->name,
+                'wheel_pairs' => $request->wheel_pairs
+            ]);
+            $train->refresh();
+            return $train->id;
+        } catch (\Throwable $th) {
+            $answer="false";
+            return $th;
+        }
+        
+
+        return ($person->id);
+    }
+
+    
     public function Create_order(Request $request)
     {
         try {

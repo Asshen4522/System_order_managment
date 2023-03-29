@@ -32,6 +32,13 @@ return new class extends Migration
             'role_id' => 1,
             'password' => Hash::make('plotnikov')
         ]);
+        user::create([
+            'name' => 'Виктория',
+            'surname' => 'Михайловна',
+            'phone' => '89772703330',
+            'role_id' => 1,
+            'password' => Hash::make('tori')
+        ]);
     }
 
     /**

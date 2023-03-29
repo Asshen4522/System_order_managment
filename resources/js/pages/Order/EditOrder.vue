@@ -43,6 +43,12 @@ const local_data = reactive({
     errorLocomotive: false,
     errorWheelPairs: false,
 
+    newModel: {
+        name: null,
+        wheel_pairs: null
+    },
+    errorNewModel: false,
+
     error_list: {
         errorCity: false,
 
@@ -119,6 +125,43 @@ function getExecutors(params) {
         });
 }
 
+function createModel() {
+    if (local_data.newModel.name != null && /^\d+$/.test(local_data.newModel.wheel_pairs)) {
+        fetch("/Create_model", {
+            method: "POST",
+            body: JSON.stringify({
+                name: local_data.newModel.name,
+                wheel_pairs: local_data.newModel.wheel_pairs
+            }),
+            headers: {
+                "X-CSRF-TOKEN": document.querySelector('[name="_token"]').value,
+                "Content-Type": "application/json",
+            },
+        })
+            .then((response) => response.json())
+            .then((response) => {
+                if (response == false) {
+                    local_data.errorNewModel = true;
+                } else {
+                    local_data.errorNewModel = false;
+                     let obj = {
+                        id: response,
+                        model:local_data.newModel.name,
+                        wheel_pairs: local_data.newModel.wheel_pairs
+                     };
+                     local_data.locomotives.push(obj);
+                     local_data.newModel.name = null;
+                        local_data.newModel.wheel_pairs = null;
+                }
+            });
+    }else{
+        local_data.errorNewModel = true;
+    }
+}
+
+function calcWheels() {
+    local_data.newLocomotive.wheel_pairs = local_data.newLocomotive.count * local_data.locomotives[local_data.newLocomotive.id-1].wheel_pairs
+}
 function addLocomotive() {
     if (
         /^\d+$/.test(local_data.newLocomotive.count) &&
@@ -369,7 +412,7 @@ getExecutors();
                     </option>
                 </select>
 
-                <customInput class="block_add_line_elem" 
+                <customInput class="block_add_line_elem"  @change="calcWheels"
                     v-model="local_data.newLocomotive.count"
                     inputname="Количество локомотивов"
                     typeIn="text"
@@ -382,6 +425,22 @@ getExecutors();
                     :ifError="local_data.errorWheelPairs"
                 />
                 <button class="block_add_line_elem"  @click="addLocomotive">Добавить</button>
+            </div>
+            <div class="block_header">Добавить Модель</div>
+            <div class="block_line">
+                 <customInput  
+                    v-model="local_data.newModel.name"
+                    inputname="Название"
+                    typeIn="text"
+                    :ifError="local_data.errorNewModel"
+                />
+                <customInput  
+                    v-model="local_data.newModel.wheel_pairs"
+                    inputname="Количество КП"
+                    typeIn="text"
+                    :ifError="local_data.errorNewModel"
+                />
+                <button   @click="createModel">Добавить</button>
             </div>
         </div>
         <div class="block">
