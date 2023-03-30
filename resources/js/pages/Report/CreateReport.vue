@@ -64,7 +64,7 @@ function updateStatus() {
         .then((response) => response.json())
         .then((response) => {
             if (response) {
-                returnToCabinet();
+                returnToOrder();
             }
         });
 }
@@ -187,7 +187,7 @@ function getOrderCosts() {
         });
 }
 function getWheelPair() {
-    fetch("/Get_wheel_pair_left", {
+    fetch("/Get_wheel_pair", {
         method: "POST",
         body: JSON.stringify({ id: props.orderId }),
         headers: {
@@ -265,7 +265,7 @@ function SendData() {
         costs: [],
         activities: [],
         comment: local_data.report.comment,
-        date: props.nowDate,
+        date: local_data.report.date,
         id: props.orderId,
     }
     local_data.report.wheel_pairs.forEach(element => {
@@ -315,7 +315,13 @@ getWheelPair();
 </script>
 <template>
     <div class="page">
-        <div class="block_header">Дневной отчет от {{props.nowDate}}</div>
+        <customInput
+                v-model="local_data.report.date"
+                inputname="Дата отчета"
+                typeIn="date"
+                :ifError="false"
+            />
+        <!-- <div class="block_header">Дневной отчет от {{props.nowDate}}</div> -->
         <div class="block">
             <div class="block_header">Финансовые затраты</div>
             <div class="block_list_line">
