@@ -7,7 +7,7 @@ const props = defineProps({
 const local_data = reactive({
     report: {
         date: null,
-        wheel_pairs: 0,
+        wheel_pairs: [],
         tangen: 0,
         cup: 0,
         costs: [],
@@ -86,25 +86,28 @@ function getReport() {
     })
         .then((response) => response.json())
         .then((response) => {
-            (local_data.report.date = response[0].date),
-                (local_data.report.id = response[0].id),
-                (local_data.report.wheel_pairs = response[0].wheel_pair),
-                (local_data.report.tangen = response[0].tangen),
-                (local_data.report.cup = response[0].cup),
-                (local_data.report.comment = response[0].comment),
-                response[1].forEach((element) => {
-                    local_data.report.activities.push({
-                        id: element.activity_id,
-                        name: local_data.activities[element.activity_id - 1]
-                            .name,
-                    });
+            local_data.report.date = response[0].date;
+            local_data.report.id = response[0].id;
+            local_data.report.tangen = response[0].tangen;
+            local_data.report.cup = response[0].cup;
+            local_data.report.comment = response[0].comment;
+            response[1].forEach((element) => {
+                local_data.report.activities.push({
+                    id: element.activity_id,
+                    name: local_data.activities[element.activity_id - 1].name,
                 });
-
+            });
             response[2].forEach((element) => {
                 local_data.report.costs.push({
                     id: element.cost_id,
                     price: element.price,
                     name: local_data.costs[element.cost_id - 1].name,
+                });
+            });
+            response[3].forEach((element) => {
+                local_data.report.wheel_pairs.push({
+                    name: element.model,
+                    count: element.amount,
                 });
             });
         });
@@ -114,61 +117,58 @@ getOrderCosts();
 Promise.all([getCosts(), getActivities()]).then(getReport);
 </script>
 <template>
-    <div>
-        <div>Дневной отчет от {{ local_data.report.date }}</div>
+    <div class="page">
+        <div class="block_header">
+            Дневной отчет от {{ local_data.report.date }}
+        </div>
         <div class="block">
             <div class="block_header">Финансовые затраты</div>
-            <div class="display_line">
-                <div class="display_line_first">Суточные</div>
-                <div class="display_line_second">
-                    {{ local_data.inner_costs[0]?.daily_cost }} р.
-                </div>
+            <div class="block_list_line">
+                <div>Суточные</div>
+                <div>{{ local_data.inner_costs[0]?.daily_cost }} р.</div>
             </div>
-            <div class="display_line">
-                <div class="display_line_first">Квартира</div>
-                <div class="display_line_second">
-                    {{ local_data.inner_costs[0]?.rent }} р.
-                </div>
+            <div class="block_list_line">
+                <div>Квартира</div>
+                <div>{{ local_data.inner_costs[0]?.rent }} р.</div>
             </div>
 
             <div
-                class="display_line"
-                v-for="(elem, index) in local_data.report.costs"
+                class="block_list_line"
+                v-for="elem in local_data.report.costs"
             >
-                <div class="display_line_first">{{ elem.name }}</div>
-                <div class="display_line_second">{{ elem.price }} р.</div>
+                <div>{{ elem.name }}</div>
+                <div>{{ elem.price }} р.</div>
             </div>
         </div>
         <div class="block">
             <div class="block_header">Занятость</div>
-            <div class="display_line">
-                <div class="display_line_first">Обточка КП</div>
-                <div class="wheelPairs">
-                    <div>{{ local_data.report.wheel_pairs }}</div>
-                </div>
+            <div class="block_header">Обточка КП</div>
+            <div
+                class="block_list_line"
+                v-for="elem in local_data.report.wheel_pairs"
+            >
+                <div>{{ elem.name }}</div>
+                <div>{{ elem.count }}</div>
             </div>
-            <div class="display_line">
-                <div class="display_line_first">
-                    Израсходовано чашечных резцов
-                </div>
-                <div class="wheelPairs">
+            <div class="block_header">Расход резцов</div>
+            <div class="block_list_line">
+                <div>Чашка</div>
+                <div>
                     <div>{{ local_data.report.cup }}</div>
                 </div>
             </div>
-            <div class="display_line">
-                <div class="display_line_first">
-                    Израсходовано тангецных резцов
-                </div>
-                <div class="wheelPairs">
+            <div class="block_list_line">
+                <div>Тангец</div>
+                <div>
                     <div>{{ local_data.report.tangen }}</div>
                 </div>
             </div>
-
+            <div class="block_header">Прочая занятость</div>
             <div
-                class="display_line"
-                v-for="(elem, index) in local_data.report.activities"
+                class="block_list_line"
+                v-for="elem in local_data.report.activities"
             >
-                <div class="display_line_first">{{ elem.name }}</div>
+                <div>{{ elem.name }}</div>
             </div>
         </div>
 
@@ -177,31 +177,40 @@ Promise.all([getCosts(), getActivities()]).then(getReport);
             <div class="comment">{{ local_data.report.comment }}</div>
         </div>
         <div class="buttons">
+            <div></div>
             <button @click="returnToCabinet">Назад</button>
         </div>
     </div>
 </template>
 <style scoped>
-.smallButtons {
-    font-size: 30px;
-    align-self: right;
-}
-
-.smallButtons:hover {
-    cursor: pointer;
+.page {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
 }
 
 .block {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+
     border-style: solid;
     border-radius: 10px;
-    margin-bottom: 20px;
-    margin-top: 20px;
-    border-width: 1px;
     border-color: var(--color-input);
+    border-width: 1px;
+
+    padding-bottom: 20px;
+    padding-left: 15px;
+    padding-right: 15px;
+    padding-top: 30px;
 }
 .block_header {
     margin-bottom: 15px;
-    margin-top: 5px;
+}
+.block_list_line {
+    display: grid;
+    grid-template-columns: 50% 50%;
+    align-items: center;
     margin-left: 10px;
 }
 
@@ -211,48 +220,6 @@ Promise.all([getCosts(), getActivities()]).then(getReport);
     width: 75%;
     height: 80px;
     resize: none;
-}
-
-.display_line {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    margin-left: 10px;
-    margin-bottom: 10px;
-}
-.display_line_act {
-    margin-top: 30px;
-    margin-left: 10px;
-    margin-bottom: 15px;
-}
-.display_line_first {
-    width: 50%;
-}
-.display_line_second {
-    width: 30%;
-}
-
-.addCost {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-}
-.addCostId {
-    width: 50%;
-    margin: 5px;
-    height: 75%;
-    align-self: center;
-}
-.addCostButton {
-    margin: 10px;
-}
-
-.wheelPairs {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-around;
-    width: 25%;
-    align-items: center;
 }
 
 .buttons {

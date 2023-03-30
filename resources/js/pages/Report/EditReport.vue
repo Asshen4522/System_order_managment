@@ -9,16 +9,14 @@ const props = defineProps({
 });
 const local_data = reactive({
     report: {
-        wheel_pairs: 0,
-        tangen: 0,
-        cup: 0,
+        wheel_pairs:[],
+        cutter:[{name: "Тангец", count:0, done:0},{name: "Чашка", count:0, done:0}],
         costs: [],
         activities: [],
         comment: null,
+        date: props.nowDate,
         id:props.orderId,
     },
-    orderStatus: null,
-    wheel_pair_left : null,
 
     newActivity: null,
     newCost: {
@@ -137,13 +135,29 @@ function getOrderCosts() {
     })
         .then((response) => response.json())
         .then((response) => {
-            response.forEach((element) => {
+            response[0].forEach((element) => {
                 local_data.inner_costs.push(element);
             });
+            local_data.report.cutter[0].amount = response[1][0].tangen;
+            local_data.report.cutter[1].amount = response[1][0].cup;
+            if (response[2].length != 0) {
+                response[2].forEach(element => {
+                    if (element.date !=props.nowDate) {
+                        local_data.report.cutter[0].done += element.tangen;
+                        local_data.report.cutter[1].done += element.cup;
+                    }else{
+                        local_data.report.cutter[0].count += element.tangen;
+                        local_data.report.cutter[1].count += element.cup;
+                    }
+                    
+                });
+            }
+            
+            
         });
 }
-function getWheelPairLeft() {
-    fetch("/Get_wheel_pair_left", {
+function getWheelPair() {
+    fetch("/Get_wheel_pair", {
         method: "POST",
         body: JSON.stringify({ id: props.orderId }),
         headers: {
@@ -153,14 +167,10 @@ function getWheelPairLeft() {
     })
         .then((response) => response.json())
         .then((response) => {
-            let $start = response[0].wheel_pairs;
-            if (response[1].length != 0) {
-                response[1].forEach(element => {
-                    $start -= element.wheel_pair
-                });
-            };
-            local_data.wheel_pair_left = $start;
-            local_data.orderStatus = response[0].status_id
+            local_data.report.wheel_pairs = response;
+            local_data.report.wheel_pairs.forEach(element => {
+                element.doneNow = 0
+            });
         });
 }
 
@@ -198,33 +208,24 @@ function deleteActivity(params) {
     local_data.report.activities.splice([params],1)
 }
 
-function lessPairs() {
-    if (local_data.report.wheel_pairs != 0) {
-        local_data.report.wheel_pairs-=0.5
+function lessPairs(index) {
+    if (local_data.report.wheel_pairs[index].doneNow != 0) {
+        local_data.report.wheel_pairs[index].doneNow-=0.5
     }
 }
-function morePairs() {
-    if (local_data.report.wheel_pairs != local_data.wheel_pair_left) {
-        local_data.report.wheel_pairs += 0.5
+function morePairs(index) {
+    if (local_data.report.wheel_pairs[index].doneNow != local_data.report.wheel_pairs[index].wheel_pairs-local_data.report.wheel_pairs[index].done) {
+        local_data.report.wheel_pairs[index].doneNow += 0.5
     }
 }
 
-function lessCup() {
-    if (local_data.report.cup != 0) {
-        local_data.report.cup-=1
+function lessCutter(index) {
+    if (local_data.report.cutter[index].count != 0) {
+        local_data.report.cutter[index].count-=1
     }
 }
-function moreCup() {
-    local_data.report.cup+=1
-}
-
-function lessTangen() {
-    if (local_data.report.tangen != 0) {
-        local_data.report.tangen-=1
-    }
-}
-function moreTangen() {
-    local_data.report.tangen+=1
+function moreCutter(index) {
+    local_data.report.cutter[index].count+=1
 }
 
 function getReport() {
@@ -239,31 +240,70 @@ function getReport() {
         .then((response) => response.json())
         .then((response) => {
             local_data.report.id= response[0].id,
-        local_data.report.wheel_pairs= response[0].wheel_pair,
-        local_data.report.tangen= response[0].tangen,
-        local_data.report.cup= response[0].cup,
-        local_data.report.comment= response[0].comment,
-        response[1].forEach(element => {
-            local_data.report.activities.push({
-                id: element.activity_id,
-                name: local_data.activities[element.activity_id - 1].name,
-            })
-        });
-
-        response[2].forEach(element => {
-            local_data.report.costs.push({
-                id: element.cost_id,
-                price: element.price,
-                name: local_data.costs[element.cost_id - 1].name,
-            })
-        });
+            local_data.report.comment= response[0].comment,
+            response[1].forEach(element => {
+                local_data.report.activities.push({
+                    id: element.activity_id,
+                    name: local_data.activities[element.activity_id - 1].name,
+                })
+            });
+            response[2].forEach(element => {
+                local_data.report.costs.push({
+                    id: element.cost_id,
+                    price: element.price,
+                    name: local_data.costs[element.cost_id - 1].name,
+                })
+            });
+            response[3].forEach(element => {
+                local_data.report.wheel_pairs.forEach(train => {
+                    if (train.locomotive_id ==  element.locomotive_id) {
+                        train.done -= element.amount
+                        train.doneNow += element.amount
+                        train.train_id = element.id
+                    }
+                });
+            });
         })
 }
 
 function SendData() {
+    let datuum = {
+        wheel_pairs: [],
+        tangen: local_data.report.cutter[0].count,
+        cup: local_data.report.cutter[1].count,
+        costs: [],
+        activities: [],
+        comment: local_data.report.comment,
+        date: local_data.report.date,
+        id: local_data.report.id,
+    }
+    local_data.report.wheel_pairs.forEach(element => {
+        datuum.wheel_pairs.push({
+            id: element.id,
+            train_id: element.train_id,
+            locomotive_id:element.locomotive_id,
+            done: element.done,
+            doneNow: element.doneNow,
+            order_id: element.order_id,
+        })
+    });
+    local_data.report.costs.forEach(element => {
+        datuum.costs.push({
+            id: element.id, 
+            name: element.name, 
+            price: element.price
+        })
+    });
+    local_data.report.activities.forEach(element => {
+        datuum.activities.push({
+            id: element.id, 
+            name: element.name
+        })
+    });
+    console.log(datuum);
     fetch("/Edit_report", {
         method: "POST",
-        body: JSON.stringify(local_data.report),
+        body: JSON.stringify(datuum),
         headers: {
             "X-CSRF-TOKEN":
                 document.querySelector('[name="_token"]').value,
@@ -278,36 +318,30 @@ function SendData() {
         });
 }
 
-getOrderCosts();
-getWheelPairLeft();
-Promise.all([getCosts(),getActivities()]).then(getReport);
+Promise.all([getOrderCosts(),getWheelPair(),getCosts(),getActivities()]).then(getReport);
 </script>
 <template>
-    <div>
-        <div>Дневной отчет от {{props.nowDate}}</div>
+    <div class="page">
+        <div class="block_header">Дневной отчет от {{props.nowDate}}</div>
         <div class="block">
             <div class="block_header">Финансовые затраты</div>
-            <div class="display_line">
-                <div class="display_line_first">Суточные</div>
-                <div class="display_line_second">{{ local_data.inner_costs[0]?.daily_cost }} р.</div>
+            <div class="block_list_line">
+                <div>Суточные</div>
+                <div>{{ local_data.inner_costs[0]?.daily_cost }} р.</div>
             </div>
-            <div class="display_line">
-                <div class="display_line_first">Квартира</div>
-                <div class="display_line_second">{{ local_data.inner_costs[0]?.rent }} р.</div>
+            <div class="block_list_line">
+                <div>Квартира</div>
+                <div>{{ local_data.inner_costs[0]?.rent }} р.</div>
             </div>
 
-            <div class="display_line" v-for="elem,index in local_data.report.costs">
-                <div class="display_line_first">{{ elem.name }}</div>
-                <div class="display_line_second">{{ elem.price }} р.</div>
+            <div class="block_list_line" v-for="elem,index in local_data.report.costs">
+                <div>{{ elem.name }}</div>
+                <div>{{ elem.price }} р.</div>
                 <div class="smallButtons" @click="deleteCost(index)">&#215</div>
             </div>
-
-
-
-            <div class="display_line_act">Добавить траты</div>
-            <div class="addCost">
-                <select class="addCostId" v-model="local_data.newCost.id">
-                   
+            <div class="block_header">Добавить траты</div>
+            <div class="block_add_line">
+                <select v-model="local_data.newCost.id" class="block_add_line_elem">
                     <option
                         v-for="option in local_data.costs"
                         :value="option.id"
@@ -315,68 +349,72 @@ Promise.all([getCosts(),getActivities()]).then(getReport);
                         {{ option.name }}
                     </option>
                 </select>
-                <customInput
+                <customInput class="block_add_line_elem"
                     v-model="local_data.newCost.price"
                     inputname="Сумма"
                     typeIn="text"
                     :ifError="local_data.errorCost"
                 />
-                <button @click="addCost" class="addCostButton">Добавить</button>
+                <button @click="addCost">Добавить</button>
             </div>
-        </div>
-        <div class="block">
-            <div class="block_header">Введите название новой затраты, только если их нет в списке выше!</div>
-            <div class="display_line">
+            <div class="block_header">Добавить вид трат</div>
+            <div class="block_add_line">
                 <customInput
                     v-model="local_data.createNewCost"
                     inputname="Затрата"
                     typeIn="text"
                     :ifError="local_data.errorNewCost"
                 />
-                <button @click="createCost" class="addCostButton">Добавить</button>
+                <button @click="createCost">Добавить</button>
             </div>
-        </div>        
+        </div>
+       
         <div class="block">
             <div class="block_header">Занятость</div>
-            <div class="display_line">
-                <div class="display_line_first">Обточка КП</div>
-                <div class="wheelPairs">
-                    <div class="smallButtons" @click="lessPairs()">-</div>
-                    <div>{{ local_data.report.wheel_pairs }}</div>
-                    <div class="smallButtons" @click="morePairs()">+</div>
-                </div>
-                
+            <div class="block_header">Обточка КП</div>
+            <div class="block_list_train">
+                <div>Модель</div>
+                <div>Кол-во поездов</div>
+                <div>Кол-во КП</div>
+                <div>Обточено всего</div>
+                <div>Обточено сейчас</div>
             </div>
-            <div class="display_line">
-                <div class="display_line_first">Израсходовано чашечных резцов</div>
-                <div class="wheelPairs">
-                    <div class="smallButtons" @click="lessCup()">-</div>
-                    <div>{{ local_data.report.cup }}</div>
-                    <div class="smallButtons" @click="moreCup()">+</div>
+            <div class="block_list_train" v-for="train,index in local_data.report.wheel_pairs">
+                <div>{{train.model}}</div>
+                <div>{{train.amount}}</div>
+                <div>{{train.wheel_pairs}}</div>
+                <div>{{train.done}}</div>
+                <div class="block_list_count">
+                    <div class="smallButtons" @click="lessPairs(index)">-</div>
+                    <div>{{ train.doneNow }}</div>
+                    <div class="smallButtons" @click="morePairs(index)">+</div>
                 </div>
-                
             </div>
-            <div class="display_line">
-                <div class="display_line_first">Израсходовано тангецных резцов</div>
-                <div class="wheelPairs">
-                    <div class="smallButtons" @click="lessTangen()">-</div>
-                    <div>{{ local_data.report.tangen }}</div>
-                    <div class="smallButtons" @click="moreTangen()">+</div>
+            <div class="block_header">Расход резцов</div>
+            <div class="block_list_cutter">
+                <div>Название</div>
+                <div>Выделено</div>
+                <div>Израсходовано</div>
+                <div>Используется</div>
+            </div>
+            <div class="block_list_cutter" v-for="cutter,index in local_data.report.cutter">
+                <div>{{cutter.name}}</div>
+                <div>{{cutter.amount}}</div>
+                <div>{{cutter.done}}</div>
+                <div class="block_list_count">
+                    <div class="smallButtons" @click="lessCutter(index)">-</div>
+                    <div>{{cutter.count}}</div>
+                    <div class="smallButtons" @click="moreCutter(index)">+</div>
                 </div>
-                
             </div>
-
-            <div class="display_line" v-for="elem,index in local_data.report.activities">
-                <div class="display_line_first">{{ elem.name }}</div>
+            <div class="block_header">Прочие занятости</div>
+            <div class="block_list_line" v-for="elem,index in local_data.report.activities">
+                <div>{{ elem.name }}</div>
                 <div class="smallButtons" @click="deleteActivity(index)">&#215</div>
             </div>
-
-
-
-            <div class="display_line_act">Добавить занятия</div>
-            <div class="addCost">
-                <select class="addCostId" v-model="local_data.newActivity">
-                    
+            <div class="block_header">Добавить занятия</div>
+            <div class="block_add_line">
+                <select  v-model="local_data.newActivity">
                     <option
                         v-for="option in local_data.activities"
                         :value="option.id"
@@ -384,27 +422,25 @@ Promise.all([getCosts(),getActivities()]).then(getReport);
                         {{ option.name }}
                     </option>
                 </select>
-                <button @click="addActivity" class="addCostButton">Добавить</button>
+                <button @click="addActivity" >Добавить</button>
             </div>
-        </div>
-        <div class="block">
-            <div class="block_header">Введите название нового занятия, только если его нет в списке выше!</div>
-            <div class="display_line">
+            <div class="block_header">Добавить вид занятий</div>
+            <div class="block_add_line">
                 <customInput
                     v-model="local_data.createNewActivity"
                     inputname="Активность"
                     typeIn="text"
                     :ifError="local_data.errorNewActivity"
                 />
-                <button @click="createActivity" class="addCostButton">Добавить</button>
+                <button @click="createActivity">Добавить</button>
             </div>
         </div>
         <div class="block">
             <div class="block_header">Комментарий</div>
-            <textarea class="comment" v-model="local_data.report.comment"> </textarea>
+            <textarea v-model="local_data.report.comment"> </textarea>
         </div>
         <div class="buttons">
-            <button @click="SendData">Сохранить</button>
+            <button @click="SendData">Закончить редактирование</button>
             <button @click="returnToOrder">Назад</button>
             
         
@@ -413,81 +449,74 @@ Promise.all([getCosts(),getActivities()]).then(getReport);
     </div>
 </template>
 <style scoped>
-.smallButtons{
-    font-size:30px;
-    align-self:right;
-}
-
-.smallButtons:hover{
-    cursor: pointer;
+.page {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
 }
 
 .block {
+    display:flex;
+    flex-direction:column;
+    gap: 15px;
+
     border-style: solid;
     border-radius: 10px;
-    margin-bottom: 20px;
-    margin-top: 20px;
+    border-color: var(--color-input);
+    border-width:1px;
+
+    padding-bottom: 20px;
+    padding-left: 15px;
+    padding-right: 15px;
+    padding-top: 30px;
 }
-.block_header {
+.block_header{
     margin-bottom: 15px;
-    margin-top: 5px;
-    margin-left: 10px;
 }
-
-.comment{
-    margin-left: 10px;
-    margin-bottom: 10px;
-    width:75%;
-    height:80px;
-    resize : none;
-}
-
-.display_line {
-    display: flex;
-    flex-direction: row;
+.block_list_line{ 
+    display:grid;
+    grid-template-columns: 50% 40% 10%;
     align-items:center;
     margin-left: 10px;
-    margin-bottom: 10px;
 }
-.display_line_act{
-    margin-top: 30px;
-    margin-left: 10px;
-    margin-bottom: 15px;
+.smallButtons{
+    font-size:30px;
 }
-.display_line_first {
-    width: 50%;
+.smallButtons:hover{
+    cursor: pointer;
 }
-.display_line_second {
-    width: 30%;
-}
-
-.addCost {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-}
-.addCostId {
-    width: 50%;
-    margin: 5px;
-    height: 75%;
-    align-self: center;
-}
-.addCostButton {
-    margin: 10px;
-}
-
-.wheelPairs{
-    display:flex;
-    flex-direction:row;
-    justify-content:space-around;
-    width:25%;
-    align-items: center;
-}
-
-.buttons {
+.block_add_line{
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     gap:10px;
+}
+.block_list_train{
+    display:grid;
+    grid-template-columns: 20% 20% 20% 10% 30% ;
+    align-items:center;
+    margin-left: 10px;
+    place-items:center;
+}
+.block_list_cutter{
+    display:grid;
+    grid-template-columns: 20% 25% 25% 30% ;
+    align-items:center;
+    margin-left: 10px;
+    justify-content:center;
+    place-items:center;
+}
+.block_list_count{
+    display:flex;
+    flex-direction:row;
+    justify-content:space-between;
+    align-items:center;
+    width:70%
+}
+.buttons {
+    gap: 10px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
 }
 </style>

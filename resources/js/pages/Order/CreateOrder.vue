@@ -284,7 +284,6 @@ function SendData() {
                 datuum.locomotive.push(obj)
 
             });
-            console.log(datuum);
             fetch("/Create_order", {
                 method: "POST",
                 body: JSON.stringify(datuum),

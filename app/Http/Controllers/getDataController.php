@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\reportWheel;
 use App\Models\activity;
 use App\Models\contactPerson;
 use App\Models\cost;
@@ -81,7 +82,9 @@ class getDataController extends Controller
             ->get();
         $reportCost = reportCost::where(["report_id" => $report->id])
             ->get();
-        $answer = [$report, $reportActivity, $reportCost];
+        $reportWheel = reportWheel::where(["report_id" => $report->id])
+            ->get();
+        $answer = [$report, $reportActivity, $reportCost,$reportWheel];
         return $answer;
     }
 
@@ -93,7 +96,7 @@ class getDataController extends Controller
             ->first();
         $order_reports = DB::table('reports')
             ->where(["reports.order_id" => $request->id])
-            ->select('id', 'tangen', 'cup', 'wheel_pair')
+            ->select('id', 'tangen', 'cup')
             ->get();
         $order_costs = DB::table('reports')
             ->leftJoin('report_costs', 'reports.id', '=', 'report_costs.report_id')
@@ -117,7 +120,10 @@ class getDataController extends Controller
             ->get();
         $reportCost = reportCost::where(["report_id" => $request->id])
             ->get();
-        $answer = [$report, $reportActivity, $reportCost];
+        $reportWheels = reportWheel::where(["report_id" => $request->id])
+            ->leftJoin('locomotives', 'locomotives.id', '=', 'locomotive_id')
+            ->get();
+        $answer = [$report, $reportActivity, $reportCost, $reportWheels];
         return $answer;
     }
 
@@ -147,11 +153,21 @@ class getDataController extends Controller
 
     public function Get_costs_order(Request $request)
     {
-        $answer = DB::table('orders')
+        $orders = DB::table('orders')
             ->where(["orders.id" => $request->id])
             ->select('daily_cost', 'rent')
             ->get();
 
+        $cutters = DB::table('orders')
+            ->where(["orders.id" => $request->id])
+            ->select('tangen', 'cup')
+            ->get();
+        $cuttersDone = DB::table('reports')
+            ->where(["reports.order_id" => $request->id])
+            ->select('tangen', 'cup','date')
+            ->get();
+
+        $answer=[$orders,$cutters,$cuttersDone];
         return $answer;
     }
 
@@ -166,7 +182,7 @@ class getDataController extends Controller
         return $answer;
     }
 
-    public function Get_wheel_pair_left(Request $request)
+    public function Get_wheel_pair(Request $request)
     {
         $order_locomotives = DB::table('order_locomotives')
         ->where(["order_locomotives.order_id" => $request->id])

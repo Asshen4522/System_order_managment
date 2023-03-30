@@ -53,7 +53,7 @@ Route::get('/Get_costs', [getDataController::class, 'Get_costs']);
 Route::get('/Get_activities', [getDataController::class, 'Get_activities']);
 Route::post('/Get_costs_order', [getDataController::class, 'Get_costs_order']);
 Route::post('/Get_order_report_dates', [getDataController::class, 'Get_order_report_dates']);
-Route::post('/Get_wheel_pair_left', [getDataController::class, 'Get_wheel_pair_left']);
+Route::post('/Get_wheel_pair', [getDataController::class, 'Get_wheel_pair']);
 Route::post('/Get_inner_costs_report', [getDataController::class, 'Get_inner_costs_report']);
 Route::post('/Get_reportList', [getDataController::class, 'Get_reportList']);
 Route::get('/Get_userList', [getDataController::class, 'Get_userList']);

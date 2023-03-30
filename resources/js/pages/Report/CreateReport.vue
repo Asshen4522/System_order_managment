@@ -10,16 +10,14 @@ const props = defineProps({
 });
 const local_data = reactive({
     report: {
-        tangen: 0,
-        cup: 0,
         wheel_pairs:[],
+        cutter:[{name: "Тангец", count:0, done:0},{name: "Чашка", count:0, done:0}],
         costs: [],
         activities: [],
         comment: null,
-        date: null,
+        date: props.nowDate,
         id:props.orderId,
     },
-    orderStatus: null,
 
     newActivity: null,
     newCost: {
@@ -44,9 +42,14 @@ const local_data = reactive({
 
 function updateStatus() {
     let statusId = 2;
-    let nowDate = "";
-    if (local_data.wheel_pair_left == local_data.report.wheel_pairs) {
-        statusId = 3
+    let statusReady = true;
+    local_data.report.wheel_pairs.forEach(element => {
+        if (element.wheel_pairs > element.done+element.doneNow) {
+            statusReady = false
+        }
+    });
+    if (statusReady) {
+        statusId=3
     }
     const statusAndId = {id : props.orderId, status : statusId, date : props.nowDate}
     fetch("/Update_status", {
@@ -66,7 +69,7 @@ function updateStatus() {
         });
 }
 
-function returnToCabinet() {
+function returnToOrder() {
     emit("openPage", 'order-show');
 }
 
@@ -168,9 +171,19 @@ function getOrderCosts() {
     })
         .then((response) => response.json())
         .then((response) => {
-            response.forEach((element) => {
+            response[0].forEach((element) => {
                 local_data.inner_costs.push(element);
             });
+            local_data.report.cutter[0].amount = response[1][0].tangen;
+            local_data.report.cutter[1].amount = response[1][0].cup;
+            if (response[2].length != 0) {
+                response[2].forEach(element => {
+                    local_data.report.cutter[0].done += element.tangen;
+                    local_data.report.cutter[1].done += element.cup;
+                });
+            }
+            
+            
         });
 }
 function getWheelPair() {
@@ -185,6 +198,9 @@ function getWheelPair() {
         .then((response) => response.json())
         .then((response) => {
             local_data.report.wheel_pairs = response;
+            local_data.report.wheel_pairs.forEach(element => {
+                element.doneNow = 0
+            });
         });
 }
 
@@ -221,39 +237,62 @@ function deleteActivity(params) {
     local_data.report.activities.splice([params],1)
 }
 
-function lessPairs() {
-    if (local_data.report.wheel_pairs != 0) {
-        local_data.report.wheel_pairs-=0.5
+function lessPairs(index) {
+    if (local_data.report.wheel_pairs[index].doneNow != 0) {
+        local_data.report.wheel_pairs[index].doneNow-=0.5
     }
 }
-function morePairs() {
-    if (local_data.report.wheel_pairs != local_data.wheel_pair_left) {
-        local_data.report.wheel_pairs += 0.5
+function morePairs(index) {
+    if (local_data.report.wheel_pairs[index].doneNow != local_data.report.wheel_pairs[index].wheel_pairs-local_data.report.wheel_pairs[index].done) {
+        local_data.report.wheel_pairs[index].doneNow += 0.5
     }
 }
 
-function lessCup() {
-    if (local_data.report.cup != 0) {
-        local_data.report.cup-=1
+function lessCutter(index) {
+    if (local_data.report.cutter[index].count != 0) {
+        local_data.report.cutter[index].count-=1
     }
 }
-function moreCup() {
-    local_data.report.cup+=1
-}
-
-function lessTangen() {
-    if (local_data.report.tangen != 0) {
-        local_data.report.tangen-=1
-    }
-}
-function moreTangen() {
-    local_data.report.tangen+=1
+function moreCutter(index) {
+    local_data.report.cutter[index].count+=1
 }
 
 function SendData() {
+    let datuum = {
+        wheel_pairs: [],
+        tangen: local_data.report.cutter[0].count,
+        cup: local_data.report.cutter[1].count,
+        costs: [],
+        activities: [],
+        comment: local_data.report.comment,
+        date: props.nowDate,
+        id: props.orderId,
+    }
+    local_data.report.wheel_pairs.forEach(element => {
+        datuum.wheel_pairs.push({
+            id: element.id,
+            locomotive_id:element.locomotive_id,
+            done: element.done,
+            doneNow: element.doneNow,
+            order_id: element.order_id,
+        })
+    });
+    local_data.report.costs.forEach(element => {
+        datuum.costs.push({
+            id: element.id, 
+            name: element.name, 
+            price: element.price
+        })
+    });
+    local_data.report.activities.forEach(element => {
+        datuum.activities.push({
+            id: element.id, 
+            name: element.name
+        })
+    });
     fetch("/Create_report", {
         method: "POST",
-        body: JSON.stringify(local_data.report),
+        body: JSON.stringify(datuum),
         headers: {
             "X-CSRF-TOKEN":
                 document.querySelector('[name="_token"]').value,
@@ -325,45 +364,50 @@ getWheelPair();
        
         <div class="block">
             <div class="block_header">Занятость</div>
-            <div class="display_line">
-                <div class="display_line_first">Обточка КП</div>
-                <div class="wheelPairs">
-                    <div class="smallButtons" @click="lessPairs()">-</div>
-                    <div>{{ local_data.report.wheel_pairs }}</div>
-                    <div class="smallButtons" @click="morePairs()">+</div>
-                </div>
-                
+            <div class="block_header">Обточка КП</div>
+            <div class="block_list_train">
+                <div>Модель</div>
+                <div>Кол-во поездов</div>
+                <div>Кол-во КП</div>
+                <div>Обточено всего</div>
+                <div>Обточено сейчас</div>
             </div>
-            <div class="display_line">
-                <div class="display_line_first">Израсходовано чашечных резцов</div>
-                <div class="wheelPairs">
-                    <div class="smallButtons" @click="lessCup()">-</div>
-                    <div>{{ local_data.report.cup }}</div>
-                    <div class="smallButtons" @click="moreCup()">+</div>
+            <div class="block_list_train" v-for="train,index in local_data.report.wheel_pairs">
+                <div>{{train.model}}</div>
+                <div>{{train.amount}}</div>
+                <div>{{train.wheel_pairs}}</div>
+                <div>{{train.done}}</div>
+                <div class="block_list_count">
+                    <div class="smallButtons" @click="lessPairs(index)">-</div>
+                    <div>{{ train.doneNow }}</div>
+                    <div class="smallButtons" @click="morePairs(index)">+</div>
                 </div>
-                
             </div>
-            <div class="display_line">
-                <div class="display_line_first">Израсходовано тангецных резцов</div>
-                <div class="wheelPairs">
-                    <div class="smallButtons" @click="lessTangen()">-</div>
-                    <div>{{ local_data.report.tangen }}</div>
-                    <div class="smallButtons" @click="moreTangen()">+</div>
+            <div class="block_header">Расход резцов</div>
+            <div class="block_list_cutter">
+                <div>Название</div>
+                <div>Выделено</div>
+                <div>Израсходовано</div>
+                <div>Используется</div>
+            </div>
+            <div class="block_list_cutter" v-for="cutter,index in local_data.report.cutter">
+                <div>{{cutter.name}}</div>
+                <div>{{cutter.amount}}</div>
+                <div>{{cutter.done}}</div>
+                <div class="block_list_count">
+                    <div class="smallButtons" @click="lessCutter(index)">-</div>
+                    <div>{{cutter.count}}</div>
+                    <div class="smallButtons" @click="moreCutter(index)">+</div>
                 </div>
-                
             </div>
-
-            <div class="display_line" v-for="elem,index in local_data.report.activities">
-                <div class="display_line_first">{{ elem.name }}</div>
+            <div class="block_header">Прочие занятости</div>
+            <div class="block_list_line" v-for="elem,index in local_data.report.activities">
+                <div>{{ elem.name }}</div>
                 <div class="smallButtons" @click="deleteActivity(index)">&#215</div>
             </div>
-
-
-
-            <div class="display_line_act">Добавить занятия</div>
-            <div class="addCost">
-                <select class="addCostId" v-model="local_data.newActivity">
-                    
+            <div class="block_header">Добавить занятия</div>
+            <div class="block_add_line">
+                <select  v-model="local_data.newActivity">
                     <option
                         v-for="option in local_data.activities"
                         :value="option.id"
@@ -371,28 +415,26 @@ getWheelPair();
                         {{ option.name }}
                     </option>
                 </select>
-                <button @click="addActivity" class="addCostButton">Добавить</button>
+                <button @click="addActivity" >Добавить</button>
             </div>
-        </div>
-        <div class="block">
-            <div class="block_header">Введите название нового занятия, только если его нет в списке выше!</div>
-            <div class="display_line">
+            <div class="block_header">Добавить вид занятий</div>
+            <div class="block_add_line">
                 <customInput
                     v-model="local_data.createNewActivity"
                     inputname="Активность"
                     typeIn="text"
                     :ifError="local_data.errorNewActivity"
                 />
-                <button @click="createActivity" class="addCostButton">Добавить</button>
+                <button @click="createActivity">Добавить</button>
             </div>
         </div>
         <div class="block">
             <div class="block_header">Комментарий</div>
-            <textarea class="comment" v-model="local_data.report.comment"> </textarea>
+            <textarea v-model="local_data.report.comment"> </textarea>
         </div>
         <div class="buttons">
             <button @click="SendData">Создать отчет</button>
-            <button @click="returnToCabinet">Назад</button>
+            <button @click="returnToOrder">Назад</button>
             
         
         </div>
@@ -429,7 +471,7 @@ getWheelPair();
     grid-template-columns: 50% 40% 10%;
     align-items:center;
     margin-left: 10px;
-    }
+}
 .smallButtons{
     font-size:30px;
 }
@@ -442,86 +484,32 @@ getWheelPair();
     justify-content: space-between;
     gap:10px;
 }
-
-select{
-    min-width: 170px;
-}
-/* .smallButtons{
-    font-size:30px;
-    align-self:right;
-}
-
-.smallButtons:hover{
-    cursor: pointer;
-}
-
-.block {
-    border-style: solid;
-    border-radius: 10px;
-    margin-bottom: 20px;
-    margin-top: 20px;
-}
-.block_header {
-    margin-bottom: 15px;
-    margin-top: 5px;
-    margin-left: 10px;
-}
-
-.comment{
-    margin-left: 10px;
-    margin-bottom: 10px;
-    width:75%;
-    height:80px;
-    resize : none;
-}
-
-.display_line {
-    display: flex;
-    flex-direction: row;
+.block_list_train{
+    display:grid;
+    grid-template-columns: 20% 20% 20% 10% 30% ;
     align-items:center;
     margin-left: 10px;
-    margin-bottom: 10px;
+    place-items:center;
 }
-.display_line_act{
-    margin-top: 30px;
+.block_list_cutter{
+    display:grid;
+    grid-template-columns: 20% 25% 25% 30% ;
+    align-items:center;
     margin-left: 10px;
-    margin-bottom: 15px;
+    justify-content:center;
+    place-items:center;
 }
-.display_line_first {
-    width: 50%;
-}
-.display_line_second {
-    width: 30%;
-}
-
-.addCost {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-}
-.addCostId {
-    width: 50%;
-    margin: 5px;
-    height: 75%;
-    align-self: center;
-}
-.addCostButton {
-    margin: 10px;
-}
-
-.wheelPairs{
+.block_list_count{
     display:flex;
     flex-direction:row;
-    justify-content:space-around;
-    width:25%;
-    align-items: center;
+    justify-content:space-between;
+    align-items:center;
+    width:70%
 }
-
 .buttons {
+    gap: 10px;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-} */
-
-
+}
 </style>

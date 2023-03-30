@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\reportWheel;
 use App\Models\locomotive;
 use App\Models\activity;
 use App\Models\contactPerson;
@@ -102,10 +103,21 @@ class postDataController extends Controller
                 'order_id' => $request->id,
                 'tangen' => (int)$request->tangen,
                 'cup' => (int)$request->cup,
-                'wheel_pair' => (float)$request->wheel_pairs,
                 'comment' => $request->comment,
             ]);
             $report->refresh();
+            if (count($request->wheel_pairs)) {
+                foreach ($request->wheel_pairs as $train) {
+                    reportWheel::create([
+                        'report_id' => $report->id,
+                        'locomotive_id' => $train['locomotive_id'],
+                        'amount' => (float)$train['doneNow'],
+                    ]);
+                    $pack = orderLocomotive::find($train['id']);
+                    $pack->done = (float)$train['doneNow'] + (float)$train['done'];
+                    $pack->save();
+                }
+            }
             if (count($request->costs)) {
                 foreach ($request->costs as $cost) {
                     reportCost::create([
@@ -127,7 +139,6 @@ class postDataController extends Controller
             $answer = 'true';
             return $answer;
         } catch (\Throwable $th) {
-            $answer = 'false';
             return $th;
         }
     }
@@ -137,9 +148,9 @@ class postDataController extends Controller
             $report = report::find($request->id);
             $report->tangen = (int)$request->tangen;
             $report->cup = (int)$request->cup;
-            $report->wheel_pair = (float)$request->wheel_pairs;
             $report->comment = $request->comment;
             $report->save();
+
             reportCost::where('report_id', '=', $request->id)->delete();
             reportActivity::where('report_id', '=', $request->id)->delete();
             if (count($request->costs)) {
@@ -159,6 +170,19 @@ class postDataController extends Controller
                     ]);
                 }
             }
+
+            if (count($request->wheel_pairs)) {
+                foreach ($request->wheel_pairs as $train) {
+                    $base_train = reportWheel::find($train['train_id']);
+                    $base_train->amount = (float)$train['doneNow'];
+                    $base_train->save();
+
+                    $pack = orderLocomotive::find($train['id']);
+                    $pack->done = (float)$train['doneNow'] + (float)$train['done'];
+                    $pack->save();
+                }
+            }
+
             $answer = "true";
             return $answer;
         } catch (\Throwable $th) {
