@@ -8,6 +8,7 @@ const props = defineProps({
 
 const local_data = reactive({
     order: {
+        name: null,
         id: props.orderId,
 
         firm: null,
@@ -30,6 +31,7 @@ const local_data = reactive({
         },
 
         created_at: "2023-01-01",
+        order_created_at: "2023-01-01",
 
         executor: null,
     },
@@ -261,6 +263,7 @@ function SendData() {
     if (Validate()) {
         contact().then((response) => {
             const datuum = {
+                name:local_data.order.name,
                 id: props.orderId,
 
                 firm: local_data.order.firm,
@@ -279,6 +282,7 @@ function SendData() {
                 contact: response,
 
                 created_at: local_data.order.created_at,
+                order_created_at: local_data.order.order_created_at,
 
                 executor: local_data.order.executor,
             };
@@ -325,6 +329,7 @@ function getDisplayOrder() {
     })
         .then((response) => response.json())
         .then((response) => {
+            local_data.order.name = response[0].name;
             local_data.order.firm = response[0].firm;
             local_data.order.city = response[0].city;
             
@@ -341,6 +346,7 @@ function getDisplayOrder() {
             local_data.order.contact.id = response[0].contact_id;
 
             local_data.order.created_at = response[0].created_at;
+            local_data.order.order_created_at = response[0].order_created_at;
 
             local_data.order.executor = response[0].executor_id;
             response[3].forEach(element => {
@@ -364,6 +370,12 @@ getExecutors();
 <template>
     <div class="page">
         <div>Редактирование заказа №{{ props.orderId }}</div>
+        <customInput
+                v-model="local_data.order.name"
+                inputname="ID заказа"
+                typeIn="text"
+                :ifError="false"
+            />
         <div class="block">
             <div class="block_header">Место жительства</div>
             <customInput
@@ -532,12 +544,21 @@ getExecutors();
                 </select>
             </div>
         </div>
-        <customInput
-                v-model="local_data.order.created_at"
-                inputname="Дата начала"
+        <div class="block">
+            <div class="block_header">Даты</div>
+            <customInput
+                    v-model="local_data.order.created_at"
+                    inputname="Дата начала"
+                    typeIn="date"
+                    :ifError="false"
+                />
+            <customInput
+                v-model="local_data.order.order_created_at"
+                inputname="Дата создания заказа"
                 typeIn="date"
-                :ifError="local_data.error_list.errorDate"
+                :ifError="false"
             />
+        </div>
         
             
 

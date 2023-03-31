@@ -52,6 +52,8 @@ class postDataController extends Controller
     {
         try {
             $order = order::create([
+                'name' => $request->name,
+
                 'firm' => $request->firm,
                 'city' => $request->city,
                 'housing' => $request->housing,
@@ -66,6 +68,7 @@ class postDataController extends Controller
                 
                 'contact_id' => $request->contact,
                 'created_at' => $request->created_at,
+                'order_created_at' => $request->order_created_at,
                 'executor_id' => $request->executor,
                 'status_id' => 1
             ]);
@@ -195,6 +198,7 @@ class postDataController extends Controller
     {
         try {
             $order = order::find($request->id);
+            $order->name = $request->name;
             $order->firm = $request->firm;
             $order->city = $request->city;
 
@@ -209,6 +213,7 @@ class postDataController extends Controller
 
             $order->contact_id = $request->contact;
             $order->created_at = $request->created_at;
+            $order->order_created_at = $request->order_created_at;
             $order->executor_id = $request->executor;
             $order->save();
 

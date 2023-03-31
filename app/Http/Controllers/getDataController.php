@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\orderLocomotive;
 use App\Models\reportWheel;
 use App\Models\activity;
 use App\Models\contactPerson;
@@ -226,7 +227,16 @@ class getDataController extends Controller
     {
         $orders = order::all();
         $reports = report::all();
-        $answer = [$orders,$reports];
+        $report_wheels = DB::table('report_wheels')
+            ->leftJoin('reports', 'reports.id', '=', 'report_wheels.report_id')
+            ->select('reports.date', 'report_wheels.*')
+            ->get();
+        
+        $order_locomotives = DB::table('order_locomotives')
+            ->leftJoin('orders', 'orders.id', '=', 'order_locomotives.order_id')
+            ->select('orders.created_at', 'order_locomotives.*')
+            ->get();
+        $answer = [$orders, $reports, $order_locomotives, $report_wheels];
         return $answer ;
     }
 }

@@ -24,6 +24,8 @@ const local_data = reactive({
     ],
     orders: [],
     reports: [],
+    orderLocomotives: [],
+    reportWheels: [],
 });
 const emit = defineEmits(["openPage"]);
 
@@ -43,22 +45,39 @@ const tableOne = computed(() => {
                 table[Number(element.date_end.slice(5, 7))][1][1] += 1;
                 table[0][1][1] += 1;
             }
+        }
+    });
+    local_data.years = Array.from(a);
+
+    local_data.orderLocomotives.forEach((element) => {
+        if (local_data.reqYear === element.created_at.slice(0, 4)) {
             table[Number(element.created_at.slice(5, 7))][2][0] +=
                 element.wheel_pairs;
             table[0][2][0] += element.wheel_pairs;
         }
     });
-    local_data.years = Array.from(a);
+    local_data.reportWheels.forEach((element) => {
+        if (local_data.reqYear === element.date.slice(0, 4)) {
+            table[Number(element.date.slice(5, 7))][2][1] += element.amount;
+            table[0][2][1] += element.amount;
+            table[0][3][0] += element.amount;
+            table[Number(element.date.slice(5, 7))][3][0] += element.amount;
+        }
+    });
     local_data.reports.forEach((element) => {
         if (local_data.reqYear === element.date.slice(0, 4)) {
-            table[Number(element.date.slice(5, 7))][2][1] += element.wheel_pair;
-            table[Number(element.date.slice(5, 7))][3][0] += element.wheel_pair;
             table[Number(element.date.slice(5, 7))][3][1] += 1;
-            table[0][2][1] += element.wheel_pair;
-            table[0][3][0] += element.wheel_pair;
             table[0][3][1] += 1;
         }
     });
+
+    table.forEach((element) => {
+        element[3] = element[3][0] / element[3][1];
+        if (isNaN(element[3])) {
+            element[3] = 0;
+        }
+    });
+
     return table;
 });
 
@@ -77,20 +96,16 @@ const tableTwo = computed(() => {
         }
         table[i].push([0, 0]);
 
-        local_data.orders.forEach((order) => {
+        local_data.orderLocomotives.forEach((order) => {
             if (element === order.created_at.slice(0, 4)) {
-                if (order.date_end != null) {
-                    table[i][Number(order.created_at.slice(5, 7)) + 1][0] += 1;
-                    table[i][1][0] += 1;
+                table[i][Number(order.created_at.slice(5, 7)) + 1][1] +=
+                    order.done;
+                table[i][1][1] += order.done;
+                if (order.done == order.wheel_pairs) {
+                    table[i][Number(order.created_at.slice(5, 7)) + 1][0] +=
+                        order.amount;
+                    table[i][1][0] += order.amount;
                 }
-            }
-        });
-
-        local_data.reports.forEach((report) => {
-            if (element === report.date.slice(0, 4)) {
-                table[i][Number(report.date.slice(5, 7)) + 1][1] +=
-                    report.wheel_pair;
-                table[i][1][1] += report.wheel_pair;
             }
         });
 
@@ -121,6 +136,12 @@ function getData() {
             response[1].forEach((element) => {
                 local_data.reports.push(element);
             });
+            response[2].forEach((element) => {
+                local_data.orderLocomotives.push(element);
+            });
+            response[3].forEach((element) => {
+                local_data.reportWheels.push(element);
+            });
         });
 }
 
@@ -134,14 +155,14 @@ getData();
                 class="menu-elem"
                 @click="local_data.menuActive = 1"
             >
-                Первая таблица
+                Заказы
             </div>
             <div
                 :class="{ menu_active: local_data.menuActive == 2 }"
                 class="menu-elem"
                 @click="local_data.menuActive = 2"
             >
-                Вторая таблица
+                Локомотивы
             </div>
         </div>
         <table v-if="local_data.menuActive == 1" class="table">
@@ -170,7 +191,7 @@ getData();
                     <th>{{ line[0] }}</th>
                     <th>{{ line[1][0] }}/{{ line[1][1] }}</th>
                     <th>{{ line[2][0] }}/{{ line[2][1] }}</th>
-                    <th>{{ line[3][0] / line[3][1] }}</th>
+                    <th>{{ line[3] }}</th>
                 </tr>
             </tbody>
         </table>

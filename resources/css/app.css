@@ -39,15 +39,15 @@ select{
   height: 40.19px;
   min-width: 170px;
 }
-  @media only screen and (min-width: 769px) {
-    body{
-      margin: 50px 150px 50px 150px;
-    }
+@media only screen and (min-width: 769px) {
+  body{
+    margin: 30px 150px 50px 150px;
+  }
     
 }
 @media only screen and (min-width: 1441px) {
   body{
-    margin: 100px 300px 100px 300px;
+    margin: 30px 300px 100px 300px;
   }
   
 }

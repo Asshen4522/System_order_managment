@@ -115,6 +115,7 @@ function RevealPassword() {
     display: flex;
     flex-direction: column;
     gap: 30px;
+    margin-top: 50px;
 }
 .pict {
     width: 25px;

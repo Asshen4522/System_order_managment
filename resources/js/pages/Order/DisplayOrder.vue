@@ -32,7 +32,7 @@ function editReport() {
 
 function writeReport(index) {
     if (local_data.order.startAt <= props.nowDate) {
-        emit("createReport", index);
+        emit("createReport", props.orderId);
     } else {
         emit("modal", ["confirm", "Заказ еще не начат"]);
     }
@@ -50,7 +50,10 @@ function getDisplayOrder() {
         .then((response) => response.json())
         .then((response) => {
             local_data.order.startAt = response[0].created_at;
-            local_data.order.id = props.orderId;
+            local_data.order.order_created_at = response[0].order_created_at;
+
+            local_data.order.id = response[0].id;
+            local_data.order.name = response[0].name;
 
             local_data.order.firm = response[0].firm;
             local_data.order.city = response[0].city;
@@ -64,7 +67,6 @@ function getDisplayOrder() {
 
             local_data.order.tangen = response[0].tangen;
             local_data.order.cup = response[0].cup;
-
             local_data.order.tangenLeft = response[0].tangen;
             local_data.order.cupLeft = response[0].cup;
             response[1].forEach((element) => {
@@ -109,7 +111,22 @@ getReportDates();
 </script>
 <template>
     <div class="page">
-        <div>Заказ № {{ local_data.order.id }}</div>
+        <div>Заказ № {{ local_data.order.name }}</div>
+        <div class="block">
+            <div class="block_header">Даты</div>
+            <div class="block_line">
+                <div>Заказ создан</div>
+                <div class="block_line_text">
+                    {{ local_data.order.order_created_at }}
+                </div>
+            </div>
+            <div class="block_line">
+                <div>Заказ начинается</div>
+                <div class="block_line_text">
+                    {{ local_data.order.startAt }}
+                </div>
+            </div>
+        </div>
         <div class="block">
             <div class="block_line">
                 <div>Фирма</div>
@@ -197,7 +214,7 @@ getReportDates();
                 Редактировать
             </button>
             <button
-                @click="writeReport(local_data.order.id)"
+                @click="writeReport"
                 v-show="
                     props.roleId == 2 && local_data.editOrCreate == 'create'
                 "
