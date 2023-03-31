@@ -98,9 +98,11 @@ const tableTwo = computed(() => {
 
         local_data.orderLocomotives.forEach((order) => {
             if (element === order.created_at.slice(0, 4)) {
-                table[i][Number(order.created_at.slice(5, 7)) + 1][1] +=
-                    order.done;
-                table[i][1][1] += order.done;
+                console.log(order);
+                table[i][Number(order.created_at.slice(5, 7)) + 1][1] += Number(
+                    order.done
+                );
+                table[i][1][1] += Number(order.done);
                 if (order.done == order.wheel_pairs) {
                     table[i][Number(order.created_at.slice(5, 7)) + 1][0] +=
                         order.amount;
