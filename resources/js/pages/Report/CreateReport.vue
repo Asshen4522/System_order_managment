@@ -44,7 +44,7 @@ function updateStatus() {
     let statusId = 2;
     let statusReady = true;
     local_data.report.wheel_pairs.forEach(element => {
-        if (element.wheel_pairs > element.done+element.doneNow) {
+        if (element.wheel_pairs > Number(element.done)+Number(element.doneNow)) {
             statusReady = false
         }
     });

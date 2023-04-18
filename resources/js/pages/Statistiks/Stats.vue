@@ -51,17 +51,23 @@ const tableOne = computed(() => {
 
     local_data.orderLocomotives.forEach((element) => {
         if (local_data.reqYear === element.created_at.slice(0, 4)) {
-            table[Number(element.created_at.slice(5, 7))][2][0] +=
-                element.wheel_pairs;
-            table[0][2][0] += element.wheel_pairs;
+            table[Number(element.created_at.slice(5, 7))][2][0] += Number(
+                element.wheel_pairs
+            );
+            table[0][2][0] += Number(element.wheel_pairs);
         }
     });
     local_data.reportWheels.forEach((element) => {
         if (local_data.reqYear === element.date.slice(0, 4)) {
-            table[Number(element.date.slice(5, 7))][2][1] += element.amount;
-            table[0][2][1] += element.amount;
-            table[0][3][0] += element.amount;
-            table[Number(element.date.slice(5, 7))][3][0] += element.amount;
+            console.log(element);
+            table[Number(element.date.slice(5, 7))][2][1] += Number(
+                element.amount
+            );
+            table[0][2][1] += Number(element.amount);
+            table[0][3][0] += Number(element.amount);
+            table[Number(element.date.slice(5, 7))][3][0] += Number(
+                element.amount
+            );
         }
     });
     local_data.reports.forEach((element) => {
@@ -98,7 +104,6 @@ const tableTwo = computed(() => {
 
         local_data.orderLocomotives.forEach((order) => {
             if (element === order.created_at.slice(0, 4)) {
-                console.log(order);
                 table[i][Number(order.created_at.slice(5, 7)) + 1][1] += Number(
                     order.done
                 );
