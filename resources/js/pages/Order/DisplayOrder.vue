@@ -1,5 +1,5 @@
 <script setup>
-import { reactive } from "vue";
+import { computed, reactive } from "vue";
 
 const props = defineProps({
     nowDate: null,
@@ -20,6 +20,23 @@ const emit = defineEmits([
     "modal",
 ]);
 
+const statusName = computed(() => {
+    switch (local_data.order.status) {
+        case 1:
+            return "Новый";
+            break;
+        case 2:
+            return "В работе";
+            break;
+        case 3:
+            return "Выполнен";
+            break;
+        case 4:
+            return "Отменен";
+            break;
+    }
+});
+
 function returnToCabinet() {
     emit("openPage", "order-main");
 }
@@ -38,6 +55,46 @@ function writeReport(index) {
     }
 }
 
+function updateStatus() {
+    let oldStatus = local_data.order.status;
+    if (local_data.order.startAt > props.nowDate) {
+        local_data.order.status = 1;
+    } else {
+        let statusReady = true;
+        local_data.order.wheel_pairs.forEach((element) => {
+            if (element.wheel_pairs != element.done) {
+                statusReady = false;
+            }
+        });
+        if (statusReady) {
+            local_data.order.status = 3;
+        } else {
+            local_data.order.status = 2;
+        }
+    }
+    if (oldStatus != local_data.order.status) {
+        const statusAndId = {
+            id: props.orderId,
+            status: local_data.order.status,
+            date: props.nowDate,
+        };
+        fetch("/Update_status", {
+            method: "POST",
+            body: JSON.stringify(statusAndId),
+            headers: {
+                "X-CSRF-TOKEN": document.querySelector('[name="_token"]').value,
+                "Content-Type": "application/json",
+            },
+        })
+            .then((response) => response.json())
+            .then((response) => {
+                emit("modal", ["confirm", "Статус заказа исправлен"]);
+            });
+    } else {
+        emit("modal", ["confirm", "Статус заказа верен"]);
+    }
+}
+
 function getDisplayOrder() {
     fetch("/Get_display_order", {
         method: "POST",
@@ -49,6 +106,8 @@ function getDisplayOrder() {
     })
         .then((response) => response.json())
         .then((response) => {
+            local_data.order.status = response[0].status_id;
+
             local_data.order.startAt = response[0].created_at;
             local_data.order.order_created_at = response[0].order_created_at;
 
@@ -111,7 +170,14 @@ getReportDates();
 </script>
 <template>
     <div class="page">
-        <div>Заказ № {{ local_data.order.name }}</div>
+        <div class="block_line">
+            <div>Заказ № {{ local_data.order.name }}</div>
+            <div class="block_line">
+                <div>Статус: {{ statusName }}</div>
+                <button @click="updateStatus">Проверить статус</button>
+            </div>
+        </div>
+
         <div class="block">
             <div class="block_header">Даты</div>
             <div class="block_line">
@@ -257,6 +323,7 @@ getReportDates();
     margin-bottom: 15px;
 }
 .block_line {
+    align-items: center;
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 10px;

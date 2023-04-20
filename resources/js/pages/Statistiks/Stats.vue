@@ -59,7 +59,6 @@ const tableOne = computed(() => {
     });
     local_data.reportWheels.forEach((element) => {
         if (local_data.reqYear === element.date.slice(0, 4)) {
-            console.log(element);
             table[Number(element.date.slice(5, 7))][2][1] += Number(
                 element.amount
             );

@@ -300,7 +300,6 @@ function SendData() {
             name: element.name
         })
     });
-    console.log(datuum);
     fetch("/Edit_report", {
         method: "POST",
         body: JSON.stringify(datuum),
