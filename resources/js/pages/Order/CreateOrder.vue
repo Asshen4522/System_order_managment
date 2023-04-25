@@ -315,13 +315,12 @@ getExecutors();
 </script>
 <template>
     <div class="page">
-        <div>Создание</div>
-            <customInput
-                v-model="local_data.order.name"
-                inputname="ID заказа"
-                typeIn="text"
-                :ifError="false"
-            />
+        <customInput
+            v-model="local_data.order.name"
+            inputname="Номер заказа"
+            typeIn="text"
+            :ifError="false"
+        />
         <div class="block">
             <div class="block_header">Место жительства</div>
             <customInput
@@ -357,7 +356,7 @@ getExecutors();
                 <div > {{ elem.wheel_pairs }}</div>
                 <div class="smallButtons" @click="deleteLocomotive(index)">&#215</div>
             </div>
-            <div class="block_header">Добавить Локомотивы</div>
+            <div>Добавить Локомотивы</div>
             <div class="block_add_line">
                 <select  v-model="local_data.newLocomotive.id">
                     <option
@@ -382,7 +381,7 @@ getExecutors();
                 />
                 <button  @click="addLocomotive">Добавить</button>
             </div>
-            <div class="block_header">Добавить Модель</div>
+            <div>Добавить Модель</div>
             <div class="block_line">
                  <customInput  
                     v-model="local_data.newModel.name"
@@ -538,6 +537,8 @@ getExecutors();
 }
 .block_header{
     margin-bottom: 15px;
+    font-size: 20px;
+    font-weight: bold;
 }
 .block_list_line{ 
     display:grid;

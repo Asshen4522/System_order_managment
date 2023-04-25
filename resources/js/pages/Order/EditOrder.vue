@@ -372,7 +372,7 @@ getExecutors();
         <div>Редактирование заказа №{{ props.orderId }}</div>
         <customInput
                 v-model="local_data.order.name"
-                inputname="ID заказа"
+                inputname="Номер заказа"
                 typeIn="text"
                 :ifError="false"
             />

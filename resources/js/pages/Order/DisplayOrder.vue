@@ -121,11 +121,11 @@ function getDisplayOrder() {
             local_data.order.fio = response[0].fio;
             local_data.order.phone = response[0].phone;
 
-            local_data.order.budget = response[0].budget;
-            local_data.order.payment = response[0].payment;
+            local_data.order.budget = 0 + response[0].budget;
+            local_data.order.payment = 0 + response[0].payment;
 
-            local_data.order.tangen = response[0].tangen;
-            local_data.order.cup = response[0].cup;
+            local_data.order.tangen = 0 + response[0].tangen;
+            local_data.order.cup = 0 + response[0].cup;
             local_data.order.tangenLeft = response[0].tangen;
             local_data.order.cupLeft = response[0].cup;
             response[1].forEach((element) => {

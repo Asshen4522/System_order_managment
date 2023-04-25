@@ -159,6 +159,9 @@ getOrders();
                         <div v-if="props.roleId == 1" class="addition">
                             {{ option.fio }}
                         </div>
+                        <div class="addition">
+                            {{ option.date }}
+                        </div>
                     </button>
                     <button
                         v-show="props.roleId == 1"
@@ -269,7 +272,7 @@ getOrders();
 
 @media only screen and (min-width: 1441px) {
 }
-@media only screen and (max-width: 425px) {
+@media only screen and (max-width: 636px) {
     .addition {
         display: none;
     }
