@@ -100,8 +100,10 @@ function logout() {
                         Аналитика
                     </div>
                 </div>
-                <div>{{ props.userFia }}</div>
-                <button @click="logout">Выйти</button>
+                <div class="menu-right">
+                    <div>{{ props.userFia }}</div>
+                    <button @click="logout">Выйти</button>
+                </div>
             </div>
             <div v-if="props.roleId == 2" class="logout top-menu-ex">
                 <div>{{ props.userFia }}</div>
@@ -166,9 +168,17 @@ function logout() {
 }
 .menu-buttons {
     display: flex;
-    width: 50%;
+    width: 40%;
     justify-content: space-between;
     gap: 10px;
+}
+
+.menu-right {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 20px;
 }
 
 .logout {

@@ -7,6 +7,7 @@ const props = defineProps({
 });
 const local_data = reactive({
     orders: [],
+    showFilter: false,
     filterStatus: 0,
     dateStart: "",
     dateEnd: "",
@@ -97,7 +98,17 @@ getOrders();
 <template>
     <div>
         <div class="field">
-            <div class="filters" v-show="props.roleId == 1">
+            <img
+                v-show="props.roleId == 1"
+                src="../../../img/filter.png"
+                class="btn_pict"
+                @click="local_data.showFilter = !local_data.showFilter"
+            />
+            <div
+                class="filters"
+                v-show="props.roleId == 1"
+                v-if="local_data.showFilter"
+            >
                 <div class="filter_elem">
                     <div>Фильтровать по статусу</div>
                     <select v-model="local_data.filterStatus">
@@ -172,7 +183,7 @@ getOrders();
                     <img
                         @click="deleteOrder(option.id)"
                         v-show="props.roleId == 1"
-                        class="close_pict"
+                        class="btn_pict"
                         src="../../../img/delete.png"
                     />
                 </div>
@@ -216,11 +227,17 @@ getOrders();
     gap: 20px;
 }
 
-.close_pict {
+.btn_pict {
     height: 20px;
+    width: 20px;
+    border-style: solid;
+    border-width: 1px;
+    border-color: var(--color-accent);
+    padding: 5px;
+    border-radius: 8px;
 }
 
-.close_pict:hover {
+.btn_pict:hover {
     cursor: pointer;
 }
 
