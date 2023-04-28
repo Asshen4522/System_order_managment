@@ -38,14 +38,14 @@ const tableOne = computed(() => {
     a.add(props.nowDate.slice(0, 4));
     local_data.orders.forEach((element) => {
         a.add(element.created_at.slice(0, 4));
-        if (local_data.reqYear === element.created_at.slice(0, 4)) {
-            table[Number(element.created_at.slice(5, 7))][1][0] += 1;
-            table[0][1][0] += 1;
-            if (element.date_end != null) {
-                table[Number(element.date_end.slice(5, 7))][1][1] += 1;
-                table[0][1][1] += 1;
-            }
-        }
+        // if (local_data.reqYear === element.created_at.slice(0, 4)) {
+        //     table[Number(element.created_at.slice(5, 7))][1][0] += 1;
+        //     table[0][1][0] += 1;
+        //     if (element.date_end != null) {
+        //         table[Number(element.date_end.slice(5, 7))][1][1] += 1;
+        //         table[0][1][1] += 1;
+        //     }
+        // }
     });
     local_data.years = Array.from(a);
 
@@ -55,6 +55,18 @@ const tableOne = computed(() => {
                 element.wheel_pairs
             );
             table[0][2][0] += Number(element.wheel_pairs);
+
+            table[Number(element.created_at.slice(5, 7))][1][0] += Number(
+                element.amount
+            );
+            table[0][1][0] += Number(element.amount);
+
+            if (element.done == element.wheel_pairs) {
+                table[Number(element.created_at.slice(5, 7))][1][1] += Number(
+                    element.amount
+                );
+                table[0][1][1] += Number(element.amount);
+            }
         }
     });
     local_data.reportWheels.forEach((element) => {

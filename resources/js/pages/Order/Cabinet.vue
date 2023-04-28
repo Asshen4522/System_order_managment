@@ -98,103 +98,137 @@ getOrders();
 <template>
     <div>
         <div class="field">
-            <img
-                v-show="props.roleId == 1"
-                src="../../../img/filter.png"
-                class="btn_pict"
-                @click="local_data.showFilter = !local_data.showFilter"
-            />
-            <div
-                class="filters"
-                v-show="props.roleId == 1"
-                v-if="local_data.showFilter"
-            >
-                <div class="filter_elem">
-                    <div>Фильтровать по статусу</div>
-                    <select v-model="local_data.filterStatus">
-                        <option :value="0">Без фильтрации</option>
-                        <option :value="1">Новые</option>
-                        <option :value="2">В работе</option>
-                        <option :value="3">Законченные</option>
-                        <option :value="4">Отмененные</option>
-                    </select>
-                </div>
+            <div class="field_filter">
+                <img
+                    v-show="props.roleId == 1"
+                    src="../../../img/filter.png"
+                    class="btn_pict"
+                    @click="local_data.showFilter = !local_data.showFilter"
+                />
+                <div
+                    class="filters"
+                    v-show="props.roleId == 1"
+                    v-if="local_data.showFilter"
+                >
+                    <div class="filter_elem">
+                        <div>Фильтровать по статусу</div>
+                        <select v-model="local_data.filterStatus">
+                            <option :value="0">Без фильтрации</option>
+                            <option :value="1">Новые</option>
+                            <option :value="2">В работе</option>
+                            <option :value="3">Законченные</option>
+                            <option :value="4">Отмененные</option>
+                        </select>
+                    </div>
 
-                <div class="filter_elem">
-                    <div>Фильтровать по дате</div>
-                    <div class="date_filter">
-                        <div class="date_lines">
-                            <div>От</div>
-                            <input v-model="local_data.dateStart" type="date" />
-                        </div>
-                        <div class="date_lines">
-                            <div>До</div>
-                            <input v-model="local_data.dateEnd" type="date" />
+                    <div class="filter_elem">
+                        <div>Фильтровать по дате</div>
+                        <div class="date_filter">
+                            <div class="date_lines">
+                                <div>От</div>
+                                <input
+                                    v-model="local_data.dateStart"
+                                    type="date"
+                                />
+                            </div>
+                            <div class="date_lines">
+                                <div>До</div>
+                                <input
+                                    v-model="local_data.dateEnd"
+                                    type="date"
+                                />
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div v-for="option in local_data.orders">
-                <div
-                    class="order_buttons"
-                    v-if="
-                        (local_data.filterStatus == 0 ||
-                            local_data.filterStatus == option.status) &&
-                        (local_data.dateStart == '' ||
-                            local_data.dateStart <= option.date) &&
-                        (local_data.dateEnd == '' ||
-                            local_data.dateEnd >= option.date)
-                    "
-                >
-                    <button @click="showOrder(option.id)" class="button-order">
-                        <div v-if="option.status === 1">
-                            <img class="pict" src="../../../img/new.png" />
-                        </div>
-                        <div v-else-if="option.status === 2">
-                            <img class="pict" src="../../../img/working.png" />
-                        </div>
-                        <div v-else-if="option.status === 3">
-                            <img class="pict" src="../../../img/ready.png" />
-                        </div>
-                        <div v-else>
-                            <img
-                                class="pict"
-                                src="../../../img/cancelled.png"
-                            />
-                        </div>
 
-                        <div>заказ №{{ option.id }}</div>
-                        <div class="addition">
-                            {{ option.city }}
-                        </div>
-                        <div v-if="props.roleId == 1" class="addition">
-                            {{ option.fio }}
-                        </div>
-                        <div class="addition">
-                            {{ option.date }}
-                        </div>
-                    </button>
-                    <button
-                        v-show="props.roleId == 1"
-                        @click="displayReports(option.id)"
+            <div class="orders">
+                <div v-for="option in local_data.orders">
+                    <div
+                        class="order_buttons"
+                        v-if="
+                            (local_data.filterStatus == 0 ||
+                                local_data.filterStatus == option.status) &&
+                            (local_data.dateStart == '' ||
+                                local_data.dateStart <= option.date) &&
+                            (local_data.dateEnd == '' ||
+                                local_data.dateEnd >= option.date)
+                        "
                     >
-                        Отчеты
-                    </button>
-                    <img
-                        @click="deleteOrder(option.id)"
-                        v-show="props.roleId == 1"
-                        class="btn_pict"
-                        src="../../../img/delete.png"
-                    />
+                        <button
+                            @click="showOrder(option.id)"
+                            class="button-order"
+                        >
+                            <div v-if="option.status === 1">
+                                <img class="pict" src="../../../img/new.png" />
+                            </div>
+                            <div v-else-if="option.status === 2">
+                                <img
+                                    class="pict"
+                                    src="../../../img/working.png"
+                                />
+                            </div>
+                            <div v-else-if="option.status === 3">
+                                <img
+                                    class="pict"
+                                    src="../../../img/ready.png"
+                                />
+                            </div>
+                            <div v-else>
+                                <img
+                                    class="pict"
+                                    src="../../../img/cancelled.png"
+                                />
+                            </div>
+
+                            <div>заказ №{{ option.id }}</div>
+                            <div class="addition">
+                                {{ option.city }}
+                            </div>
+                            <div v-if="props.roleId == 1" class="addition">
+                                {{ option.fio }}
+                            </div>
+                            <div class="addition">
+                                {{ option.date }}
+                            </div>
+                        </button>
+                        <button
+                            v-show="props.roleId == 1"
+                            @click="displayReports(option.id)"
+                        >
+                            Отчеты
+                        </button>
+                        <img
+                            @click="deleteOrder(option.id)"
+                            v-show="props.roleId == 1"
+                            class="btn_pict"
+                            src="../../../img/delete.png"
+                        />
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="buttons" v-show="props.roleId == 1">
-            <button @click="nextPage('order-add')">Добавить заказ</button>
+            <div class="buttons" v-show="props.roleId == 1">
+                <button @click="nextPage('order-add')">Добавить заказ</button>
+            </div>
         </div>
     </div>
 </template>
 <style scoped>
+.field_filter {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.orders {
+    height: 600px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    overflow-y: scroll;
+}
+.field {
+}
 .filters {
     display: flex;
     flex-direction: row;
@@ -206,7 +240,7 @@ getOrders();
     display: flex;
     flex-direction: column;
     gap: 10px;
-    width: 40%;
+    width: 45%;
 }
 .date_filter {
     display: flex;
@@ -251,12 +285,6 @@ getOrders();
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    gap: 10px;
-}
-
-.field {
-    display: flex;
-    flex-direction: column;
     gap: 10px;
 }
 
