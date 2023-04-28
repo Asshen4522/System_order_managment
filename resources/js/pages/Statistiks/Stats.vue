@@ -34,18 +34,11 @@ const tableOne = computed(() => {
     for (let index = 0; index < local_data.month.length; index++) {
         table.push([local_data.month[index], [0, 0], [0, 0], [0, 0]]);
     }
+
     let a = new Set();
     a.add(props.nowDate.slice(0, 4));
     local_data.orders.forEach((element) => {
         a.add(element.created_at.slice(0, 4));
-        // if (local_data.reqYear === element.created_at.slice(0, 4)) {
-        //     table[Number(element.created_at.slice(5, 7))][1][0] += 1;
-        //     table[0][1][0] += 1;
-        //     if (element.date_end != null) {
-        //         table[Number(element.date_end.slice(5, 7))][1][1] += 1;
-        //         table[0][1][1] += 1;
-        //     }
-        // }
     });
     local_data.years = Array.from(a);
 
@@ -115,15 +108,23 @@ const tableTwo = computed(() => {
 
         local_data.orderLocomotives.forEach((order) => {
             if (element === order.created_at.slice(0, 4)) {
-                table[i][Number(order.created_at.slice(5, 7)) + 1][1] += Number(
-                    order.done
-                );
-                table[i][1][1] += Number(order.done);
+                // table[i][Number(order.created_at.slice(5, 7)) + 1][1] += Number(
+                //     order.done
+                // );
+                // table[i][1][1] += Number(order.done);
                 if (order.done == order.wheel_pairs) {
                     table[i][Number(order.created_at.slice(5, 7)) + 1][0] +=
-                        order.amount;
-                    table[i][1][0] += order.amount;
+                        Number(order.amount);
+                    table[i][1][0] += Number(order.amount);
                 }
+            }
+        });
+        local_data.reportWheels.forEach((report) => {
+            if (element === report.date.slice(0, 4)) {
+                table[i][Number(report.date.slice(5, 7)) + 1][1] += Number(
+                    report.amount
+                );
+                table[i][1][1] += Number(report.amount);
             }
         });
 

@@ -228,6 +228,9 @@ getOrders();
     overflow-y: scroll;
 }
 .field {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
 .filters {
     display: flex;
