@@ -102,7 +102,7 @@ getOrders();
                 <img
                     v-show="props.roleId == 1"
                     src="../../../img/filter.png"
-                    class="btn_pict"
+                    class="btn_pict right"
                     @click="local_data.showFilter = !local_data.showFilter"
                 />
                 <div
@@ -220,8 +220,11 @@ getOrders();
     flex-direction: column;
     gap: 10px;
 }
+.right {
+    align-self: flex-end;
+}
 .orders {
-    height: 600px;
+    height: 66vh;
     display: flex;
     flex-direction: column;
     gap: 10px;

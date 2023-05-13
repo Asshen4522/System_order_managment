@@ -108,10 +108,6 @@ const tableTwo = computed(() => {
 
         local_data.orderLocomotives.forEach((order) => {
             if (element === order.created_at.slice(0, 4)) {
-                // table[i][Number(order.created_at.slice(5, 7)) + 1][1] += Number(
-                //     order.done
-                // );
-                // table[i][1][1] += Number(order.done);
                 if (order.done == order.wheel_pairs) {
                     table[i][Number(order.created_at.slice(5, 7)) + 1][0] +=
                         Number(order.amount);
@@ -174,7 +170,7 @@ getData();
                 class="menu-elem"
                 @click="local_data.menuActive = 1"
             >
-                Заказы
+                Детализация
             </div>
             <div
                 :class="{ menu_active: local_data.menuActive == 2 }"
@@ -194,7 +190,7 @@ getData();
                 <tr class="table_line">
                     <th class="text_block">Период</th>
                     <th class="text_block">
-                        <div>Заказы</div>
+                        <div>Локомотивы</div>
                         <div>(План/Факт)</div>
                     </th>
                     <th class="text_block">

@@ -321,6 +321,8 @@ getReportDates();
 }
 .block_header {
     margin-bottom: 15px;
+    font-size: 20px;
+    font-weight: bold;
 }
 .block_line {
     align-items: center;
