@@ -338,7 +338,7 @@ Promise.all([getOrderCosts(),getWheelPair(),getCosts(),getActivities()]).then(ge
                 <div>{{ elem.price }} р.</div>
                 <div class="smallButtons" @click="deleteCost(index)">&#215</div>
             </div>
-            <div class="block_header">Добавить траты</div>
+            <div>Добавить траты</div>
             <div class="block_add_line">
                 <select v-model="local_data.newCost.id" class="block_add_line_elem">
                     <option
@@ -356,7 +356,7 @@ Promise.all([getOrderCosts(),getWheelPair(),getCosts(),getActivities()]).then(ge
                 />
                 <button @click="addCost">Добавить</button>
             </div>
-            <div class="block_header">Добавить вид трат</div>
+            <div>Добавить вид трат</div>
             <div class="block_add_line">
                 <customInput
                     v-model="local_data.createNewCost"
@@ -370,7 +370,7 @@ Promise.all([getOrderCosts(),getWheelPair(),getCosts(),getActivities()]).then(ge
        
         <div class="block">
             <div class="block_header">Занятость</div>
-            <div class="block_header">Обточка КП</div>
+            <div>Обточка КП</div>
             <div class="block_list_train">
                 <div>Модель</div>
                 <div>Кол-во поездов</div>
@@ -389,7 +389,7 @@ Promise.all([getOrderCosts(),getWheelPair(),getCosts(),getActivities()]).then(ge
                     <div class="smallButtons" @click="morePairs(index)">+</div>
                 </div>
             </div>
-            <div class="block_header">Расход резцов</div>
+            <div>Расход резцов</div>
             <div class="block_list_cutter">
                 <div>Название</div>
                 <div>Выделено</div>
@@ -406,12 +406,12 @@ Promise.all([getOrderCosts(),getWheelPair(),getCosts(),getActivities()]).then(ge
                     <div class="smallButtons" @click="moreCutter(index)">+</div>
                 </div>
             </div>
-            <div class="block_header">Прочие занятости</div>
+            <div>Прочие занятости</div>
             <div class="block_list_line" v-for="elem,index in local_data.report.activities">
                 <div>{{ elem.name }}</div>
                 <div class="smallButtons" @click="deleteActivity(index)">&#215</div>
             </div>
-            <div class="block_header">Добавить занятия</div>
+            <div>Добавить занятия</div>
             <div class="block_add_line">
                 <select  v-model="local_data.newActivity">
                     <option
@@ -423,7 +423,7 @@ Promise.all([getOrderCosts(),getWheelPair(),getCosts(),getActivities()]).then(ge
                 </select>
                 <button @click="addActivity" >Добавить</button>
             </div>
-            <div class="block_header">Добавить вид занятий</div>
+            <div>Добавить вид занятий</div>
             <div class="block_add_line">
                 <customInput
                     v-model="local_data.createNewActivity"
@@ -471,6 +471,8 @@ Promise.all([getOrderCosts(),getWheelPair(),getCosts(),getActivities()]).then(ge
 }
 .block_header{
     margin-bottom: 15px;
+    font-size: 20px;
+    font-weight: bold;
 }
 .block_list_line{ 
     display:grid;

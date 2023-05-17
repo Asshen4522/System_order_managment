@@ -174,7 +174,9 @@ getReportDates();
             <div>Заказ № {{ local_data.order.name }}</div>
             <div class="block_line">
                 <div>Статус: {{ statusName }}</div>
-                <button @click="updateStatus">Проверить статус</button>
+                <button @click="updateStatus" v-show="props.roleId == 1">
+                    Проверить статус
+                </button>
             </div>
         </div>
 

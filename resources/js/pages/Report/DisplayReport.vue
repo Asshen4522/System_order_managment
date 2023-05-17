@@ -142,7 +142,7 @@ Promise.all([getCosts(), getActivities()]).then(getReport);
         </div>
         <div class="block">
             <div class="block_header">Занятость</div>
-            <div class="block_header">Обточка КП</div>
+            <div>Обточка КП</div>
             <div
                 class="block_list_line"
                 v-for="elem in local_data.report.wheel_pairs"
@@ -150,7 +150,7 @@ Promise.all([getCosts(), getActivities()]).then(getReport);
                 <div>{{ elem.name }}</div>
                 <div>{{ elem.count }}</div>
             </div>
-            <div class="block_header">Расход резцов</div>
+            <div>Расход резцов</div>
             <div class="block_list_line">
                 <div>Чашка</div>
                 <div>
@@ -163,7 +163,7 @@ Promise.all([getCosts(), getActivities()]).then(getReport);
                     <div>{{ local_data.report.tangen }}</div>
                 </div>
             </div>
-            <div class="block_header">Прочая занятость</div>
+            <div>Прочая занятость</div>
             <div
                 class="block_list_line"
                 v-for="elem in local_data.report.activities"
@@ -206,6 +206,8 @@ Promise.all([getCosts(), getActivities()]).then(getReport);
 }
 .block_header {
     margin-bottom: 15px;
+    font-size: 20px;
+    font-weight: bold;
 }
 .block_list_line {
     display: grid;

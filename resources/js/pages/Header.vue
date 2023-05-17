@@ -169,8 +169,8 @@ function logout() {
 .menu-buttons {
     display: flex;
     width: 40%;
-    justify-content: space-between;
-    gap: 10px;
+    justify-content: flex-start;
+    gap: 20px;
 }
 
 .menu-right {

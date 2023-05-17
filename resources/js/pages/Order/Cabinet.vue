@@ -219,6 +219,7 @@ getOrders();
     display: flex;
     flex-direction: column;
     gap: 10px;
+    margin-right: 20px;
 }
 .right {
     align-self: flex-end;
@@ -227,7 +228,6 @@ getOrders();
     height: 66vh;
     display: flex;
     flex-direction: column;
-    gap: 10px;
     overflow-y: scroll;
 }
 .field {
@@ -265,6 +265,8 @@ getOrders();
     justify-content: space-between;
     align-items: center;
     gap: 20px;
+    margin-bottom: 10px;
+    margin-right: 20px;
 }
 
 .btn_pict {
