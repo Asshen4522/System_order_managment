@@ -125,11 +125,11 @@ Promise.all([getCosts(), getActivities()]).then(getReport);
             <div class="block_header">Финансовые затраты</div>
             <div class="block_list_line">
                 <div>Суточные</div>
-                <div>{{ local_data.inner_costs[0]?.daily_cost }} р.</div>
+                <div>{{ 0 + local_data.inner_costs[0]?.daily_cost }} р.</div>
             </div>
             <div class="block_list_line">
                 <div>Квартира</div>
-                <div>{{ local_data.inner_costs[0]?.rent }} р.</div>
+                <div>{{ 0 + local_data.inner_costs[0]?.rent }} р.</div>
             </div>
 
             <div
@@ -137,7 +137,7 @@ Promise.all([getCosts(), getActivities()]).then(getReport);
                 v-for="elem in local_data.report.costs"
             >
                 <div>{{ elem.name }}</div>
-                <div>{{ elem.price }} р.</div>
+                <div>{{ 0 + elem.price }} р.</div>
             </div>
         </div>
         <div class="block">

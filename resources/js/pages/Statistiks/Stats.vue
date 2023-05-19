@@ -220,7 +220,7 @@ getData();
                     <th>{{ line[0] }}</th>
                     <th>{{ line[1][0] }}/{{ line[1][1] }}</th>
                     <th>{{ line[2][0] }}/{{ line[2][1] }}</th>
-                    <th>{{ line[3] }}</th>
+                    <th>{{ Math.round(line[3] * 100) / 100 }}</th>
                 </tr>
             </tbody>
         </table>
