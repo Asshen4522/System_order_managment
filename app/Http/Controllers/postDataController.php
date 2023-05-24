@@ -95,7 +95,7 @@ class postDataController extends Controller
             return $answer;
         } catch (\Throwable $th) {
             $answer = "false";
-            return $answer;
+            return $th;
         }
     }
     public function Create_report(Request $request)

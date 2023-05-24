@@ -87,7 +87,15 @@ function deleteOrder(orderId) {
             .then((response) => response.json())
             .then((response) => {
                 if (response) {
-                    getOrders();
+                    local_data.orders.forEach(function callback(
+                        element,
+                        index,
+                        array
+                    ) {
+                        if (element.id == orderId) {
+                            array.splice(index, 1);
+                        }
+                    });
                 }
             });
     }
