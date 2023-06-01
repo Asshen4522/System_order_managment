@@ -29,11 +29,30 @@ function getOrders() {
             .then((response) => response.json())
             .then((response) => {
                 response.forEach((element) => {
+                    let FIO = "";
+                    if (element.name && element.surname) {
+                        FIO = element.name + " " + element.surname;
+                    } else if (element.name) {
+                        FIO = element.name;
+                    } else if (element.surname) {
+                        FIO = element.surname;
+                    } else {
+                        FIO = "не назначен";
+                    }
+
+                    let orderID = "";
+                    if (element.orderId) {
+                        orderID = "заказ №" + element.orderId;
+                    } else {
+                        orderID = " ";
+                    }
+
                     const elem = {
+                        orderId: orderID,
                         city: element.city,
                         status: element.status_id,
                         id: element.id,
-                        fio: element.name + " " + element.surname,
+                        fio: FIO,
                         date: element.created_at,
                     };
                     local_data.orders.push(elem);
@@ -190,7 +209,7 @@ getOrders();
                                 />
                             </div>
 
-                            <div>заказ №{{ option.id }}</div>
+                            <div>{{ option.orderId }}</div>
                             <div class="addition">
                                 {{ option.city }}
                             </div>
@@ -312,8 +331,8 @@ getOrders();
 
 .button-order {
     width: 75%;
-    display: flex;
-    flex-direction: row;
+    display: grid;
+    grid-template-columns: 1fr 2fr 2fr 3fr 2fr;
     align-items: center;
     justify-content: left;
     gap: 20px;
@@ -322,7 +341,6 @@ getOrders();
     color: var(--color-accent);
 }
 .addition {
-    width: 30%;
 }
 
 .button-order:hover {

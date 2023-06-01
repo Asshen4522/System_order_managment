@@ -54,7 +54,7 @@ class getDataController extends Controller
         $answer = DB::table('orders')
             ->leftJoin('users', 'users.id', '=', 'orders.executor_id')
             ->orderBy('orders.id', 'asc')
-            ->select('orders.id', 'city', 'status_id', 'users.name', 'users.surname','orders.created_at')
+            ->select('orders.id','orders.name as orderId', 'city', 'status_id', 'users.name', 'users.surname','orders.created_at')
             ->get();
 
         return $answer;
